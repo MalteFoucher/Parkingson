@@ -1,0 +1,35 @@
+<!--h2 md-dialog-title>Login / Registrierung</h2-->
+
+<md-dialog-content >
+
+  <md-tab-group #tabGroup >
+  <md-tab label="Login">    
+    <p>Email</p>
+    <input [(ngModel)]="user_email">
+    <p></p>
+    <p>Password</p>    
+    <input [(ngModel)]="user_password">
+    <p>{{fb_status}}</p>
+      
+  </md-tab>
+  
+  <md-tab label="Register">
+    <p>Email</p>
+    <input [(ngModel)]="user_email">
+    <p></p>
+    <p>Password</p>    
+    <input [(ngModel)]="user_password">
+    <p>{{fb_status}}</p>
+  </md-tab>  
+  </md-tab-group>
+</md-dialog-content>
+<div class="centered-content" style="margin-top: 10px">        
+  <button *ngIf="tabGroup.selectedIndex==0 && !success" md-raised-button (click)="login()" >Login</button>  
+  <button *ngIf="tabGroup.selectedIndex==1 && !success" md-raised-button (click)="register()" >Register</button>  
+  <!-- Weiß nicht, ob das noch unterschieden werden muss, ob der Login- oder der Register-Button successfull war-->
+  <button *ngIf="success" md-raised-button [md-dialog-close] >Ok, cool!</button>  
+    <!--md-dialog-actions>
+      <button *ngIf="(tabGroup.selectedIndex==0)" md-raised-button [md-dialog-close]=true >Login</button>  
+      <button *ngIf="(tabGroup.selectedIndex==1)" md-raised-button [md-dialog-close]=user_password >Register</button>  
+    </md-dialog-actions-->
+</div>

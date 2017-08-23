@@ -1,0 +1,38 @@
+
+<div class="centered-content" style="margin-top: 10px; color: var(--myYellow)">
+  <button (click)="wocheUmblaettern(-7)"><i class="fa fa-toggle-left fa-2x" style="color: #3f51b5"></i></button>
+  <h3 [innerHTML]="woche_von_bis" style="margin: 5px; color: #3f51b5">Kalender-Woche</h3>
+  <button (click)="wocheUmblaettern(7)"><i class="fa fa-toggle-right fa-2x"  style="color: #3f51b5"></i></button>
+  <md-checkbox *ngIf='(userAdmin)' style="margin-left: 5px" (change)="onAdminButtonChange()">Admin-Modus</md-checkbox>
+</div>
+
+<!--div class= "centered-content" [innerHTML]="woche_von_bis">debugText</div>
+<div [innerHTML]="tableHTML"></div-->
+
+<div class="row columns">
+  <table>
+    <tr><th>Mon</th><th>Die</th><th>Mit</th><th>Don</th><th>Frei</th></tr>
+    <tr *ngFor="let row of tablerows">
+      <td class={{row.montagClass}} (click)=onItemClickListener($event) id={{row.montagId}}>
+        {{row.montag.parkId}}
+      </td>
+      <td class={{row.dienstagClass}} (click)=onItemClickListener($event) id={{row.dienstagId}}>
+        {{row.dienstag.parkId}}
+      </td>
+      <td class={{row.mittwochClass}} (click)=onItemClickListener($event) id={{row.mittwochId}}>
+        {{row.mittwoch.parkId}}
+      </td>
+      <td class={{row.donnerstagClass}} (click)=onItemClickListener($event) id={{row.donnerstagId}}>
+        {{row.donnerstag.parkId}}
+      </td>
+      <td class={{row.freitagClass}} (click)=onItemClickListener($event) id={{row.freitagId}}>
+        {{row.freitag.parkId}}
+      </td>
+    </tr>
+  </table>  
+</div>
+<div class="centered-content">
+  <!--p *ngIf="tablerows.length==0">Keine verfügbaren Plätze in dieser Woche</p-->
+  <p>{{buli_status}}</p>
+</div>
+<!--button md-raised-button (click)="writeNewBuchung()" id="neueFreigabeButton">Eigenen Parkplatz P{{userParkId}} freigeben</button-->

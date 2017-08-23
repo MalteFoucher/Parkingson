@@ -1,0 +1,44 @@
+<!--p-accordion>
+    <p-accordionTab header="Header 1">
+       Content 1
+    </p-accordionTab>
+    <p-accordionTab header="Header 2">
+        Content 2
+    </p-accordionTab>
+    <p-accordionTab header="Header 3">
+        Content 3    
+    </p-accordionTab>
+</p-accordion-->
+<div class="centered-content">
+  <h3>Vermietungen</h3>
+</div>
+
+<button md-raised-button (click)="onGoButton()">Daten laden!</button>    
+<br>
+<div class="centered-content">
+  <md-select placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">    
+    <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>  
+  </md-select>
+
+  <md-select placeholder="Monat" [(ngModel)]="myMonth" (change)="onMonthChanged()">    
+    <md-option *ngFor="let month of monthValues" [value]="month">{{month}}</md-option>  
+  </md-select>
+</div>
+<br>
+<div class="row columns">
+  
+    <table>
+      <tr><th>Datum</th><th>MieterId (muss noch Email)</th><th>Zahlung erhalten></th></tr>
+      <tr *ngFor="let i of buchungValues">                
+        <td>{{i.dateString}}</td>
+        <td>{{i.mieter}}</td>
+        <td><input type="checkbox" value ={{i.erhalten}}></td>
+      </tr>
+    </table>  
+  </div>
+<!--p *ngFor="let bk in buchungValues">{{bk.mieter}}</p-->
+
+<!--div *ngFor='#key of yearKeys'>
+    <h3>{{dataObject[key].someProperty}}</h3>
+    <p>{{dataObject[key].anotherPropery}}</p>
+</div-->
