@@ -8,8 +8,11 @@
   <md-tab label="Buchungen">
     <buchungen-component #buchungen></buchungen-component>
   </md-tab>
-  <md-tab label="Auswertung">
+  <md-tab *ngIf="(userAdmin)" label="Auswertung">
     <auswertung-component #auswertung>Yo!</auswertung-component>    
+  </md-tab>
+  <md-tab *ngIf="(userAdmin)" label="Nutzerverwaltung">
+    <p>    DUMMY CONTENT </p>
   </md-tab>
 </md-tab-group>
 

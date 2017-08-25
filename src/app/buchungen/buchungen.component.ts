@@ -52,11 +52,11 @@ export class BuchungenComponent implements OnInit {
       for (var jahr in jahresKeys) {
         var year = jahresKeys[jahr];
         var wochenKeys = Object.keys(snapshot.val()[year]);
-        console.log ("WochenKeys:"+wochenKeys);
+        console.log ("Jahr "+[jahresKeys[jahr]]+":  WochenKeys:"+wochenKeys);
 
         for (var woche in wochenKeys) {
           var buchungsKeys = Object.keys(snapshot.val()[jahresKeys[jahr]][wochenKeys[woche]]);
-          console.log ("BuchungsKeys: "+buchungsKeys);
+          console.log ("Woche "+[wochenKeys[woche]]+" BuchungsKeys: "+buchungsKeys);
 
             for (var bk in buchungsKeys) {
               var buchung = snapshot.val()[jahresKeys[jahr]][wochenKeys[woche]][buchungsKeys[bk]];
@@ -94,7 +94,7 @@ export class BuchungenComponent implements OnInit {
       }
       //Also auf Konsole kann man anzeigen, aber muss ich jetzt noch schick machen!
       console.log ( " " );
-      console.log (this.userBuchungenMap);
+      console.log (Object.keys(this.userBuchungenMap));
       var yearKeys = Object.keys(this.userBuchungenMap);
       for (var yk in yearKeys)
       {

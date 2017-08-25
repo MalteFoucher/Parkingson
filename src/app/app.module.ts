@@ -2,7 +2,6 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-//import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 
@@ -12,8 +11,6 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 import { MdButtonModule, MdTabsModule, MdDialogModule, MdDatepickerModule, MdNativeDateModule,
   MdSelectModule, MdCheckboxModule} from '@angular/material';
-//import {Md2AccordionModule} from 'md2-accordion/accordion';
-import {AccordionModule} from 'primeng/components/accordion/accordion';
 import {MenuItem} from 'primeng/components/common/api';
 
 
@@ -58,7 +55,6 @@ export const firebaseConfig = {
     MdNativeDateModule,
     MdSelectModule,
     MdCheckboxModule,
-    //Md2AccordionModule,
 		AngularFireModule.initializeApp(firebaseConfig),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule

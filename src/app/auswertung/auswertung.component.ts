@@ -34,8 +34,7 @@ export class AuswertungComponent implements OnInit {
   constructor() {
     console.log ("Auswertung Konstruktor");
     //Erstmal ne Liste aller Vermieter besorgen    
-    firebase.database().ref("/emailToRole/").orderByChild('parkId').startAt(0).once('value', this.e2rCallback);
-    //this.vonDate = moment().format('DD.MM.YYYY');
+    firebase.database().ref("/emailToRole/").orderByChild('parkId').startAt(1).once('value', this.e2rCallback);    
   }
 
   public openPicker(i: number) {
@@ -48,8 +47,7 @@ export class AuswertungComponent implements OnInit {
     console.log ("onGoButton()");    
     this.auswertungenArray=[];
     this.auswertungenMap={};
-    
-    
+        
     //Da ich es nicht gebacken bekomme, die Property _selected in ein Format zu überführen,
     //das einem moment-Konstruktor übergeben werden kann -> die umständliche Tour!
     var vonMoment = moment().date(this.picker_von._selected.getDate());
@@ -61,8 +59,8 @@ export class AuswertungComponent implements OnInit {
     bisMoment.year(this.picker_bis._selected.getFullYear());
     
     console.log ( vonMoment.format('DD.MM.YYYY')+ " -- "+bisMoment.format('DD.MM.YYYY') );
-    //Mal angenommen, start und ende sind valide.... (ende > start, beide selbes jahr, ?)
-    //Muss hier noch überprüft werden!
+    //Vorerst geh ich mal davon aus, start und ende sind valide.... (ende > start, beide selbes jahr, ?)
+    //Muss aber noch überprüft werden!
     
     var vonKW = parseInt(vonMoment.format('WW'));
     this.vonTag = vonMoment.day();
@@ -72,8 +70,7 @@ export class AuswertungComponent implements OnInit {
     var year = bisMoment.year();
 
     console.log ("VonKW,-tag - BisKW,-tag: " ,vonKW, this.vonTag +" - "+ bisKW,this.bisTag);
-    
-    //Scheiße: //Warum hab ich hier scheiße hingeschribene?
+        
     firebase.database().ref("/buchungen2/"+year).orderByKey().startAt("KW"+(vonKW)).endAt("KW"+(bisKW)).once('value', this.auswertungCallback);    
 
   }
@@ -111,11 +108,14 @@ public auswertungCallback = (snapshot) => {
           console.log ("Buchung ("+kwKeys[kwKey] +"/"+buchung.tag+") aussortiert.");
           continue;
         }
+        //Prüfen, ob der Vermieter-Key der des im Dropdown ausgewählten ist:
         if ( !this.myState || this.myState==buchung.vermieter) {
           console.log ("Buchung ("+kwKeys[kwKey] +"/"+buchung.tag+") geht fit!");
           //Hier noch >=Start und <=End- Tag berücksichtigen!!! 
           //Das mach ich ambesten mit moments
           //Aus dem ausgelesenen KW und .Tag nen 
+          
+          
           if (!(buchung.vermieter in this.auswertungenMap)) {
             console.log("Vermieter-Key "+buchung.vermieter +" und dazugehörige Auswertung-Instanz anlegen...");
             //vermieterMap[buchung.vermieter] = {freigaben: 1, davon_gebucht: 0};          

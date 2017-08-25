@@ -16,7 +16,10 @@ import { AdminDialogComponent } from './admin-dialog/admin-dialog.component';
 
 export class KalenderComponent {
 
-  @ViewChild(MdCheckbox) adminButton: MdCheckbox;
+  @ViewChild('adminModeCB') adminButton: MdCheckbox;
+  @ViewChild('nurFreigabenCB') nurFreigaben: MdCheckbox;
+  
+  nurFreigabenAnzeigen: boolean=false;
   
   buli_status: string = "Bitte einloggen...";
   dialog: MdDialog;
@@ -24,7 +27,8 @@ export class KalenderComponent {
   year: number = 2017;
   moment_today = moment();
   nodeRef: any;
-  snackBar: MdSnackBar;
+  //snackBar: MdSnackBar;
+  b3nodeRef: any;
   woche_von_bis: string=this.getVonBisString();
   buchungen: any;
   userId: string="initKalenderUserId";
@@ -42,7 +46,7 @@ export class KalenderComponent {
   tablerow: Tablerow = new Tablerow();
   tablerows: Tablerow[] = new Array<Tablerow>();
 
-  controller: any;
+  //controller: any;
 
   constructor(dialog: MdDialog) {
     this.dialog=dialog;
@@ -56,9 +60,6 @@ export class KalenderComponent {
 
   setUserId(uid: string):void {
     this.userId=uid;
-    this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
-    this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
-    this.buli_status="Freigaben werden geladen...";
   }
 
   wocheUmblaettern(days: number):void {
@@ -107,6 +108,11 @@ export class KalenderComponent {
 
   }
 
+  public buchung3Listener = (snapshot) => {
+    console.log ("B3 Listener!");
+    console.log (snapshot); 
+  }
+
 public generateTable() {
   console.log ("Aufruf generateTable() mit UserParkId: "+this.userParkId);
   //Wenn noch keine Userdaten gelesen (zB noch kein Login) wurden, auch nix anzeigen.
@@ -149,25 +155,17 @@ public generateTable() {
     //Checken, ob parkId eine Nummer ist. Falls nein, ist es wohl 'Freigabe hinzuf.' , welches vom Admin-Mode hinzugefügt wurde und hier rausgefischt wird.
     if (!isNaN(parkId )) {
       alle_freigaben++;
-      if (tag==1) {// && mieter=="") {
-        this.montagArray.push(buchung);
+      console.log ("Einsortieren: "+this.nurFreigabenAnzeigen+" "+mieter+".");
+      if (  !this.nurFreigabenAnzeigen || (this.nurFreigabenAnzeigen && mieter=="") ) {
+        if (tag==1) this.montagArray.push(buchung);
         
-      }
-      if (tag==2) {// && mieter=="") {
-        this.dienstagArray.push(buchung);
+        if (tag==2) this.dienstagArray.push(buchung);
         
-      }
-      if (tag==3) {// && mieter=="") {
-        this.mittwochArray.push(buchung);
+        if (tag==3) this.mittwochArray.push(buchung);
         
-      }
-      if (tag==4) {// && mieter=="") {
-        this.donnerstagArray.push(buchung);
-        
-      }
-      if (tag==5) {// && mieter=="") {
-        this.freitagArray.push(buchung);
-        
+        if (tag==4) this.donnerstagArray.push(buchung);
+  
+        if (tag==5) this.freitagArray.push(buchung);        
       }
     }
   } 
@@ -356,7 +354,7 @@ public generateTable() {
         
         let dialogRef = this.dialog.open(AdminDialogComponent, {
           data:  {
-            controller: this.controller,
+            //controller: this.controller,
             buchung: clickedBuchung,
             titel: 'Buchung anlegen',
             text:'Vermieter auswählen, in dessen Namen die Freigabe angelegt werden soll.',
@@ -382,9 +380,7 @@ public generateTable() {
                 //User hat noch keine Freigaben an diesem Tag, also: neue anlegen!
                 this.freigabeAnlegen( {
                   mieter: "",
-                  vermieter: vermieter_uid,
-                  erhalten: false,
-                  bezahlt: false,
+                  vermieter: vermieter_uid,                  
                   parkId: vermieter_parkId,
                   tag: tag
                 });
@@ -410,9 +406,7 @@ public generateTable() {
           if (selection) {
             this.freigabeAnlegen( {
               mieter: "",
-              vermieter: this.userId,
-              erhalten: false,
-              bezahlt: false,
+              vermieter: this.userId,              
               parkId: this.userParkId,
               tag: this.buchungen[value].tag
             });
@@ -513,14 +507,20 @@ public generateTable() {
 
 //debug
   writeNewBuchung() {
-    var newPostRef = this.nodeRef.push();
+    var tag = <number> moment().dayOfYear() ;    
+    tag += Math.round( (Math.random() * 90)-45 );
+    var pp = Math.round( Math.random()*250);
+    console.log ("WnB: "+this.year+" / "+ tag+" /" +pp);
+    var mmt = moment().year(this.year).dayOfYear(tag);
+    console.log ( "Tag "+tag+" in "+this.year+" entspricht: " + mmt.format('DD.MM.YYYY'));
+    //Year und Tag kommen im endeffekt dann von der selectierten zelle natürlich 
+    var b3nodeRef=firebase.database().ref('/buchungen3/'+this.year+'/'+tag);
+
+    var newPostRef = b3nodeRef.push();
     newPostRef.set({
-      mieter: "neuer mieter",
-      vermieter: "neuer vermieter",
-      erhalten: false,
-      bezahlt: false,
-      parkId:10,
-      tag:1
+      mId: "",
+      vId: this.userId,
+      pId: pp
     });
   }
 
@@ -622,6 +622,20 @@ private isBuchungMoeglich(tag: number): boolean {
       newPostRef.set(data);
     }
   }
+//debug
+private writeNewbuchung() {
+    console.log ("WNB: NodeRef:");
+    console.log(this.nodeRef);
+      var newPostRef = this.nodeRef.push();
+      newPostRef.set( {
+        mieter: "",
+        vermieter: this.userId,
+        parkId: this.userParkId,
+        tag: 4,
+        datum: "24.08.2017"
+      });
+    
+  }
 
   private freigabeBuchen(data: any, fbKey: string) {
     //Bediungen für Buchung wären ?
@@ -702,7 +716,28 @@ private isBuchungMoeglich(tag: number): boolean {
     this.generateTable();
   }
 
-  public setController(ctrl:any) {
+  /*public setController(ctrl:any) {
     this.controller=ctrl;
+  }*/
+
+  public onNurFreigabenChange() {
+    console.log ("NFA:");
+    this.nurFreigabenAnzeigen = this.nurFreigaben.checked;
+    console.log (this.nurFreigabenAnzeigen);
+    this.generateTable();
+  }
+
+  public setUserRights(pid:number, admin:boolean) {    
+    this.userParkId=pid;
+    this.userAdmin=admin;
+    this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
+    this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
+    this.buli_status="Freigaben werden geladen...";
+
+console.log ("b3 listener anmelden");
+    this.b3nodeRef=firebase.database().ref('/buchungen3/'+this.year+'/');
+    this.b3nodeRef.orderByKey().startAt("220").endAt("250").on('value', this.buchung3Listener);
+    
+
   }
 }

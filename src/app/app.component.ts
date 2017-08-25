@@ -66,8 +66,7 @@ export class AppComponent implements AfterViewInit{
             this.userParkId= snapshot.val()['parkId'];
               this.debugText="this.userParkId="+this.userParkId;
             
-            this.kalender.userParkId = this.userParkId;
-            this.kalender.userAdmin = this.userAdmin;
+            this.kalender.setUserRights(this.userParkId, this.userAdmin);
             //Aufrufen nach (erneutem) Login
             //this.kalender.generateTable();            
           }
@@ -126,7 +125,7 @@ export class AppComponent implements AfterViewInit{
     //Zu diesem Punkt noch zu früh, die parkId zu übermitteln. Wird nochmal aufgerufen, wenn sie tatsächlich da ist.
     //this.kalender.userParkId = this.userParkId;
     //this.cdRef.detectChanges();
-    this.kalender.setController(this);
+    //this.kalender.setController(this);
   }
 
   public getVermieter() : firebase.Promise<any> {
