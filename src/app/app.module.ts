@@ -1,39 +1,43 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-//import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {FormsModule} from '@angular/forms';
+import {HttpModule} from '@angular/http';
+import {NgModule} from '@angular/core';
 
 
-import { AngularFireModule } from 'angularfire2';
-import { AngularFireDatabaseModule } from 'angularfire2/database';
-import { AngularFireAuthModule } from 'angularfire2/auth';
+import {AngularFireModule} from 'angularfire2';
+import {AngularFireDatabaseModule} from 'angularfire2/database';
+import {AngularFireAuthModule} from 'angularfire2/auth';
 
-import { MdButtonModule, MdTabsModule, MdDialogModule, MdDatepickerModule, MdNativeDateModule,
-  MdSelectModule, MdCheckboxModule} from '@angular/material';
-//import {Md2AccordionModule} from 'md2-accordion/accordion';
-import {AccordionModule} from 'primeng/components/accordion/accordion';
-import {MenuItem} from 'primeng/components/common/api';
+import {
+  MdButtonModule,
+  MdCheckboxModule,
+  MdDatepickerModule,
+  MdDialogModule,
+  MdNativeDateModule,
+  MdSelectModule,
+  MdTabsModule
+} from '@angular/material';
 
 
-import { AppComponent } from './app.component';
-import { KalenderComponent } from './kalender.component';
-import { DialogComponent } from './dialog/dialog.component';
-import { LoginComponent } from './login/login.component';
-import { AuswertungComponent } from './auswertung/auswertung.component';
-import { AdminDialogComponent } from './admin-dialog/admin-dialog.component';
-import { BuchungenComponent } from './buchungen/buchungen.component';
-
+import {AppComponent} from './app.component';
+import {KalenderComponent} from './kalender.component';
+import {DialogComponent} from './dialog/dialog.component';
+import {LoginComponent} from './login/login.component';
+import {AuswertungComponent} from './auswertung/auswertung.component';
+import {AdminDialogComponent} from './admin-dialog/admin-dialog.component';
+import {BuchungenComponent} from './buchungen/buchungen.component';
+import {OverviewComponent} from './overview/overview.component';
+import {Store} from "./store/store.service";
 
 
 export const firebaseConfig = {
-			apiKey: "AIzaSyAc4lRwOrVEX7F9vU03KUImmL6_RV45-Ck",
-      authDomain: "parkingtool-6cf77.firebaseapp.com",
-      databaseURL: "https://parkingtool-6cf77.firebaseio.com",
-      projectId: "parkingtool-6cf77",
-      storageBucket: "parkingtool-6cf77.appspot.com",
-      messagingSenderId: "506320863480"
+			apiKey: 'AIzaSyAc4lRwOrVEX7F9vU03KUImmL6_RV45-Ck',
+      authDomain: 'parkingtool-6cf77.firebaseapp.com',
+      databaseURL: 'https://parkingtool-6cf77.firebaseio.com',
+      projectId: 'parkingtool-6cf77',
+      storageBucket: 'parkingtool-6cf77.appspot.com',
+      messagingSenderId: '506320863480'
 };
 
 @NgModule({
@@ -44,7 +48,8 @@ export const firebaseConfig = {
 		LoginComponent,
 		AuswertungComponent,
 		AdminDialogComponent,
-		BuchungenComponent
+		BuchungenComponent,
+		OverviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,12 +63,11 @@ export const firebaseConfig = {
     MdNativeDateModule,
     MdSelectModule,
     MdCheckboxModule,
-    //Md2AccordionModule,
 		AngularFireModule.initializeApp(firebaseConfig),
 		AngularFireDatabaseModule,
 		AngularFireAuthModule
   ],
-  providers: [AppComponent],
+  providers: [AppComponent, Store],
   bootstrap: [AppComponent, DialogComponent, AdminDialogComponent, LoginComponent, BuchungenComponent]
 })
 

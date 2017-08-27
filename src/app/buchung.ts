@@ -11,7 +11,7 @@ export class Buchung {
 
     constructor( vermieter: string, mieter: string, bezahlt: boolean, erhalten: boolean, tag: number, parkId: any, key: string) {
       this.vermieter = vermieter;
-      this.mieter = mieter;      
+      this.mieter = mieter;
       this.bezahlt = bezahlt;
       this.erhalten = erhalten;
       this.tag=tag;

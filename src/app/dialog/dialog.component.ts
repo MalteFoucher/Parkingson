@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import {Component, OnInit, Inject} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
 import {MdDialogModule} from '@angular/material';
 
@@ -8,28 +8,28 @@ import {MdDialogModule} from '@angular/material';
   styleUrls: ['./dialog.component.css']
 })
 export class DialogComponent implements OnInit {
-  titel: string="Parking Tool";
-  text: string="Dialogtext...";
-  yesButtonVisible: boolean=true;
-  yesButtonText: string="JA";
-  noButtonVisible: boolean=false;
-  noButtonText: string="NEIN";
+  titel: string = "Parking Tool";
+  text: string = "Dialogtext...";
+  yesButtonVisible: boolean = true;
+  yesButtonText: string = "JA";
+  noButtonVisible: boolean = false;
+  noButtonText: string = "NEIN";
 
-    vermieter: string="";
-    userPid: number;
+  vermieter: string = "";
+  userPid: number;
 
   constructor(@Inject(MD_DIALOG_DATA) public data: any) {
     this.titel = data.titel;
-    this.text=data.text;
-    this.yesButtonText=data.yesButtonText;
-    this.yesButtonVisible=data.yesButtonVisible;
-    this.noButtonText=data.noButtonText;
-    this.noButtonVisible=data.noButtonVisible;
+    this.text = data.text;
+    this.yesButtonText = data.yesButtonText;
+    this.yesButtonVisible = data.yesButtonVisible;
+    this.noButtonText = data.noButtonText;
+    this.noButtonVisible = data.noButtonVisible;
 
-      this.vermieter = data.buchung.vermieter;
-      this.userPid = data.userPid;
+    this.vermieter = data.buchung.vermieter;
+    this.userPid = data.userPid;
     console.log("Kontruktor Dialog");
-   }
+  }
 
   ngOnInit() {
   }

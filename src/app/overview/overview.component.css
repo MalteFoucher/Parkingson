@@ -1,0 +1,14 @@
+.parkplatz {
+  background-color: #64cf53;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  color: white;
+}
+
+.no_parkplatz {
+  background-color: #de4e4e;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  color: white;
+}
+
