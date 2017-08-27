@@ -1,0 +1,13 @@
+<md-dialog-content >
+  <div [innerHTML]="innerHtmlString"></div>
+  <p>Email</p>
+  <input [(ngModel)]="user_email">
+  
+</md-dialog-content>
+  
+  <button md-raised-button [md-dialog-close]=true >Passwort zurücksetzen</button>  
+  <button md-raised-button [md-dialog-close]=false >Abbruch</button>  
+    <!--md-dialog-actions>
+      <button *ngIf="(tabGroup.selectedIndex==0)" md-raised-button [md-dialog-close]=true >Login</button>  
+      <button *ngIf="(tabGroup.selectedIndex==1)" md-raised-button [md-dialog-close]=user_password >Register</button>  
+    </md-dialog-actions-->

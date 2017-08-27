@@ -1,5 +1,7 @@
 <h2 md-dialog-title>{{titel}}</h2>
-<md-dialog-content>{{text}}</md-dialog-content>
+<md-dialog-content>
+  <div [innerHTML]="text"></div>
+</md-dialog-content>
 <md-dialog-actions>
   <button *ngIf="yesButtonVisible==true" md-raised-button [md-dialog-close]="true">{{yesButtonText}}</button>
   <!-- Can optionally provide a result for the closing dialog. -->

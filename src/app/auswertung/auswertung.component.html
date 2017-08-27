@@ -11,12 +11,14 @@
   
   <!--button (click)="openPicker(1)"><i class="fa fa-calendar"></i></button-->
   <input [mdDatepicker]="vonPicker" (click)="openPicker(1)" placeholder="Von...">
-  <md-datepicker #vonPicker  placeholder="Von Datum..."  ></md-datepicker>
+  <button [mdDatepickerToggle]="vonPicker"></button>
+  <md-datepicker #vonPicker  placeholder="Von Datum..."  [startAt]="vonInitDate"></md-datepicker>
   
   
   <!--button (click)="openPicker(2)"><i class="fa fa-calendar"></i></button-->
   <input [mdDatepicker]="bisPicker" (click)="openPicker(2)" placeholder="Bis...">
-  <md-datepicker #bisPicker  placeholder="Bis Datum..." ></md-datepicker>
+  <button [mdDatepickerToggle]="bisPicker"></button>
+  <md-datepicker #bisPicker  placeholder="Bis Datum..." [startAt]="bisInitDate"></md-datepicker>
 
   <button md-raised-button (click)="onGoButton()" >GO!</button>
 </div>

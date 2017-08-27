@@ -9,7 +9,7 @@
     <p></p>
     <p>Password</p>    
     <input [(ngModel)]="user_password">
-    <p>{{fb_status}}</p>
+    <div [innerHTML]="innerHtmlString"></div>
       
   </md-tab>
   
@@ -18,10 +18,11 @@
     <input [(ngModel)]="user_email">
     <p></p>
     <p>Password</p>    
-    <input [(ngModel)]="user_password">
-    <p>{{fb_status}}</p>
+    <input [(ngModel)]="user_password">    
+    <div [innerHTML]="innerHtmlString"></div>
   </md-tab>  
   </md-tab-group>
+  <a (click)="onPasswordReset()">Passwort vergessen?</a>
 </md-dialog-content>
 <div class="centered-content" style="margin-top: 10px">        
   <button *ngIf="tabGroup.selectedIndex==0 && !success" md-raised-button (click)="login()" >Login</button>  

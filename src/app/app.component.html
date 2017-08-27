@@ -5,25 +5,25 @@
   <md-tab label="Kalender">
     <kalender-component #kalender>Yo!</kalender-component>
   </md-tab>
-  <md-tab label="Übersicht">
-    <app-overview></app-overview>
-  </md-tab>
   <md-tab label="Buchungen">
     <buchungen-component #buchungen></buchungen-component>
   </md-tab>
-  <md-tab label="Auswertung">
-    <auswertung-component #auswertung>Yo!</auswertung-component>
+  <md-tab *ngIf="(userAdmin)" label="Auswertung">
+    <auswertung-component #auswertung>Yo!</auswertung-component>    
+  </md-tab>
+  <md-tab *ngIf="(userAdmin)" label="Nutzerverwaltung">
+    <p>    DUMMY CONTENT </p>
   </md-tab>
 </md-tab-group>
 
 <div class="row columns">
-
+  
   <button md-button (click)="login()" *ngIf="!(user | async)?.uid">Anonymous Login</button>
   <button md-raised-button (click)="logout()" *ngIf="(user | async)?.uid">Logout</button>
-
+  
   <!--input type="text" id="message" *ngIf="(user | async)?.uid" placeholder="What is it that you do?" (keyup.enter)="Send($event.target.value)" [(ngModel)]="msgVal" />
   <div id="details-container">
-
+      
       <p *ngFor="let item of items | async">{{item.parkId}}</p>
   </div-->
 </div>
