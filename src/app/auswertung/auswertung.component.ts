@@ -24,8 +24,9 @@ export class AuswertungComponent implements OnInit {
   auswertungenMap = {};
   //myState ist doofer Name, ist die Auswahl aus dem vermiter drop down
   myState = null;
-  vonDate = moment().format('DD-MM-YYYY');
-  bisDate = moment();
+  vonInitDate = moment().format('DD-MM-YYYY');
+  bisInitDate = moment();;
+
 
 
   vonTag: number=0;
@@ -33,7 +34,7 @@ export class AuswertungComponent implements OnInit {
 
   constructor() {
     console.log ("Auswertung Konstruktor");
-    //Erstmal ne Liste aller Vermieter besorgen    
+    //Erstmal ne Liste aller Vermieter besorgen (anhand der ParkId):
     firebase.database().ref("/emailToRole/").orderByChild('parkId').startAt(1).once('value', this.e2rCallback);    
   }
 
@@ -59,19 +60,17 @@ export class AuswertungComponent implements OnInit {
     bisMoment.year(this.picker_bis._selected.getFullYear());
     
     console.log ( vonMoment.format('DD.MM.YYYY')+ " -- "+bisMoment.format('DD.MM.YYYY') );
+    console.log ( "Entspricht: "+vonMoment.dayOfYear() + " - "+bisMoment.dayOfYear());
     //Vorerst geh ich mal davon aus, start und ende sind valide.... (ende > start, beide selbes jahr, ?)
     //Muss aber noch überprüft werden!
     
-    var vonKW = parseInt(vonMoment.format('WW'));
-    this.vonTag = vonMoment.day();
     
-    var bisKW = parseInt(bisMoment.format('WW'));
-    this.bisTag = bisMoment.day();
     var year = bisMoment.year();
+    var startDay=""+vonMoment.dayOfYear();
+    var endDay=""+bisMoment.dayOfYear();
 
-    console.log ("VonKW,-tag - BisKW,-tag: " ,vonKW, this.vonTag +" - "+ bisKW,this.bisTag);
         
-    firebase.database().ref("/buchungen2/"+year).orderByKey().startAt("KW"+(vonKW)).endAt("KW"+(bisKW)).once('value', this.auswertungCallback);    
+    firebase.database().ref("/buchungen3/"+year).orderByKey().startAt(startDay).endAt(endDay).once('value', this.auswertungCallback);    
 
   }
 
@@ -93,41 +92,25 @@ public auswertungCallback = (snapshot) => {
   
 
   if (snapshot.val()) {
-    var kwKeys = Object.keys(snapshot.val());
-    console.log ("kwkeys lenht:"+ kwKeys.length );
-    console.log ( "Keys der KWs: "+kwKeys);
-    for (var kwKey in kwKeys) {
-      var buchungenKeys = Object.keys(snapshot.val()[kwKeys[kwKey]]);
-      console.log ("  BuchungsKeys der KW"+kwKeys[kwKey]+": "+buchungenKeys);
-      for (var buchungKey in buchungenKeys) {
-        var buchung = snapshot.val()[kwKeys[kwKey]][buchungenKeys[buchungKey]];
-        console.log ("    Buchung vermieter/mieter: "+buchung.vermieter+" / "+buchung.mieter + " gesuchter Vermieter: "+this.myState+ " BuchTag/VonTag/BisTag=>"+buchung.tag+"/"+this.vonTag+"/"+this.bisTag);
-        
-        //Tage aussortieren, die nicht innerhalb Start- und Endtag liegen
-        if ( (kwKey=='0' && buchung.tag < this.vonTag) || (parseInt(kwKey)== kwKeys.length-1 && buchung.tag > this.bisTag) ){
-          console.log ("Buchung ("+kwKeys[kwKey] +"/"+buchung.tag+") aussortiert.");
-          continue;
-        }
+    var tagesKeys = Object.keys(snapshot.val());
+    for (var tk in tagesKeys) {
+      var buchungsKeys = Object.keys(snapshot.val()[tagesKeys[tk]]);
+      for (var bk in buchungsKeys) {
+        var buchung = snapshot.val()[tagesKeys[tk]][buchungsKeys[bk]];
+                
         //Prüfen, ob der Vermieter-Key der des im Dropdown ausgewählten ist:
-        if ( !this.myState || this.myState==buchung.vermieter) {
-          console.log ("Buchung ("+kwKeys[kwKey] +"/"+buchung.tag+") geht fit!");
-          //Hier noch >=Start und <=End- Tag berücksichtigen!!! 
-          //Das mach ich ambesten mit moments
-          //Aus dem ausgelesenen KW und .Tag nen 
+        if ( !this.myState || this.myState==buchung.vId) {          
           
-          
-          if (!(buchung.vermieter in this.auswertungenMap)) {
-            console.log("Vermieter-Key "+buchung.vermieter +" und dazugehörige Auswertung-Instanz anlegen...");
-            //vermieterMap[buchung.vermieter] = {freigaben: 1, davon_gebucht: 0};          
-            this.auswertungenMap[buchung.vermieter] = new Auswertung(buchung.vermieter, buchung.parkId);
-            this.auswertungenMap[buchung.vermieter].setEmail( this.vermieterMap[buchung.vermieter]);
-            this.auswertungenMap[buchung.vermieter].incFreigaben();
+          if (!(buchung.vId in this.auswertungenMap)) {                        
+            this.auswertungenMap[buchung.vId] = new Auswertung(buchung.vId, buchung.pId);
+            this.auswertungenMap[buchung.vId].setEmail( this.vermieterMap[buchung.vId]);
+            this.auswertungenMap[buchung.vId].incFreigaben();
           } else {
-            console.log("Vermieter-Key "+buchung.vermieter +" erhöhen...");
-            this.auswertungenMap[buchung.vermieter].incFreigaben();//freigaben++;          
+            //console.log("Vermieter-Key "+buchung.vermieter +" erhöhen...");
+            this.auswertungenMap[buchung.vId].incFreigaben();//freigaben++;          
           }
           // In der Annahme, dass es zu jeder Buchung auch einen Vermieter geben muss/wird! 
-          if (buchung.mieter!="") this.auswertungenMap[buchung.vermieter].incGebucht();
+          if (buchung.mId!="") this.auswertungenMap[buchung.vId].incGebucht();
         }
       }
     }

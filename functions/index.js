@@ -1,7 +1,7 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 'use strict';
 const functions = require('firebase-functions');
-const nodemailer = require('nodemailer');
+//const nodemailer = require('nodemailer');
 //cors ist für Cross Origin Header
 const cors = require('cors')({origin:true});
 //const sync = require('synchronize');
@@ -11,7 +11,7 @@ const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
 
-// Konstanten für nodemaile:
+/* Konstanten für nodemaile:
 //const gmailEmail = 'maltewolfcastle';//encodeURIComponent(functions.config().g);
 //const gmailPassword = 'AllesWirdGut2017';//encodeURIComponent(functions.config().gmail.password);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
@@ -25,9 +25,9 @@ const smtpConfig = {
     }};
 
 const transporter = nodemailer.createTransport(smtpConfig);
+*/
 
-
-//Funktion, die zu ner Email die Rolle zurückgibt.
+/*Funktion, die zu ner Email die Rolle zurückgibt. Gerade mal rausge *-t weil cors
 exports.getRole = functions.https.onRequest((req, response) => {
     cors (req, response, () => {
         var email = req.query.email;
@@ -47,32 +47,6 @@ exports.getRole = functions.https.onRequest((req, response) => {
             })
     })
 })
-
-/*Funktion, die zu ner ParkplatzId die Email zurückgibt. Bruachen wir nicht mehr
-exports.getPlatzOwner = functions.https.onRequest((req, response) => {
-    var gesuchteParkId = req.query.parkId;
-    admin.database().ref('/emailToRole/').once('value').then(function (snapshot) {
-        var values = snapshot.val();
-        var keys = Object.keys(snapshot.val());
-        console.log("Gesuchte ParkId:"+gesuchteParkId);
-        //console.log ("getPO: values: "+values);
-        //console.log ("egtPO: keys  : "+keys);
-        // Jetzt mit den gefundenen keys über den .val() itereiren und prüfen, wann parkId==gesuchteParkId. Dessen key is dann die Email
-        for (var key in keys) {
-            var pid = snapshot.val()[keys[key]].parkId;
-            //console.log("Email: "+keys[key]+" -> Pid: "+pid);
-            if (pid == gesuchteParkId)
-            {
-                //console.log("Die gesuchte Email zu P"+gesuchteParkId+" ist "+keys[key]);
-                response.writeHead(200, {'Content-Type': 'text/plain'});
-                response.end(keys[key]);
-            }
-        }
-        //Kann ich an dieser Stelle annehmen, dass kein Treffer erzielt wurde? Denke schon!
-        response.writeHead(200, {'Content-Type': 'text/plain'});
-        response.end('fail');
-    });
-})
 */
 
 //Funktion, die eine AuthInfo (wie Email-Adresse oder Displayname) zu einer UserId zurückliefert:
@@ -80,17 +54,7 @@ exports.getAuthInfo = functions.https.onRequest((req, response) => {
     var uid = req.query.uid;
     var key = req.query.key;
     admin.auth().getUser(uid).then(function (userRecord) {
-/*
-        var antwort= "";
-        console.log("UserRecord zu "+uid+": "+userRecord.toJSON());
-        console.log("Als String: "+userRecord.toString())
-        console.log("Keys d. UserRecords: "+Object.keys(userRecord));
-        antwort+=Object.keys(userRecord);
-        console.log("Keys d. urJSON: "+Object.keys(userRecord.toJSON()));
-        antwort+="\n"+Object.keys(userRecord.toJSON());
-        console.log("Keys d. UserRecords als String: "+Object.keys(userRecord.toString()));
-        antwort+="\n"+Object.keys(userRecord.toString());
-*/
+
         response.writeHead(200, {'Content-Type': 'text/plain'});
         response.end(userRecord[key]);
         })
@@ -193,20 +157,25 @@ exports.deleteUser = functions.https.onRequest((req, response) => {
 
 })
 
+//Listener für wenn User sich registrieren (check ob PW und Email korrekt sind, und auch, ob
+//unter dem Key schon was in der DB stand, geschah client-seitig)
 exports.welcomeUser = functions.auth.user().onCreate(event => {
     console.log("---welcomeUser---");
     const user = event.data;
     const email = user.email;
     const emailAsKey = email.replace(/\./g, '!');
-    //    const displayName = user.displayName;
-    console.log("Neuer User registriert: " + email);
-
+    
     var db = admin.database();
     var ref = db.ref('/emailToRole/' + emailAsKey);
-    ref.set({admin: 'false', parkId: 'null'});
-    console.log("Neuen User in DB eingetragen!");
+    //Die eben generierte UserId im DB-Eintrag ergänzen
+    ref.update({
+      uid: user.uid
+    });
+    //..fertig! Das heißt, an welcher Stelle sollte denn eigentlich die BEstätigungs-Email kommen?
 
-
+    //Was jetzt folgt, ist ne selbsgemachte Willkommens-Email, aber wir wollen ja eh die Bestätigungs-Mail
+    //von Firebase verschicken lassen.
+    /*
     var mailOptions = {
         from: from,
         to: email,
@@ -222,9 +191,10 @@ exports.welcomeUser = functions.auth.user().onCreate(event => {
         }
         console.log("PostSend: "+info);
     })
+    */
 })
 
-// Methode, um Emails zu verschicken
+/* Methode, um Emails zu verschicken
 function sendEmail(mailOptions) {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -235,7 +205,7 @@ function sendEmail(mailOptions) {
     return ("ok");
     })
 }
-
+*/
 
 /*...emails verschicken - debug! Kann später weg!
 
@@ -401,111 +371,44 @@ exports.getJahre = functions.https.onRequest((req, res) => {
         })
 })
 
-//Für die Auswertung der Freigaben auf dem Buchungen2 - Zweig (angular Version)
-exports.auswertungZwo = functions.https.onRequest((req, res) => {
-    //Bekommt Jahreszahl, vonKW, vonTag, bisKW, bisTag, uid.
-        var vonKW = req.query.vonKW;
-        var
-        var uid = req.query.uid;
-        var year = req.query.year;
-
-        var refString = '/buchungen/' + year + '/';
-        var vermieterMap = {};
-
-        var response = "";
-        var responseString="";  //nötig für detail-info
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-
-        admin.database().ref(refString).startAt(once('value')
-            .then(function (snapshot) {
-
-        //Hier sammelt er eigentlich sämtliche Buchungen zusammen, nicht nur die der übergebenen Id.
-
-        //response.end(parkId+'\n'+admin);
-        var keys = Object.keys(snapshot.val());
-
-        //Falls sämtliche User herausgesucht werden sollen, wird ne Hashmap erstellt: [UserId: {freigaben: x, davon_gebucht: y}]
-        if (uid=='null') {
-            for (var key in keys) { //Über Keys eines Jahres (=die KW)
-                //console.log( keys[key] + ": ");
-                var kwKeys = Object.keys(snapshot.val()[keys[key]]);
-                for (var k in kwKeys) {   //Über Keys der einzelnen KW (=die Buchungen)
-                    //console.log ( keys[key] + "->" + kwKeys[k] );
-                    var buchung = snapshot.val()[keys[key]][kwKeys[k]];
-                    //Prüfen, ob HashMap den Key schon enthält
-                    if (!(buchung.vermieter in vermieterMap)) {
-                        vermieterMap[buchung.vermieter] = {freigaben: 1, davon_gebucht: 0};
-                    } else {
-                        vermieterMap[buchung.vermieter].freigaben++;
-                    }
-                    if (buchung.mieter != 'null') {
-                        vermieterMap[buchung.vermieter].davon_gebucht++;
-                    }
-                }
+exports.b3getJahre = functions.https.onRequest((req, res) => {
+    res.writeHead(200, {'Content-Type': 'application/json'});
+    admin.database().ref('/buchungen3/').once('value')
+        .then (function (snapshot) {
+            var keys = Object.keys(snapshot.val());
+            var response={};
+            for (var k in keys) {
+                response[k]=keys[k];
             }
-        }
-        //Falls ein konkreter User angegeben wurde, wird direkt ein String SÄMTLICHER Freigaben des Users gebastelt.
+            console.log ("Response von b3getJahre: ");
+            console.log (response);
+            res.end(response);
+        })
+        .catch(function (error) {
+            console.log(error);
+            res.end({failure:error});
+        })
+})
 
-        else {
-            console.log("Suche nach konkretem User " + uid);
-            for (var key in keys) { //Über Keys eines Jahres (=die KW)
-                //console.log( keys[key] + ": ");
-                var kwKeys = Object.keys(snapshot.val()[keys[key]]);
-                for (var k in kwKeys) {   //Über Keys der einzelnen KW (=die Buchungen)
-                    // console.log ( keys[key] + "->" + kwKeys[k] );
-                    var buchung = snapshot.val()[keys[key]][kwKeys[k]];
-                    //Prüfen, ob der gefundene Vermieter der übergebene ist.
-                    console.log(buchung.vermieter, " / " + uid);
-                    if (buchung.vermieter == uid) {
-                        console.log("Freigabe von dem gefunden.");
-                        responseString+=keys[key]+","; //KW
-                        //Prüfen, ob HashMap den Key schon enthält
-                        responseString+=kwKeys[k]+","; //Kürzel (Tag-ParkId)
-
-                        if (!(buchung.vermieter in vermieterMap)) {
-                            vermieterMap[buchung.vermieter] = {freigaben: 1, davon_gebucht: 0};
-                            //freigabenMap.push(buchung);
-                        } else {
-                            vermieterMap[buchung.vermieter].freigaben++;
-                        }
-                        if (buchung.mieter != 'null') {
-                            vermieterMap[buchung.vermieter].davon_gebucht++;
-                        }
-                        responseString+=buchung.mieter+",";
-                        //Bezahlt und erhalten interessiert doch keinen!
-                        responseString+=buchung.bezahlt+",";
-                        responseString+=buchung.erhalten+"\n";
-                    }
+exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
+  cors (req, res, () => {
+    var email = req.query.email;
+    var emailAsKey = email.replace(/\./g, '!');
+    res.writeHead(200, {'Content-Type': 'text/plain'});
+        admin.database().ref('/emailToRole/').orderByKey().equalTo(emailAsKey).once('value')
+            .then (function (snapshot) {
+                //console.log ("b3isUser... : "+snapshot.val());
+                if (snapshot.val()) {
+                    //console.log("true, weil gibts schon");
+                    res.end("true");
+                } else {
+                    //console.log("false, weil gibts noch nicht");
+                    res.end("false");
                 }
-            }
-        }
-        var keys = Object.keys(vermieterMap);
-
-
-
-        //An dieser Stelle werden die (oder der) gefundenen Vermieter in einen Strign gepackt und dann zurückgeschickt.
-        //Wäre (unter aufwendiger Synchronisation?) möglich, stattdessen Email oder Displaynames zurückzusenden aber... mal sehen, was ich genau brauche!
-        for (var i in keys) {
-            //Das wird doch wieder sone nebenläufikeits kackscheiße hier! Das kommt doch wieder nicht rechtzeitig an!
-            /*
-             admin.auth().getUser(uid).then(function (userRecord) {
-             console.log("Erfrage Email zu: "+uid);
-
-             //Ich könnte hier prüfen, ob i = keys.length und dann res.end machen, aber sagt ja auch keiner, dass alle anderen requests schon fertig zurück kamen!
-             //Ansonsten wieder clientseitig lauter Anfragen stellen. Also Uid als Antwort senden, und dann clienteitg nochmal für jede Uid die EMail erfragen :/
-             resultOfgetUser=userRecord.email;
-             //console.log("Email zu "+uid+" ist: "+resultOfgetUser)
-             });
-             */
-            response += keys[i] + ", " + vermieterMap[keys[i]].freigaben + ", " + vermieterMap[keys[i]].davon_gebucht + "\n";
-        }
-        //console.log("Vermieter "+uid + " hat "+ freigaben+ " Freigaben gemacht (davon "+davon_gebucht+ " gebucht).");
-        console.log(response);
-        //Hier hänge ich die Detail-Infos einfach an den den String, was natürlich so nicht geht! Das heißt, ginge schon, sit aber so nicht vorgesehen!d
-        res.end(response+responseString);
-    })
-    .catch(function (error) {
-        console.log(error);
-        res.end("failure:"+error);
-    })
+            })
+            .catch(function (error) {
+                //console.log("Error, weil "+error);
+                res.end("failure:"+error);
+            })  
+  });
 })

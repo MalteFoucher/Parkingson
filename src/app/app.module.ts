@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { NgModule } from '@angular/core';
 
+// Import HttpClientModule from @angular/common/http
+import {HttpClientModule} from '@angular/common/http';
 
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
@@ -21,6 +23,7 @@ import { LoginComponent } from './login/login.component';
 import { AuswertungComponent } from './auswertung/auswertung.component';
 import { AdminDialogComponent } from './admin-dialog/admin-dialog.component';
 import { BuchungenComponent } from './buchungen/buchungen.component';
+import { TextInputDialogComponent } from './text-input-dialog/text-input-dialog.component';
 
 
 
@@ -41,12 +44,14 @@ export const firebaseConfig = {
 		LoginComponent,
 		AuswertungComponent,
 		AdminDialogComponent,
-		BuchungenComponent
+		BuchungenComponent,
+		TextInputDialogComponent
   ],
   imports: [
     BrowserModule,
 		FormsModule,
     HttpModule,
+    HttpClientModule,
 		NoopAnimationsModule,
 		MdButtonModule,
 		MdTabsModule,
@@ -60,7 +65,8 @@ export const firebaseConfig = {
 		AngularFireAuthModule
   ],
   providers: [AppComponent],
-  bootstrap: [AppComponent, DialogComponent, AdminDialogComponent, LoginComponent, BuchungenComponent]
+  //Warum muss ich meine ganzen selbsgebauten Komponenten eigetlich bootstrappen?
+  bootstrap: [AppComponent, DialogComponent, AdminDialogComponent, LoginComponent, BuchungenComponent, TextInputDialogComponent]
 })
 
 export class AppModule { }

@@ -4,13 +4,13 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
-import {MdButtonModule, MdDialog} from '@angular/material';
+import {MdButtonModule, MdDialog, MdDialogRef} from '@angular/material';
 import { Http } from '@angular/http';
 import { KalenderComponent } from './kalender.component';
 import { LoginComponent } from './login/login.component';
 import { AuswertungComponent } from './auswertung/auswertung.component';
 import { BuchungenComponent } from './buchungen/buchungen.component';
-
+import { DialogComponent } from './dialog/dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -22,7 +22,7 @@ import { BuchungenComponent } from './buchungen/buchungen.component';
 
 export class AppComponent implements AfterViewInit{
   dialog: MdDialog;  
-  dialogRef: any;
+  //dialogRef: MdDialogRef;
 
   title = 'app';
   user: Observable<firebase.User>;
@@ -47,11 +47,41 @@ export class AppComponent implements AfterViewInit{
     console.log("Constructor AppComponent");
     //this.userService.getUser().subscribe( data => console.log("Hier, dieser Service für http requests. Woltl ich doch einbauen!"+data) );
 
-    this.dialog = dialog;
+    this.dialog = dialog;    
     this.user = this.afAuth.authState;
     firebase.auth().onAuthStateChanged( user => {
       //Eingeloggter user
-      if (user) {        
+      if (user) {
+        if (!user.emailVerified) {
+          //Email-Adresse noch nicht verifiziert. Warnung und Button um Email zu versenden,
+          //anschließend ausloggen
+          let dialogRef = this.dialog.open(DialogComponent, {
+                disableClose: true,
+                data:  {                
+                titel: 'Email nicht verifiziert',
+                text: "Ihre E-Mail wurde noch nicht verifiziert.<br>Klicken Sie auf den Button, und<br>folgen Sie dem Link in der E-Mail.",
+                yesButtonText: 'Ok',
+                yesButtonVisible: true,
+                noButtonText: 'Email senden',
+                noButtonVisible: true                
+              }})
+              .afterClosed().subscribe( selection => {
+                if (selection) {
+                  //OK Button geklickt, um Dialog zu schließen -> Ausloggen                  
+                } else {
+                  //Email senden Button geklickt -> Ebenfalls ausloggen
+                  //.then und .catch - Behandlung noch n bissel mager, aber funktioniert ja.
+                  user.sendEmailVerification().then(function() {
+                    console.log("Email sent.");
+                  }).catch(function(error) {
+                    console.log("An error happened.");
+                  });                
+                }
+                afAuth.auth.signOut();                
+              });
+          
+          return;
+        }
         this.userId = user.uid;
         this.kalender.setUserId(this.userId);
         this.buchungen.setUserId(this.userId)
@@ -65,10 +95,25 @@ export class AppComponent implements AfterViewInit{
             this.userAdmin= snapshot.val()['admin'];
             this.userParkId= snapshot.val()['parkId'];
               this.debugText="this.userParkId="+this.userParkId;
-            
-            this.kalender.setUserRights(this.userParkId, this.userAdmin);
-            //Aufrufen nach (erneutem) Login
-            //this.kalender.generateTable();            
+              
+            if ( snapshot.val()['isActive'] ) {
+              console.log ("---------- Der User ist aktiv! Alles gut! ----------");
+              this.kalender.setUserRights(this.userParkId, this.userAdmin);
+            } else {              
+              console.log ("---------- Der User ist inaktiv! ");
+              //Erst ein Dialog mit ner Fehlermeldung, danach ausloggen (wodurch LoginDialog hochkommt)
+              let dialogRef = this.dialog.open(DialogComponent, {
+                disableClose: true,
+                data:  {                
+                titel: 'Userkonto inaktiv',
+                text: "Ihr Konto wurde noch nicht aktiviert.<br>Wenden Sie sich an die Hotline.",
+                yesButtonText: 'Ok',
+                yesButtonVisible: true                
+              }})
+              .afterClosed().subscribe( selection => {
+                afAuth.auth.signOut();
+              });              
+            }        
           }
         });
         this.cdRef.detectChanges();
@@ -77,11 +122,13 @@ export class AppComponent implements AfterViewInit{
       else {
         console.log ("AAAAAAAAAAAAAAA Login Dialog AAAAAAAAAAAAAAAA");
         //NOCH: Listener abmelden, KalenderView leeren
-        this.dialogRef = this.dialog.open(LoginComponent, {
+        var dialogRef = this.dialog.open(LoginComponent, {
           disableClose: true
         });
         
-        this.dialogRef.componentInstance.setAuth(this.afAuth);
+        dialogRef.componentInstance.setAuth(this.afAuth);
+        dialogRef.componentInstance.setSelf(dialogRef);
+        
         /*
         this.dialogRef.afterClosed().subscribe(selection => {
           console.log("Selection: "+selection);

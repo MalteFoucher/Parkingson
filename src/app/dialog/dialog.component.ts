@@ -9,7 +9,7 @@ import {MdDialogModule} from '@angular/material';
 })
 export class DialogComponent implements OnInit {
   titel: string="Parking Tool";
-  text: string="Dialogtext...";
+  text: string="Dialogtext bzw HTML...";
   yesButtonVisible: boolean=true;
   yesButtonText: string="JA";
   noButtonVisible: boolean=false;
@@ -19,6 +19,7 @@ export class DialogComponent implements OnInit {
     userPid: number;
 
   constructor(@Inject(MD_DIALOG_DATA) public data: any) {
+    console.log("Kontruktor Dialog");
     this.titel = data.titel;
     this.text=data.text;
     this.yesButtonText=data.yesButtonText;
@@ -26,9 +27,9 @@ export class DialogComponent implements OnInit {
     this.noButtonText=data.noButtonText;
     this.noButtonVisible=data.noButtonVisible;
 
-      this.vermieter = data.buchung.vermieter;
-      this.userPid = data.userPid;
-    console.log("Kontruktor Dialog");
+    if (data.buchung) this.vermieter = data.buchung.vermieter;
+    this.userPid = data.userPid;
+    
    }
 
   ngOnInit() {

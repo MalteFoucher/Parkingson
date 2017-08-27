@@ -508,7 +508,8 @@ public generateTable() {
 //debug
   writeNewBuchung() {
     var tag = <number> moment().dayOfYear() ;    
-    tag += Math.round( (Math.random() * 90)-45 );
+    //tag += Math.round( (Math.random() * 90)-45 );
+    tag = Math.round( Math.random()*60);
     var pp = Math.round( Math.random()*250);
     console.log ("WnB: "+this.year+" / "+ tag+" /" +pp);
     var mmt = moment().year(this.year).dayOfYear(tag);
@@ -522,6 +523,18 @@ public generateTable() {
       vId: this.userId,
       pId: pp
     });
+  }
+
+writeNewUser() {        
+    var newPostRef = firebase.database().ref('/emailToRole/malte_kun@web!de')
+    .set({
+      benutzerAdmin: false,
+      buchungsAdmin: false,
+      isActive: false,
+      parkId: 0,
+      uid: "sechsSiebenAcht"
+    });
+    
   }
 
   private isEarlyEnough(): boolean {
