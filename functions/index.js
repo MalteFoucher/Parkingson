@@ -412,3 +412,35 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
             })  
   });
 })
+
+/* BRAUCHEN WIR AUCH NICHT MEHR -< Zu Appbeginn einfach mal alle Userdaten saugen!
+exports.getListOfAllUsers = functions.https.onRequest((req, res) => {
+  cors (req, res, () => {
+    //Alle User aus der DB lesen, die nötigsten Daten rausstrippen und als String versenden
+    //email.replace(/./g, '!');
+    var responseString="";
+    admin.database().ref('/emailToRole/').once('value')
+            .then(function (snapshot) {
+                var emailKeys = snapshot.val();
+                console.log ("--EmailKeys:"+emailKeys);
+                for (var ek in emailKeys) {
+                    var e2rEntry = snapshot.val()[emailKeys[ek]];
+                    console.log ("---"+e2rEntry);
+                    if (e2rEntry.isActive) {
+                      responseString+=emailKeys[ek]+";"+e2rEntry.uid+";"+e2rEntry.parkId;
+                    }
+                    if (ek != emailKeys.length) responseString+=";" ;
+                }                
+                console.log("--> "+responseString);
+                response.writeHead(200, {'Content-Type': 'text/plain'});
+                response.end(responseString);
+            })
+            .catch(function (error) {
+                //Wenn hier ein Error auftritt, dann wahrscheinlich, weil kein Eintrag zu der Email vorliegt, zB bei nem neu registrierten User.
+                //Der kriegt dann default-Werte:
+                response.writeHead(500, {'Content-Type': 'text/plain'});
+                response.end(error);
+            })
+  });
+});
+*/

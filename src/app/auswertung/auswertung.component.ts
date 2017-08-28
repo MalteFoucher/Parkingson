@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import * as firebase from 'firebase/app';
-import { MdDatepicker, MdDatepickerModule, MdSelectModule,MdSelect } from '@angular/material';
+import { MdDatepicker, MdDatepickerModule, MdSelectModule,MdSelect,MdDialog } from '@angular/material';
 import * as moment from 'moment';
 import { Auswertung } from './auswertung';
 import { Vermieter } from './vermieter';
+import {Store} from '../store/store.service';
+import { DialogComponent } from '../dialog/dialog.component';
 
 @Component({
   selector: 'auswertung-component',
@@ -17,6 +19,7 @@ export class AuswertungComponent implements OnInit {
   @ViewChild('dropdown') mdSelector: MdSelect;
 
 
+  //dialog: MdDialog;
   //Die Arrays brauch ich nur, weil das Template nicht über Maps iterieren kann.
   vermieterArray: Vermieter[] = new Array();
   vermieterMap = {};
@@ -24,18 +27,20 @@ export class AuswertungComponent implements OnInit {
   auswertungenMap = {};
   //myState ist doofer Name, ist die Auswahl aus dem vermiter drop down
   myState = null;
-  vonInitDate = moment().format('DD-MM-YYYY');
-  bisInitDate = moment();;
-
-
+  
+  vonInitDate = new Date(moment().subtract(1,'months').format('MM/DD/YYYY'));  
+  bisInitDate = new Date(moment().format('MM/DD/YYYY'));
 
   vonTag: number=0;
   bisTag: number=0;
 
-  constructor() {
+  constructor(public store: Store, public dialog: MdDialog) {
     console.log ("Auswertung Konstruktor");
     //Erstmal ne Liste aller Vermieter besorgen (anhand der ParkId):
-    firebase.database().ref("/emailToRole/").orderByChild('parkId').startAt(1).once('value', this.e2rCallback);    
+    
+    //firebase.database().ref("/emailToRole/").orderByChild('parkId').startAt(1).once('value', this.e2rCallback);    
+    this.vermieterArray= this.store.getAlleVermieter();
+    
   }
 
   public openPicker(i: number) {
@@ -50,10 +55,10 @@ export class AuswertungComponent implements OnInit {
     this.auswertungenMap={};
         
     //Da ich es nicht gebacken bekomme, die Property _selected in ein Format zu überführen,
-    //das einem moment-Konstruktor übergeben werden kann -> die umständliche Tour!
-    var vonMoment = moment().date(this.picker_von._selected.getDate());
+    //das einem moment-Konstruktor übergeben werden kann -> die umständliche Tour:
+    var vonMoment = moment().date(this.picker_von._selected.getDate()); 
     vonMoment.month(this.picker_von._selected.getMonth());
-    vonMoment.year(this.picker_bis._selected.getFullYear());
+    vonMoment.year(this.picker_von._selected.getFullYear());
     
     var bisMoment = moment().date(this.picker_bis._selected.getDate());
     bisMoment.month(this.picker_bis._selected.getMonth());
@@ -63,7 +68,22 @@ export class AuswertungComponent implements OnInit {
     console.log ( "Entspricht: "+vonMoment.dayOfYear() + " - "+bisMoment.dayOfYear());
     //Vorerst geh ich mal davon aus, start und ende sind valide.... (ende > start, beide selbes jahr, ?)
     //Muss aber noch überprüft werden!
-    
+    console.log ("OK? "+bisMoment.year()+"/"+vonMoment.year()+"/"+bisMoment.isAfter(vonMoment));
+    if (bisMoment.year() != vonMoment.year() || vonMoment.isAfter(bisMoment, 'day')) {
+      //Dialog aufploppen, der auf falsche Eingaben hinweist:
+      let dialogRef = this.dialog.open(DialogComponent, {
+          data:  {            
+            titel: 'Ungültige Eingaben',
+            text:'Die Daten sind ungültig. Achten Sie darauf, dass<br>das Start- vorm Enddatum liegt und beide<br>in einem Jahr liegen.',            
+            yesButtonText: 'OK',
+            yesButtonVisible: true,
+            noButtonText:'Abbruch',
+            noButtonVisible: false
+          }
+        });
+      return;  
+    }
+
     
     var year = bisMoment.year();
     var startDay=""+vonMoment.dayOfYear();

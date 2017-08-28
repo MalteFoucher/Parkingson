@@ -2,14 +2,14 @@ import { Component, OnInit, Input } from '@angular/core';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import { Buchung } from '../buchung';
+import {Store} from '../store/store.service';
 
 @Component({
   selector: 'buchungen-component',
   templateUrl: './buchungen.component.html',
   styleUrls: ['./buchungen.component.css']
 })
-export class BuchungenComponent implements OnInit {
-  
+export class BuchungenComponent implements OnInit {  
   userId: string="";
   yearValues: number[] = new Array();
   monthValues: string[] = new Array();
@@ -20,7 +20,7 @@ export class BuchungenComponent implements OnInit {
   public myYear; 
   public myMonth;
   
-  constructor() { 
+  constructor(public store: Store) { 
     var now = moment();
     this.yearValues.push ( now.year() );
     this.monthValues.push ( this.monatNamen[now.months()] );   
@@ -61,15 +61,31 @@ export class BuchungenComponent implements OnInit {
         let buchungsKeys = Object.keys( snapshot.val()[tagesKeys[tk]] );
         for (let bk in buchungsKeys) {
           var buchung = snapshot.val()[tagesKeys[tk]][buchungsKeys[bk]];
-          if ( buchung.mId == "" ) buchung.mId = "niemanden."; 
+          
           if ( buchung.vId == this.userId ) {                                  
+            console.log ("user ist vId: vermietet an:"+buchung.mId);
+            if ( buchung.mId == "" ) buchung.mId = "niemanden."; 
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Vermietet an: ";
+            let email = this.store.getEmailToUid( buchung.mId );
+            if (email) {
+              buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
+            } else {
+              buchung["partner"] = "Unbekannte UserId";
+            }
             this.buchungsArray.push( buchung );
           }
-          if ( buchung.mId == this.userId ) {                                  
+          if ( buchung.mId == this.userId ) {                       
+            console.log ("user ist mId: gemietet von:"+buchung.vId);           
+            //Hier werde ich wohl nicht prüfen müssen, ob vId=="". Obwohl sicherer wäre es.
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
-            buchung["text"] = "Gemietet von: ";
+            buchung["text"] = "Gemietet von: ";            
+            let email = this.store.getEmailToUid( buchung.vId );
+            if (email) {
+              buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
+            } else {
+              buchung["partner"] = "Unbekannte UserId";
+            }
             this.buchungsArray.push( buchung );
           }
         }        

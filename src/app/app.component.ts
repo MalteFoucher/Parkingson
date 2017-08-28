@@ -11,6 +11,7 @@ import { LoginComponent } from './login/login.component';
 import { AuswertungComponent } from './auswertung/auswertung.component';
 import { BuchungenComponent } from './buchungen/buchungen.component';
 import { DialogComponent } from './dialog/dialog.component';
+import {Store} from './store/store.service';
 
 @Component({
   selector: 'app-root',
@@ -43,7 +44,7 @@ export class AppComponent implements AfterViewInit{
   @ViewChild(AuswertungComponent)
   private auswertung: AuswertungComponent;
 
-  constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http,  private cdRef: ChangeDetectorRef, dialog: MdDialog) {
+  constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http,  private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
     console.log("Constructor AppComponent");
     //this.userService.getUser().subscribe( data => console.log("Hier, dieser Service für http requests. Woltl ich doch einbauen!"+data) );
 
@@ -52,9 +53,18 @@ export class AppComponent implements AfterViewInit{
     firebase.auth().onAuthStateChanged( user => {
       //Eingeloggter user
       if (user) {
+        //Als erstes Mal (ob verified Email oder nicht juckt mich nicht) emailToRole besorgen
+        firebase.database().ref('/emailToRole/').once('value', snapshot => {          
+          console.log ("e2R abfragen...");
+          console.log(snapshot);
+          if ( snapshot.val() ) {
+            
+            this.store.setEmailToRole(snapshot.val());
+          }
+        });
+
         if (!user.emailVerified) {
-          //Email-Adresse noch nicht verifiziert. Warnung und Button um Email zu versenden,
-          //anschließend ausloggen
+          //Email-Adresse noch nicht verifiziert. Warnung und Button um Email zu versenden, anschließend ausloggen
           let dialogRef = this.dialog.open(DialogComponent, {
                 disableClose: true,
                 data:  {                
@@ -91,8 +101,8 @@ export class AppComponent implements AfterViewInit{
 
         //Statt email2Role, was völlig schwachsinnig war, einfach once aus der DB lesen!
         firebase.database().ref('/emailToRole/'+emailAsKey+'/').once('value', snapshot => {          
-          if ( snapshot.val() != null ) {
-            this.userAdmin= snapshot.val()['admin'];
+          if ( snapshot.val() != null ) {            
+            this.userAdmin= true;//snapshot.val()['admin'];
             this.userParkId= snapshot.val()['parkId'];
               this.debugText="this.userParkId="+this.userParkId;
               
@@ -148,6 +158,8 @@ export class AppComponent implements AfterViewInit{
         */
       }
     });
+
+    
   }
 
 
