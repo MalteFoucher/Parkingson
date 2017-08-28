@@ -13,7 +13,7 @@ import { AngularFireAuthModule } from 'angularfire2/auth';
 
 import { MdButtonModule, MdTabsModule, MdDialogModule, MdDatepickerModule, MdNativeDateModule,
   MdSelectModule, MdCheckboxModule} from '@angular/material';
-import {MenuItem} from 'primeng/components/common/api';
+//import {MenuItem} from 'primeng/components/common/api';
 
 
 import { AppComponent } from './app.component';
