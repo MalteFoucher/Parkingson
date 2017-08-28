@@ -1,0 +1,6 @@
+.green {
+  background-color: #64cf53;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  color: white;
+}
