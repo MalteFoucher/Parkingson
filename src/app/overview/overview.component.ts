@@ -7,7 +7,6 @@ enum ParkState {
   GREEN, RED, YELLOW
 }
 
-
 @Component({
   selector: 'app-overview',
   templateUrl: './overview.component.html',
