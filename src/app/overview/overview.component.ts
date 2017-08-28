@@ -55,23 +55,23 @@ export class OverviewComponent implements OnInit {
               if (dayValue) {
                 const dayValues = Object.keys(dayValue).map(k => dayValue[k]);
                 if (this.store.vermieter) {
-                  const vValues = dayValues.filter(v => v.vId = this.store.user.uid);
-                  if (vValues) {
+                  const vValues = dayValues.filter(v => v.vId === this.store.user.uid);
+                  console.log('vValues: ' + JSON.stringify(vValues));
+                  if (vValues.length > 0) {
                     state = vValues[0].mId == null ? ParkState.YELLOW : ParkState.RED;
                   }
                 } else {
-                  const mValues = dayValues.filter(v => v.mId = this.store.user.uid);
-                  if (mValues) {
+                  const mValues = dayValues.filter(v => v.mId === this.store.user.uid);
+                  console.log('mValues: ' + JSON.stringify(mValues));
+                  if (mValues.length > 0) {
                     state = ParkState.GREEN;
                   }
                 }
               }
 
-              console.log('state: ' + state);
               if (state != null) {
                 entry.state = state;
               }
-              console.log('dayValue: ' + JSON.stringify(entry));
             });
           });
         }
