@@ -14,10 +14,12 @@ enum ParkState {
 })
 
 export class OverviewComponent implements OnInit, OnDestroy {
+  day;
   weekCount = 4;
   woche_von_bis: string;
   weeks;
   mietDay;
+  year;
   JSON: JSON;
   private ref: firebase.database.Reference;
   private query: firebase.database.Query;
@@ -28,22 +30,30 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   constructor(public store: Store) {
     this.JSON = JSON;
-    const kw = moment().week();
-    this.woche_von_bis = 'KW' + kw + ' - KW' + (kw + (this.weekCount - 1));
+  }
+
+  calcValues() {
+    if (this.query) {
+      this.query.off();
+    }
+
+    const kw = this.day.week();
+    const kwTo = this.day.clone().add(4, 'weeks').week();
+    this.woche_von_bis = 'KW' + kw + ' - KW' + kwTo;
 
     this.weeks = this.calcMoreWeekDays(kw, this.weekCount);
 
     const firstDay = this.weeks[0][0];
+    this.year = firstDay.year;
     const lastWeek = this.weeks[this.weeks.length - 1];
     const lastDay = lastWeek[lastWeek.length - 1];
 
-    this.ref = firebase.database().ref('/buchungen3').child(firstDay.year);
-    this.query = this.ref.orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear));
+    this.ref = firebase.database().ref('/buchungen3');
+    this.query = this.ref.child(this.year).orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear));
     this.query.on('value', (snapshot) => {
         const value = snapshot.val();
 
         console.log('value: ' + JSON.stringify(value));
-
 
         if (value) {
           this.weeks.forEach(week => {
@@ -112,10 +122,12 @@ export class OverviewComponent implements OnInit, OnDestroy {
   calcWeekDays(week) {
     const ret = [];
 
+    const state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
+
     const firstDayInWeek = moment().week(week);
     for (let i = 1; i <= 5; i++) {
       const weekDay = firstDayInWeek.day(i);
-      ret.push({year: weekDay.year(), dayOfYear: weekDay.dayOfYear()});
+      ret.push({year: weekDay.year(), dayOfYear: weekDay.dayOfYear(), state: state});
     }
 
     console.log('week: ' + JSON.stringify(ret));
@@ -124,29 +136,32 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.day = moment();
+    this.calcValues();
   }
 
   dayClick(day) {
-    console.log('DayClick');
+    const dayRef = this.ref.child(day.year).child(day.dayOfYear);
+
     if (this.store.vermieter) {
       console.log('vermieter');
       // Test mit enum - wie?
       if (day.state === 0) {
         console.log('green');
-        this.ref.child(day.dayOfYear).push({vId: this.store.user.uid, pId: this.store.user.parkId});
+        dayRef.push({vId: this.store.user.uid, pId: this.store.user.parkId});
       } else if (day.state === 1) {
         console.log('red');
-        this.ref.child(day.dayOfYear).child(day.key).remove();
+        dayRef.child(day.key).remove();
       } else if (day.state === 2) {
         console.log('yellow');
-        this.ref.child(day.dayOfYear).child(day.key).remove();
+        dayRef.child(day.key).remove();
       }
     } else {
       console.log('mieter');
       // Test mit enum - wie?
       if (day.state === 0) {
         console.log('green');
-        this.ref.child(day.dayOfYear).child(day.key).child('mId').remove();
+        dayRef.child(day.key).child('mId').remove();
       } else if (day.state === 2) {
         console.log('yellow');
         this.mietDay = day;
@@ -156,5 +171,16 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   chooseSlotClosed() {
     this.mietDay = null;
+  }
+
+  weiter() {
+    this.day.add(4, 'weeks');
+    this.calcValues();
+  }
+
+
+  zurueck() {
+    this.day.subtract(4, 'weeks');
+    this.calcValues();
   }
 }
