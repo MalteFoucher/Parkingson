@@ -19,7 +19,7 @@ export class OverviewComponent implements OnInit {
   woche_von_bis: string;
   weeks;
   JSON: JSON;
-  private dataRef: firebase.database.Query;
+  private ref: firebase.database.Reference
 
   constructor(public store: Store) {
     this.JSON = JSON;
@@ -35,8 +35,8 @@ export class OverviewComponent implements OnInit {
     console.log('firstDay: ' + JSON.stringify(firstDay));
     console.log('lastDay: ' + JSON.stringify(lastDay));
     console.log('call database');
-    this.dataRef = firebase.database().ref('/buchungen3/' + firstDay.year).orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear));
-    this.dataRef.on('value', (snapshot) => {
+    this.ref = firebase.database().ref('/buchungen3').child(firstDay.year);
+    this.ref.orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear)).on('value', (snapshot) => {
         const value = snapshot.val();
 
         console.log('value: ' + JSON.stringify(value));
@@ -53,17 +53,25 @@ export class OverviewComponent implements OnInit {
 
               const dayValue = value[day];
               if (dayValue) {
-                const dayValues = Object.keys(dayValue).map(k => dayValue[k]);
+                const dayValues = Object.keys(dayValue).map(k => {
+                  const ret = dayValue[k];
+                  ret.key = k;
+                  return ret;
+                });
                 if (this.store.vermieter) {
                   const vValues = dayValues.filter(v => v.vId === this.store.user.uid);
                   console.log('vValues: ' + JSON.stringify(vValues));
                   if (vValues.length > 0) {
-                    state = vValues[0].mId == null ? ParkState.YELLOW : ParkState.RED;
+                    const vValue = vValues[0];
+                    entry.key = vValue.key;
+                    state = vValue.mId == null ? ParkState.YELLOW : ParkState.RED;
                   }
+
                 } else {
                   const mValues = dayValues.filter(v => v.mId === this.store.user.uid);
                   console.log('mValues: ' + JSON.stringify(mValues));
                   if (mValues.length > 0) {
+                    entry.key = mValues[0].key;
                     state = ParkState.GREEN;
                   }
                 }
@@ -107,6 +115,23 @@ export class OverviewComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
 
+  dayClick(day) {
+    if (this.store.vermieter) {
+      console.log('vermieter');
+      // Test mit enum - wie?
+      if (day.state === 0) {
+        console.log('green');
+        this.ref.child(day.dayOfYear).push({vId: this.store.user.uid, pId: this.store.user.parkId});
+      }
+      if (day.state === 2) {
+        console.log('yellow');
+
+        console.log("key: " + day.key);
+
+        this.ref.child(day.dayOfYear).child(day.key).remove();
+      }
+    }
   }
 }
