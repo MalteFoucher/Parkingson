@@ -13,7 +13,7 @@
       <th>Frei</th>
     </tr>
     <tr *ngFor="let week of weeks">
-      <td *ngFor="let day of week" [class]="store.vermieter ? 'parkplatz':'no_parkplatz'">
+      <td *ngFor="let day of week" [class]="parkplatzColor(day.state)">
         {{day.dayOfYear}}
       </td>
     </tr>

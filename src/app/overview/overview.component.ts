@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
@@ -38,39 +38,49 @@ export class OverviewComponent implements OnInit {
     this.dataRef = firebase.database().ref('/buchungen3/' + firstDay.year).orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear));
     this.dataRef.on('value', (snapshot) => {
         const value = snapshot.val();
+
         console.log('value: ' + JSON.stringify(value));
+
 
         if (value) {
           this.weeks.forEach(week => {
             week.forEach(entry => {
+              let state: ParkState = null;
+
               const day = entry.dayOfYear;
 
-              entry.state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
+              state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
 
               const dayValue = value[day];
               if (dayValue) {
-                console.log('dayValue: ' + JSON.stringify(dayValue));
                 const dayValues = Object.keys(dayValue).map(k => dayValue[k]);
                 if (this.store.vermieter) {
                   const vValues = dayValues.filter(v => v.vId = this.store.user.uid);
                   if (vValues) {
-                    entry.state = vValues[0].mId == null ? ParkState.YELLOW : ParkState.RED;
+                    state = vValues[0].mId == null ? ParkState.YELLOW : ParkState.RED;
                   }
                 } else {
                   const mValues = dayValues.filter(v => v.mId = this.store.user.uid);
                   if (mValues) {
-                    entry.state = ParkState.GREEN;
+                    state = ParkState.GREEN;
                   }
                 }
               }
 
-              // const abc = Object.values(value[day]).filter(v => v.vId === store.user.uid);
-
+              console.log('state: ' + state);
+              if (state != null) {
+                entry.state = state;
+              }
+              console.log('dayValue: ' + JSON.stringify(entry));
             });
           });
         }
       }
     );
+  }
+
+  parkplatzColor(state: ParkState) {
+    return state != null ? ParkState[state].toString().toLowerCase() : '';
   }
 
   calcMoreWeekDays(week, weeks) {
@@ -79,8 +89,6 @@ export class OverviewComponent implements OnInit {
     for (let i = 0; i < weeks; i++) {
       ret.push(this.calcWeekDays(week + i));
     }
-
-    console.log('all: ' + JSON.stringify(ret));
     return ret;
   }
 

@@ -5,7 +5,7 @@ export class Store {
   public user;
 
   constructor() {
-    // this.user = {uid: 'abc123'};
+    this.user = {uid: 'abc123'};
   }
 
   get vermieter(): boolean {

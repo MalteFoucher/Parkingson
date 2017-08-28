@@ -1,14 +1,21 @@
-.parkplatz {
+.green {
   background-color: #64cf53;
   border-radius: 4px;
   transition: background-color 0.3s;
   color: white;
 }
 
-.no_parkplatz {
+.red {
   background-color: #de4e4e;
   border-radius: 4px;
   transition: background-color 0.3s;
   color: white;
+}
+
+.yellow {
+  background-color: #de4e4e;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  color: yellow;
 }
 
