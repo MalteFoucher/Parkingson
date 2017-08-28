@@ -63,11 +63,11 @@ export class BuchungenComponent implements OnInit {
           var buchung = snapshot.val()[tagesKeys[tk]][buchungsKeys[bk]];
           
           if ( buchung.vId == this.userId ) {                                  
-            console.log ("user ist vId: vermietet an:"+buchung.mId);
-            if ( buchung.mId == "" ) buchung.mId = "niemanden."; 
+            //console.log ("user ist vId: vermietet an:"+buchung.mId);
+            
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Vermietet an: ";
-            let email = this.store.getEmailToUid( buchung.mId );
+            let email = this.store.getEmailToUid( buchung.mId );            
             if (email) {
               buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
             } else {
@@ -76,10 +76,11 @@ export class BuchungenComponent implements OnInit {
             this.buchungsArray.push( buchung );
           }
           if ( buchung.mId == this.userId ) {                       
-            console.log ("user ist mId: gemietet von:"+buchung.vId);           
+            //console.log ("user ist mId: gemietet von:"+buchung.vId);           
             //Hier werde ich wohl nicht prüfen müssen, ob vId=="". Obwohl sicherer wäre es.
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Gemietet von: ";            
+            //if mId=="" -> Niemanden
             let email = this.store.getEmailToUid( buchung.vId );
             if (email) {
               buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
@@ -90,15 +91,13 @@ export class BuchungenComponent implements OnInit {
           }
         }        
       }
-      console.log ("bA:");
-      this.buchungsArray.forEach(element => {
-        console.log (element);
-      });
+      
     });
 
       
   }
 
+//Brauch ich wohl nicht mehr
   public onYearChanged() {
     console.log ("OYC: "+this.myYear);    
   }

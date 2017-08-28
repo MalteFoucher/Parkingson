@@ -47,5 +47,13 @@ export class Store {
     return vermieter;
   }
 
+  getPidToUid(uid: string): string {    
+    var e2rKeys = Object.keys(this.emailToRole);
+    for (var ek in e2rKeys) {      
+      if (this.emailToRole[e2rKeys[ek]].uid == uid) return this.emailToRole[e2rKeys[ek]].parkId;
+    }
+    return null;
+  }
+
 
 }

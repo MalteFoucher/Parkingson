@@ -24,7 +24,7 @@
 </div>
   <div class="row columns">
     <table>
-      <tr><th>ParkP.</th><th>Vermieter</th><th>Freigaben</th><th>Davon gebucht</th></tr>
+      <tr><th class="number_col">ParkP.</th><th class="text_col">Vermieter</th><th class="number_col">Freigaben</th><th class="number_col">Davon gebucht</th></tr>
       <tr *ngFor="let i of auswertungenArray">                
         <td>{{i.parkId}}</td>
         <td>{{i.user_email}}</td>
