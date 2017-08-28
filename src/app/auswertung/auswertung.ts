@@ -7,10 +7,10 @@ export class Auswertung {
     public user_email: string;
     public freigaben: number=0;
     public davon_gebucht: number=0;
+    
 
-    constructor(uid: string, parkId:number) {
-        this.uid = uid;
-        this.parkId = parkId;
+    constructor(uid: string) {
+        this.uid = uid;        
     }
 
     public incFreigaben() {        
@@ -24,7 +24,10 @@ export class Auswertung {
         if (email) {
           this.user_email = email;
         } else {
-          this.user_email = "-unbekannt-";
+          this.user_email = "Unbekannte UserId";
         }
+    }
+    public setParkId(pid: number) {        
+      this.parkId=pid;        
     }
 }

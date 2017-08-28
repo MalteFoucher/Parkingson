@@ -122,8 +122,10 @@ public auswertungCallback = (snapshot) => {
         if ( !this.myState || this.myState==buchung.vId) {          
           
           if (!(buchung.vId in this.auswertungenMap)) {                        
-            this.auswertungenMap[buchung.vId] = new Auswertung(buchung.vId, buchung.pId);
-            this.auswertungenMap[buchung.vId].setEmail( this.vermieterMap[buchung.vId]);
+            this.auswertungenMap[buchung.vId] = new Auswertung(buchung.vId);
+            console.log ("Suche email zu vID "+buchung.vId+": "+this.store.getEmailToUid(buchung.vId));
+            this.auswertungenMap[buchung.vId].setParkId( this.store.getPidToUid(buchung.vId) );
+            this.auswertungenMap[buchung.vId].setEmail( this.store.getEmailToUid(buchung.vId) );
             this.auswertungenMap[buchung.vId].incFreigaben();
           } else {
             //console.log("Vermieter-Key "+buchung.vermieter +" erhöhen...");
@@ -143,15 +145,6 @@ public auswertungCallback = (snapshot) => {
   }
 
 }
-/*
-public getEmailToUidAndSetItOnAuswertung(uid: string, auswertung: Auswertung) {
-  firebase.database().ref("/emailToRole/").orderByChild("uid").equalTo(uid).once('value', function(snapshot) {
-    console.log("getEmailToRole- Snapshot: "+snapshot);
-    console.log ("Zur Id:"+uid+" gehört: "+snapshot.val());
-    console.log(snapshot.val().key);
-  });    
-}
-*/
   ngOnInit() {
   }
 
