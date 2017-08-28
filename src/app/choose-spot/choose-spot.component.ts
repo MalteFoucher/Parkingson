@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import {Store} from "../store/store.service";
+import {Store} from '../store/store.service';
 
 @Component({
   selector: 'app-choose-spot',

@@ -48,11 +48,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
         if (value) {
           this.weeks.forEach(week => {
             week.forEach(entry => {
-              let state: ParkState = null;
-
               const day = entry.dayOfYear;
 
-              state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
+              let state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
 
               const dayValue = value[day];
               if (dayValue) {

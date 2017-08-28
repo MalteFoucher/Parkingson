@@ -3,7 +3,6 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {NgModule} from '@angular/core';
-
 // Import HttpClientModule from @angular/common/http
 import {HttpClientModule} from '@angular/common/http';
 
@@ -12,12 +11,14 @@ import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {AngularFireAuthModule} from 'angularfire2/auth';
 
 import {
-  MdButtonModule, MdTabsModule, MdDialogModule, MdDatepickerModule, MdNativeDateModule,
-  MdSelectModule, MdCheckboxModule
+  MdButtonModule,
+  MdCheckboxModule,
+  MdDatepickerModule,
+  MdDialogModule,
+  MdNativeDateModule,
+  MdSelectModule,
+  MdTabsModule
 } from '@angular/material';
-//import {MenuItem} from 'primeng/components/common/api';
-
-
 import {AppComponent} from './app.component';
 import {KalenderComponent} from './kalender.component';
 import {DialogComponent} from './dialog/dialog.component';
@@ -27,8 +28,8 @@ import {AdminDialogComponent} from './admin-dialog/admin-dialog.component';
 import {BuchungenComponent} from './buchungen/buchungen.component';
 import {TextInputDialogComponent} from './text-input-dialog/text-input-dialog.component';
 import {OverviewComponent} from './overview/overview.component';
-import {Store} from "./store/store.service";
-import { ChooseSpotComponent } from './choose-spot/choose-spot.component';
+import {Store} from './store/store.service';
+import {ChooseSpotComponent} from './choose-spot/choose-spot.component';
 
 
 export const firebaseConfig = {
@@ -51,7 +52,7 @@ export const firebaseConfig = {
     BuchungenComponent,
     TextInputDialogComponent,
     OverviewComponent,
-    ChooseSpotComponent
+    ChooseSpotComponent,
   ],
   imports: [
     BrowserModule,
