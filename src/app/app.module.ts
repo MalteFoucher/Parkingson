@@ -28,6 +28,7 @@ import {BuchungenComponent} from './buchungen/buchungen.component';
 import {TextInputDialogComponent} from './text-input-dialog/text-input-dialog.component';
 import {OverviewComponent} from './overview/overview.component';
 import {Store} from "./store/store.service";
+import { ChooseSpotComponent } from './choose-spot/choose-spot.component';
 
 
 export const firebaseConfig = {
@@ -49,7 +50,8 @@ export const firebaseConfig = {
     AdminDialogComponent,
     BuchungenComponent,
     TextInputDialogComponent,
-    OverviewComponent
+    OverviewComponent,
+    ChooseSpotComponent
   ],
   imports: [
     BrowserModule,

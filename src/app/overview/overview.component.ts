@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
@@ -13,13 +13,18 @@ enum ParkState {
   styleUrls: ['./overview.component.css']
 })
 
-export class OverviewComponent implements OnInit {
+export class OverviewComponent implements OnInit, OnDestroy {
   weekCount = 4;
-
   woche_von_bis: string;
   weeks;
+  mietDay;
   JSON: JSON;
-  private ref: firebase.database.Reference
+  private ref: firebase.database.Reference;
+  private query: firebase.database.Query;
+
+  ngOnDestroy(): void {
+    this.query.off();
+  }
 
   constructor(public store: Store) {
     this.JSON = JSON;
@@ -32,11 +37,9 @@ export class OverviewComponent implements OnInit {
     const lastWeek = this.weeks[this.weeks.length - 1];
     const lastDay = lastWeek[lastWeek.length - 1];
 
-    console.log('firstDay: ' + JSON.stringify(firstDay));
-    console.log('lastDay: ' + JSON.stringify(lastDay));
-    console.log('call database');
     this.ref = firebase.database().ref('/buchungen3').child(firstDay.year);
-    this.ref.orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear)).on('value', (snapshot) => {
+    this.query = this.ref.orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear));
+    this.query.on('value', (snapshot) => {
         const value = snapshot.val();
 
         console.log('value: ' + JSON.stringify(value));
@@ -66,13 +69,21 @@ export class OverviewComponent implements OnInit {
                     entry.key = vValue.key;
                     state = vValue.mId == null ? ParkState.YELLOW : ParkState.RED;
                   }
-
                 } else {
-                  const mValues = dayValues.filter(v => v.mId === this.store.user.uid);
-                  console.log('mValues: ' + JSON.stringify(mValues));
-                  if (mValues.length > 0) {
-                    entry.key = mValues[0].key;
-                    state = ParkState.GREEN;
+                  if (dayValues.length > 0) {
+                    const mValues = dayValues.filter(v => v.mId === this.store.user.uid);
+                    console.log('mValues: ' + JSON.stringify(mValues));
+                    if (mValues.length > 0) {
+                      entry.key = mValues[0].key;
+                      state = ParkState.GREEN;
+                    } else {
+                      const freeValues = dayValues.filter(v => v.mId == null);
+                      console.log('freeValues: ' + JSON.stringify(freeValues));
+                      if (freeValues.length > 0) {
+                        state = ParkState.YELLOW;
+                        entry.free = freeValues.length;
+                      }
+                    }
                   }
                 }
               }
@@ -118,20 +129,34 @@ export class OverviewComponent implements OnInit {
   }
 
   dayClick(day) {
+    console.log('DayClick');
     if (this.store.vermieter) {
       console.log('vermieter');
       // Test mit enum - wie?
       if (day.state === 0) {
         console.log('green');
         this.ref.child(day.dayOfYear).push({vId: this.store.user.uid, pId: this.store.user.parkId});
-      }
-      if (day.state === 2) {
+      } else if (day.state === 1) {
+        console.log('red');
+        this.ref.child(day.dayOfYear).child(day.key).remove();
+      } else if (day.state === 2) {
         console.log('yellow');
-
-        console.log("key: " + day.key);
-
         this.ref.child(day.dayOfYear).child(day.key).remove();
       }
+    } else {
+      console.log('mieter');
+      // Test mit enum - wie?
+      if (day.state === 0) {
+        console.log('green');
+        this.ref.child(day.dayOfYear).child(day.key).child('mId').remove();
+      } else if (day.state === 2) {
+        console.log('yellow');
+        this.mietDay = day;
+      }
     }
+  }
+
+  chooseSlotClosed() {
+    this.mietDay = null;
   }
 }
