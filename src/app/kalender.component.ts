@@ -108,10 +108,6 @@ export class KalenderComponent {
 
   }
 
-  public buchung3Listener = (snapshot) => {
-    console.log ("B3 Listener!");
-    console.log (snapshot); 
-  }
 
 public generateTable() {
   console.log ("Aufruf generateTable() mit UserParkId: "+this.userParkId);
@@ -747,10 +743,6 @@ private writeNewbuchung() {
     this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
     this.buli_status="Freigaben werden geladen...";
 
-console.log ("b3 listener anmelden");
-    this.b3nodeRef=firebase.database().ref('/buchungen3/'+this.year+'/');
-    this.b3nodeRef.orderByKey().startAt("220").endAt("250").on('value', this.buchung3Listener);
-    
 
   }
 }
