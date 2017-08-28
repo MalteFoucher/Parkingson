@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
+import {Store} from "../store/store.service";
 
 @Component({
   selector: 'app-choose-spot',
@@ -22,7 +23,7 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   private query: firebase.database.Query;
   private ref: firebase.database.Reference;
 
-  constructor() {
+  constructor(private store: Store) {
   }
 
   ngOnDestroy(): void {
@@ -59,7 +60,10 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   }
 
   slotClick(slot) {
-    this.ref.child(slot.key).remove();
+    this.ref.child(slot.key).update({
+      'mId': this.store.user.uid
+    });
+
     this.close();
   }
 
