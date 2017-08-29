@@ -55,6 +55,20 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
     while (list.length) {
       res.push(list.splice(0, size));
     }
+    const last = res[res.length - 1];
+
+    console.log('last: ' + JSON.stringify(last));
+    console.log('length: ' + last.length);
+    console.log('size: ' + size);
+
+    if (last.length < size) {
+      const n = size - last.length;
+      for (let i = 0; i < n; i++) {
+        last.push({pId: 0});
+      }
+    }
+
+    console.log('last2: ' + JSON.stringify(last));
 
     return res;
   }

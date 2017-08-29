@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
+import {MdSnackBar} from '@angular/material';
 
 enum ParkState {
   GREEN, RED, YELLOW, GRAY
@@ -21,6 +22,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
   mietDay;
   year;
   JSON: JSON;
+
+  changeMail;
+
   private ref: firebase.database.Reference;
   private query: firebase.database.Query;
 
@@ -28,7 +32,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.query.off();
   }
 
-  constructor(public store: Store) {
+  constructor(public store: Store, private snachBar: MdSnackBar) {
     this.JSON = JSON;
   }
 
@@ -72,6 +76,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
 
             let state = entry.year !== this.year ? ParkState.GRAY : this.store.vermieter ? ParkState.GREEN : ParkState.RED;
+            if (state === 0) {
+              entry.pId = this.store.oververviewUser.parkId;
+            }
 
             if (value) {
               const dayValue = value[day];
@@ -94,7 +101,10 @@ export class OverviewComponent implements OnInit, OnDestroy {
                     const mValues = dayValues.filter(v => v.mId === this.store.oververviewUser.uid);
                     console.log('mValues: ' + JSON.stringify(mValues));
                     if (mValues.length > 0) {
-                      entry.key = mValues[0].key;
+                      const mValue = mValues[0];
+                      entry.key = mValue.key;
+                      entry.free = null;
+                      entry.pId = mValue.pId;
                       state = ParkState.GREEN;
                     } else {
                       const freeValues = dayValues.filter(v => v.mId == null);
@@ -108,7 +118,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 }
               }
             }
-
             if (state != null) {
               entry.state = state;
             }
@@ -166,6 +175,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     const now = moment();
     if (now.isAfter(border)) {
       console.log('gesperrt');
+      this.snachBar.open('Die Bearbeitung ist für diesen Tag gesperrt', null, {duration: 2000});
       return;
     }
 
@@ -232,6 +242,27 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   info(day) {
-    return day.free != null ? '#' + day.free : '';
+    return day.pId != null ? 'P' + day.pId : day.free != null ? '#' + day.free : '';
+  }
+
+  changeUser() {
+    let message;
+    if (this.changeMail == null || this.changeMail.length === 0) {
+      message = 'Bitte Mailadresse angeben.';
+      this.snachBar.open(message, null, {duration: 2000});
+    } else {
+      firebase.database().ref('/emailToRole').child(this.changeMail.replace('.', '!')).once('value').then(snapshot => {
+        const value = snapshot.val();
+        if (value != null) {
+          this.store.eUser = value;
+          message = 'Aktiver Benutzer ist jetzt ' + this.changeMail;
+          this.calcValues();
+        } else {
+          message = 'Benutzer ' + this.changeMail + ' nicht gefunden.';
+        }
+        this.snachBar.open(message, null, {duration: 2000});
+      });
+    }
+
   }
 }

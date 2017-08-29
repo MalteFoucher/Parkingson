@@ -8,8 +8,8 @@
 <div class="row columns">
   <table>
     <tr *ngFor="let chu of chunks">
-      <td *ngFor="let slot of chu" class="green">
-        <div (click)="slotClick(slot)">{{slot.pId}}</div>
+      <td *ngFor="let slot of chu" [class]="slot.pId>0 ? 'green':''" style="text-align: center">
+        <div *ngIf="slot.pId>0" (click)="slotClick(slot)">{{slot.pId}}</div>
       </td>
     </tr>
   </table>
