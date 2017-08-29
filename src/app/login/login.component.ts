@@ -48,8 +48,8 @@ export class LoginComponent {
     
     //Natürlich nur vorläufig!
     if (this.user_email=="" && this.user_password=="") {
-      this.user_email="123@abc.de";
-      this.user_password="AbcGuy123";
+      this.user_email="malte_kun@web.de";
+      this.user_password="qweasd";
     }
     
     this.auth.auth.signInWithEmailAndPassword(this.user_email, this.user_password)
@@ -73,7 +73,7 @@ export class LoginComponent {
     */
     console.log ("Register:");
     console.log (this.user_email, this.user_password);
-    if ( this.user_email.indexOf("deka.lu") < 0 )  {
+    if ( this.user_email.endsWith("deka.lu") )  {
       this.innerHtmlString="Bitte verwenden Sie Ihre DEKA E-Mail.";
       //return;
     }

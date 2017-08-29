@@ -8,6 +8,14 @@ import { MdCheckbox } from '@angular/material';
 import { DialogComponent } from './dialog/dialog.component';
 import { AdminDialogComponent } from './admin-dialog/admin-dialog.component';
 
+import {Http, Response} from '@angular/http';
+import {NgModule} from '@angular/core';
+// Import HttpClientModule from @angular/common/http
+import {HttpClientModule} from '@angular/common/http';
+
+import { EmailService } from './email.service';
+
+
 @Component({
   selector: 'kalender-component',
   templateUrl: './kalender.component.html',
@@ -48,7 +56,7 @@ export class KalenderComponent {
 
   //controller: any;
 
-  constructor(dialog: MdDialog) {
+  constructor(dialog: MdDialog, private emailService: EmailService) {
     this.dialog=dialog;
     this.kw = parseInt(moment().format('WW'));
     this.year = parseInt(moment().format('YYYY'));
@@ -522,7 +530,7 @@ public generateTable() {
   }
 
 writeNewUser() {        
-    var newPostRef = firebase.database().ref('/emailToRole/malte_kun@web!de')
+    var newPostRef = firebase.database().ref('/emailToRole/michael@jatomix!de')
     .set({
       benutzerAdmin: false,
       buchungsAdmin: false,
@@ -742,7 +750,10 @@ private writeNewbuchung() {
     this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
     this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
     this.buli_status="Freigaben werden geladen...";
+  }
 
-
+  emailTesten() {
+    console.log("EMIALTESTEN");
+    this.emailService.sendEmail().subscribe(data => console.log(data));
   }
 }

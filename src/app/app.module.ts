@@ -20,6 +20,7 @@ import {
   MdSelectModule,
   MdTabsModule
 } from '@angular/material';
+
 import {AppComponent} from './app.component';
 import {KalenderComponent} from './kalender.component';
 import {DialogComponent} from './dialog/dialog.component';
@@ -31,15 +32,18 @@ import {TextInputDialogComponent} from './text-input-dialog/text-input-dialog.co
 import {OverviewComponent} from './overview/overview.component';
 import {Store} from './store/store.service';
 import {ChooseSpotComponent} from './choose-spot/choose-spot.component';
+import { VerwaltungComponent } from './verwaltung/verwaltung.component';
+import { EmailService } from './email.service';
 
 
-export const firebaseConfig = {
-  apiKey: "AIzaSyAc4lRwOrVEX7F9vU03KUImmL6_RV45-Ck",
-  authDomain: "parkingtool-6cf77.firebaseapp.com",
-  databaseURL: "https://parkingtool-6cf77.firebaseio.com",
-  projectId: "parkingtool-6cf77",
-  storageBucket: "parkingtool-6cf77.appspot.com",
-  messagingSenderId: "506320863480"
+export const firebaseConfig = {  
+  apiKey: "AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE",
+  authDomain: "parkplatztool.firebaseapp.com",
+  databaseURL: "https://parkplatztool.firebaseio.com",
+  projectId: "parkplatztool",
+  storageBucket: "parkplatztool.appspot.com",
+  messagingSenderId: "110161579432"
+
 };
 
 @NgModule({
@@ -54,6 +58,7 @@ export const firebaseConfig = {
     TextInputDialogComponent,
     OverviewComponent,
     ChooseSpotComponent,
+    VerwaltungComponent
   ],
   imports: [
     BrowserModule,
@@ -73,7 +78,7 @@ export const firebaseConfig = {
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
-  providers: [AppComponent, Store],
+  providers: [AppComponent, Store, EmailService],
   //Warum muss ich meine ganzen selbsgebauten Komponenten eigetlich bootstrappen?
   bootstrap: [AppComponent, DialogComponent, AdminDialogComponent, LoginComponent, BuchungenComponent, TextInputDialogComponent]
 })
