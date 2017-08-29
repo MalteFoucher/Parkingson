@@ -15,6 +15,7 @@ import {
   MdCheckboxModule,
   MdDatepickerModule,
   MdDialogModule,
+  MdInputContainer,
   MdNativeDateModule,
   MdSelectModule,
   MdTabsModule
@@ -67,6 +68,7 @@ export const firebaseConfig = {
     MdNativeDateModule,
     MdSelectModule,
     MdCheckboxModule,
+    MdInputContainer,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule

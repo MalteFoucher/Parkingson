@@ -61,7 +61,7 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
 
   slotClick(slot) {
     this.ref.child(slot.key).update({
-      'mId': this.store.user.uid
+      'mId': this.store.oververviewUser.uid
     });
 
     this.close();

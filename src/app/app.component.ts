@@ -98,11 +98,13 @@ export class AppComponent implements AfterViewInit {
         this.buchungen.setUserId(this.userId)
         this.debugText = "Eingeloggt als: " + user.email;
         console.log(this.debugText);
+
         var emailAsKey = user.email.replace(/\./g, '!');
 
         //Statt email2Role, was völlig schwachsinnig war, einfach once aus der DB lesen!
         firebase.database().ref('/emailToRole/' + emailAsKey + '/').once('value', snapshot => {
           if (snapshot.val() != null) {
+            this.store.eUser = snapshot.val();
             this.userAdmin = true;//snapshot.val()['admin'];
             this.userParkId = snapshot.val()['parkId'];
             this.debugText = "this.userParkId=" + this.userParkId;

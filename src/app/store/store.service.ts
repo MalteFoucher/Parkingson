@@ -3,17 +3,30 @@ import {Vermieter} from '../auswertung/vermieter';
 
 @Injectable()
 export class Store {
-  public user;
+  public ovUser;
+  public eUser;
   public emailToRole;
   public config;
 
   constructor() {
-    this.user = {uid: 'abc123', parkId: 11};
+    // this.user = {uid: 'abc123', parkId: 11};
+  }
+
+  get oververviewUser() {
+    const ret = this.ovUser != null ? this.ovUser : this.eUser;
+
+    console.log("overviewUser: " + ret);
+
+    return ret;
   }
 
   get vermieter(): boolean {
-    // return this.user.parkId && this.user.parkId > 0;
-    return false;
+    const ret = this.oververviewUser.parkId != null && this.oververviewUser.parkId > 0;
+
+    console.log('user:  ' + JSON.stringify(this.oververviewUser));
+    console.log('vermieter:  ' + ret);
+
+    return ret;
   }
 
   get mieter(): boolean {
@@ -21,6 +34,7 @@ export class Store {
   }
 
   setEmailToRole(snapshot: any) {
+    console.log('user:  ' + JSON.stringify(snapshot));
     this.emailToRole = snapshot;
   }
 
@@ -30,17 +44,17 @@ export class Store {
 
   getEmailToUid(uid: string): string {
     //Durchsucht die email2Role-Daten nach der übergebenen Uid und gibt die zugehörige Email zurück
-    let e2rKeys = Object.keys(this.emailToRole);
-    for (let ek in e2rKeys) {
+    const e2rKeys = Object.keys(this.emailToRole);
+    for (const ek in e2rKeys) {
       if (this.emailToRole[e2rKeys[ek]].uid == uid) return e2rKeys[ek].replace(/!/g, '.');
     }
     return null;
   }
 
   getAlleVermieter(): Vermieter[] {
-    let vermieter = [];
-    let e2rKeys = Object.keys(this.emailToRole);
-    for (let ek in e2rKeys) {
+    const vermieter = [];
+    const e2rKeys = Object.keys(this.emailToRole);
+    for (const ek in e2rKeys) {
       if (this.emailToRole[e2rKeys[ek]].parkId > 0) {
         vermieter.push(new Vermieter(this.emailToRole[e2rKeys[ek]].uid, e2rKeys[ek].replace(/!/g, '.')));
       }
@@ -49,8 +63,8 @@ export class Store {
   }
 
   getPidToUid(uid: string): string {
-    let e2rKeys = Object.keys(this.emailToRole);
-    for (let ek in e2rKeys) {
+    const e2rKeys = Object.keys(this.emailToRole);
+    for (const ek in e2rKeys) {
       if (this.emailToRole[e2rKeys[ek]].uid == uid) return this.emailToRole[e2rKeys[ek]].parkId;
     }
     return null;

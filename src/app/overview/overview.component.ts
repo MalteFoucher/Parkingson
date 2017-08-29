@@ -82,7 +82,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
                   return ret;
                 });
                 if (this.store.vermieter) {
-                  const vValues = dayValues.filter(v => v.vId === this.store.user.uid);
+                  const vValues = dayValues.filter(v => v.vId === this.store.oververviewUser.uid);
                   console.log('vValues: ' + JSON.stringify(vValues));
                   if (vValues.length > 0) {
                     const vValue = vValues[0];
@@ -91,7 +91,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
                   }
                 } else {
                   if (dayValues.length > 0) {
-                    const mValues = dayValues.filter(v => v.mId === this.store.user.uid);
+                    const mValues = dayValues.filter(v => v.mId === this.store.oververviewUser.uid);
                     console.log('mValues: ' + JSON.stringify(mValues));
                     if (mValues.length > 0) {
                       entry.key = mValues[0].key;
@@ -176,7 +176,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       // Test mit enum - wie?
       if (day.state === 0) {
         console.log('green');
-        dayRef.push({vId: this.store.user.uid, pId: this.store.user.parkId});
+        dayRef.push({vId: this.store.oververviewUser.uid, pId: this.store.oververviewUser.parkId});
       } else if (day.state === 1) {
         console.log('red');
 
@@ -212,7 +212,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   weiter() {
     const year = this.day.year();
-    const nextYear = this.day.clone().add(4, "weeks").year();
+    const nextYear = this.day.clone().add(4, 'weeks').year();
     if (nextYear > year) {
       this.day.year(nextYear);
       this.day.week(1);
@@ -229,5 +229,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
   formatDate(day) {
     return moment().year(day.year).dayOfYear(day.dayOfYear).format('DD.MM.');
+  }
+
+  info(day) {
+    return day.free != null ? '#' + day.free : '';
   }
 }
