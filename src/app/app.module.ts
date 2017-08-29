@@ -15,7 +15,6 @@ import {
   MdCheckboxModule,
   MdDatepickerModule,
   MdDialogModule,
-  MdInputContainer,
   MdNativeDateModule,
   MdSelectModule,
   MdTabsModule
@@ -32,11 +31,11 @@ import {TextInputDialogComponent} from './text-input-dialog/text-input-dialog.co
 import {OverviewComponent} from './overview/overview.component';
 import {Store} from './store/store.service';
 import {ChooseSpotComponent} from './choose-spot/choose-spot.component';
-import { VerwaltungComponent } from './verwaltung/verwaltung.component';
-import { EmailService } from './email.service';
+import {VerwaltungComponent} from './verwaltung/verwaltung.component';
+import {EmailService} from './email.service';
 
 
-export const firebaseConfig = {  
+export const firebaseConfig = {
   apiKey: "AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE",
   authDomain: "parkplatztool.firebaseapp.com",
   databaseURL: "https://parkplatztool.firebaseio.com",
@@ -73,7 +72,6 @@ export const firebaseConfig = {
     MdNativeDateModule,
     MdSelectModule,
     MdCheckboxModule,
-    MdInputContainer,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule
