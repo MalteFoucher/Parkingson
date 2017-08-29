@@ -153,6 +153,22 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   dayClick(day) {
+    const sperrzeit = this.store.config['sperrzeit'];
+    console.log('sperrzeit: ' + sperrzeit);
+
+    const border = moment();
+    const splits = sperrzeit.split(':');
+    border.year(day.year);
+    border.dayOfYear(day.dayOfYear);
+    border.hour(Number(splits[0]));
+    border.minute(Number(splits[1]));
+
+    const now = moment();
+    if (now.isAfter(border)) {
+      console.log('gesperrt');
+      return;
+    }
+
     const dayRef = this.ref.child(day.year).child(day.dayOfYear);
 
     if (this.store.vermieter) {
@@ -163,7 +179,13 @@ export class OverviewComponent implements OnInit, OnDestroy {
         dayRef.push({vId: this.store.user.uid, pId: this.store.user.parkId});
       } else if (day.state === 1) {
         console.log('red');
-        dayRef.child(day.key).remove();
+
+        border.subtract(2, 'days');
+        if (now.isAfter(border)) {
+          this.mietDay = day;
+        } else {
+          dayRef.child(day.key).remove();
+        }
       } else if (day.state === 2) {
         console.log('yellow');
         dayRef.child(day.key).remove();
@@ -174,6 +196,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
       if (day.state === 0) {
         console.log('green');
         dayRef.child(day.key).child('mId').remove();
+      } else if (day.state === 1) {
+        console.log('red');
+        this.mietDay = day;
       } else if (day.state === 2) {
         console.log('yellow');
         this.mietDay = day;
