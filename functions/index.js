@@ -1,7 +1,7 @@
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 'use strict';
 const functions = require('firebase-functions');
-//const nodemailer = require('nodemailer');
+const nodemailer = require('nodemailer');
 //cors ist für Cross Origin Header
 const cors = require('cors')({origin:true});
 //const sync = require('synchronize');
@@ -10,22 +10,26 @@ const cors = require('cors')({origin:true});
 const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
-
-/* Konstanten für nodemaile:
+ 
 //const gmailEmail = 'maltewolfcastle';//encodeURIComponent(functions.config().g);
 //const gmailPassword = 'AllesWirdGut2017';//encodeURIComponent(functions.config().gmail.password);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
-const from = 'Parkingson <malte_kun@web.de>';
+
+//const from = 'ParkplatzTool <malte_kun@web.de>';
+const from = 'ParkplatzTool <malte@parkingtool-6cf77.firebaseapp.com>';
 const smtpConfig = {
-    host: 'smtp.web.de',
+    host: 'smtp-relay.gmail.com',
+    //host: 'smtp.web.de',
     port: 587,
     auth: {
-        user: 'malte_kun@web.de',
-        pass: 'Koksun2014'
+        user: 'malte@parkingtool-6cf77.firebaseapp.com',
+        pass: 'MalteMalte'
+        //user: 'malte_kun@web.de',
+        //pass: 'Koksun2014'
     }};
 
 const transporter = nodemailer.createTransport(smtpConfig);
-*/
+
 
 /*Funktion, die zu ner Email die Rolle zurückgibt. Gerade mal rausge *-t weil cors
 exports.getRole = functions.https.onRequest((req, response) => {
@@ -194,7 +198,7 @@ exports.welcomeUser = functions.auth.user().onCreate(event => {
     */
 })
 
-/* Methode, um Emails zu verschicken
+// Methode, um Emails zu verschicken
 function sendEmail(mailOptions) {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
@@ -205,17 +209,18 @@ function sendEmail(mailOptions) {
     return ("ok");
     })
 }
-*/
 
-/*...emails verschicken - debug! Kann später weg!
+
+
+//...emails verschicken - debug! Kann später weg!
 
 exports.testEmail = functions.https.onRequest((req, response) => {
+    console.log ("TESTEMAIL");
     response.writeHead(200, {'Content-Type': 'text/plain'});
-
-
     var mailOptions = {
         from: from,
         to: 'malte.foucher@deka.lu',
+        //to: 'malte_kun@web.de',
         //to: 'foucherm@fh-trier.de',
         subject: 'Hallo',
         text: 'plaintext version of the message',
@@ -224,7 +229,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
     var res = sendEmail(mailOptions);
     response.end( res );
 })
-*/
+
 
 //Generiert und verschickt ne Email
 exports.email = functions.https.onRequest((req, response) => {
@@ -413,34 +418,3 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
   });
 })
 
-/* BRAUCHEN WIR AUCH NICHT MEHR -< Zu Appbeginn einfach mal alle Userdaten saugen!
-exports.getListOfAllUsers = functions.https.onRequest((req, res) => {
-  cors (req, res, () => {
-    //Alle User aus der DB lesen, die nötigsten Daten rausstrippen und als String versenden
-    //email.replace(/./g, '!');
-    var responseString="";
-    admin.database().ref('/emailToRole/').once('value')
-            .then(function (snapshot) {
-                var emailKeys = snapshot.val();
-                console.log ("--EmailKeys:"+emailKeys);
-                for (var ek in emailKeys) {
-                    var e2rEntry = snapshot.val()[emailKeys[ek]];
-                    console.log ("---"+e2rEntry);
-                    if (e2rEntry.isActive) {
-                      responseString+=emailKeys[ek]+";"+e2rEntry.uid+";"+e2rEntry.parkId;
-                    }
-                    if (ek != emailKeys.length) responseString+=";" ;
-                }                
-                console.log("--> "+responseString);
-                response.writeHead(200, {'Content-Type': 'text/plain'});
-                response.end(responseString);
-            })
-            .catch(function (error) {
-                //Wenn hier ein Error auftritt, dann wahrscheinlich, weil kein Eintrag zu der Email vorliegt, zB bei nem neu registrierten User.
-                //Der kriegt dann default-Werte:
-                response.writeHead(500, {'Content-Type': 'text/plain'});
-                response.end(error);
-            })
-  });
-});
-*/
