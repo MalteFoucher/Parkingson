@@ -70,4 +70,5 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   close() {
     this.onClose.emit();
   }
+
 }

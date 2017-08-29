@@ -15,7 +15,7 @@
       </tr>
       <tr *ngFor="let week of weeks">
         <td *ngFor="let day of week" [class]="parkplatzColor(day.state)">
-          <div (click)="dayClick(day)">{{day.dayOfYear}}</div>
+          <div (click)="dayClick(day)">{{formatDate(day)}}</div>
         </td>
       </tr>
     </table>

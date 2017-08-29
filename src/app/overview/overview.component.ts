@@ -4,7 +4,7 @@ import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 
 enum ParkState {
-  GREEN, RED, YELLOW
+  GREEN, RED, YELLOW, GRAY
 }
 
 @Component({
@@ -38,30 +38,42 @@ export class OverviewComponent implements OnInit, OnDestroy {
     }
 
     const kw = this.day.week();
-    const kwTo = this.day.clone().add(4, 'weeks').week();
-    this.woche_von_bis = 'KW' + kw + ' - KW' + kwTo;
+    const kwTo = this.day.clone().add(3, 'weeks').week();
 
     this.weeks = this.calcMoreWeekDays(kw, this.weekCount);
 
     const firstDay = this.weeks[0][0];
+
     this.year = firstDay.year;
+    this.woche_von_bis = 'KW' + kw + ' - KW' + kwTo + ' ' + this.year;
     const lastWeek = this.weeks[this.weeks.length - 1];
     const lastDay = lastWeek[lastWeek.length - 1];
 
+    let lastDayValue = lastDay.dayOfYear;
+    if (lastDay.year > this.year) {
+      lastDayValue = 366;
+    }
+    let firstDayValue = firstDay.dayOfYear;
+    if (firstDay.year < this.year) {
+      firstDayValue = 1;
+    }
+
     this.ref = firebase.database().ref('/buchungen3');
-    this.query = this.ref.child(this.year).orderByKey().startAt(String(firstDay.dayOfYear)).endAt(String(lastDay.dayOfYear));
+    this.query = this.ref.child(this.year).orderByKey().startAt(String(firstDayValue)).endAt(String(lastDayValue));
     this.query.on('value', (snapshot) => {
         const value = snapshot.val();
 
         console.log('value: ' + JSON.stringify(value));
 
-        if (value) {
-          this.weeks.forEach(week => {
-            week.forEach(entry => {
-              const day = entry.dayOfYear;
 
-              let state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
+        this.weeks.forEach(week => {
+          week.forEach(entry => {
+            const day = entry.dayOfYear;
 
+
+            let state = entry.year !== this.year ? ParkState.GRAY : this.store.vermieter ? ParkState.GREEN : ParkState.RED;
+
+            if (value) {
               const dayValue = value[day];
               if (dayValue) {
                 const dayValues = Object.keys(dayValue).map(k => {
@@ -95,13 +107,13 @@ export class OverviewComponent implements OnInit, OnDestroy {
                   }
                 }
               }
+            }
 
-              if (state != null) {
-                entry.state = state;
-              }
-            });
+            if (state != null) {
+              entry.state = state;
+            }
           });
-        }
+        });
       }
     );
   }
@@ -122,12 +134,12 @@ export class OverviewComponent implements OnInit, OnDestroy {
   calcWeekDays(week) {
     const ret = [];
 
-    const state = this.store.vermieter ? ParkState.GREEN : ParkState.RED;
-
-    const firstDayInWeek = moment().week(week);
+    const firstDayInWeek = moment();
+    firstDayInWeek.year(this.day.year());
+    firstDayInWeek.week(week);
     for (let i = 1; i <= 5; i++) {
       const weekDay = firstDayInWeek.day(i);
-      ret.push({year: weekDay.year(), dayOfYear: weekDay.dayOfYear(), state: state});
+      ret.push({year: weekDay.year(), dayOfYear: weekDay.dayOfYear()});
     }
 
     console.log('week: ' + JSON.stringify(ret));
@@ -174,13 +186,23 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   weiter() {
-    this.day.add(4, 'weeks');
+    const year = this.day.year();
+    const nextYear = this.day.clone().add(4, "weeks").year();
+    if (nextYear > year) {
+      this.day.year(nextYear);
+      this.day.week(1);
+    } else {
+      this.day.add(4, 'weeks');
+    }
     this.calcValues();
   }
-
 
   zurueck() {
     this.day.subtract(4, 'weeks');
     this.calcValues();
+  }
+
+  formatDate(day) {
+    return moment().year(day.year).dayOfYear(day.dayOfYear).format('DD.MM.');
   }
 }
