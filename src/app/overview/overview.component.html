@@ -22,8 +22,9 @@
         <th>Frei</th>
       </tr>
       <tr *ngFor="let week of weeks">
-        <td *ngFor="let day of week" [class]="parkplatzColor(day.state)" style="text-align: center">
-          <div (click)="dayClick(day)">{{formatDate(day)}}</div>
+        <td *ngFor="let day of week" (click)="dayClick(day)" [class]="parkplatzColor(day.state)"
+            style="text-align: center">
+          <div>{{formatDate(day)}}</div>
           <div>{{info(day).length>0?info(day):'&nbsp;'}}</div>
         </td>
       </tr>

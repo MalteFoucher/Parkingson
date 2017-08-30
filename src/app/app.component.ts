@@ -107,6 +107,8 @@ export class AppComponent implements AfterViewInit {
             this.user = value;
             this.store.eUser = value;
 
+            this.content = 'overview';
+
             this.userAdmin = true; //snapshot.val()['admin'];
             this.userParkId = value['parkId'];
             this.debugText = 'this.userParkId=' + this.userParkId;
