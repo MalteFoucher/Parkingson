@@ -1,10 +1,11 @@
 <div *ngIf="mietDay==null;else mietDayContent">
+  <div class="row columns">
 
-  <md-input-container>
-    <input mdInput [(ngModel)]="changeMail"/>
-  </md-input-container>
-  <button md-button color="primary" (click)="changeUser()">Change User</button>
-
+    <md-input-container>
+      <input mdInput [(ngModel)]="changeMail"/>
+    </md-input-container>
+    <button md-button color="primary" (click)="changeUser()">Change User</button>
+  </div>
 
   <div class="centered-content" style="margin-top: 10px; color: var(--myYellow)">
     <button (click)="zurueck()"><i class="fa fa-toggle-left fa-2x" style="color: #3f51b5"></i></button>
