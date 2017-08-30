@@ -80,10 +80,10 @@ export class LoginComponent {
       this.innerHtmlString = 'Bitte verwenden Sie Ihre DEKA E-Mail.';
       //return;
     }
-    //Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
+    // Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
 
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
-    this.http.get('https://us-central1-parkingtool-6cf77.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
+    this.http.get('https://us-central1-parkplatztool.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
 
       //Falls es die Register-Email (noch) nicht in emailToRole gibt:
       if (data === 'false') {
