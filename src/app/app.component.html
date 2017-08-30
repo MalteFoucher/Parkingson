@@ -1,35 +1,64 @@
-<!--div [innerHTML]="debugText">debugText</div-->
-<!--app-tablerow>234 </app-tablerow-->
+<md-toolbar color="primary">
+  <button md-icon-button (click)="sidenav.open()">
+    <md-icon class="md-24">menu</md-icon>
+  </button>
+  Parkplatztool
+  <md-toolbar-row *ngIf="user!=null">
+    <span>{{user.email}}</span>
+    <button md-button (click)="logout()">Logout</button>
+  </md-toolbar-row>
+</md-toolbar>
 
-<md-tab-group>
-  <md-tab label="Kalender">
-    <kalender-component #kalender>Yo!</kalender-component>
-  </md-tab>
-  <md-tab label="Übersicht">
-    <app-overview></app-overview>
-  </md-tab>
-  <md-tab label="Buchungen">
-    <buchungen-component #buchungen></buchungen-component>
-  </md-tab>
-  <md-tab *ngIf="(userAdmin)" label="Auswertung">
-    <auswertung-component #auswertung>Yo!</auswertung-component>
-  </md-tab>
-  <md-tab *ngIf="(userAdmin)" label="Nutzerverwaltung">
-    <app-verwaltung></app-verwaltung>
-  </md-tab>
-</md-tab-group>
+<md-sidenav-container class="example-container" class="wrapper">
 
-<div class="row columns">
+  <md-sidenav #sidenav class="example-sidenav">
+    <md-list>
+      <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
+      <md-list-item (click)="setContent('kalender')">Kalender</md-list-item>
+      <md-list-item (click)="setContent('buchungen')">Buchungen</md-list-item>
+      <md-list-item (click)="setContent('auswertung')">Auswertung</md-list-item>
+      <md-list-item (click)="setContent('verwaltung')">Verwaltung</md-list-item>
+    </md-list>
+  </md-sidenav>
 
-  <button md-button (click)="login()" *ngIf="!(user | async)?.uid">Anonymous Login</button>
-  <button md-raised-button (click)="logout()" *ngIf="(user | async)?.uid">Logout</button>
+  <div style="height:100vh">
+    <!--
+        <app-login *ngIf="content==='login'"></app-login>
+    -->
+    <app-overview *ngIf="content==='overview'"></app-overview>
+    <kalender-component *ngIf="content==='kalender'" #kalender>Yo!</kalender-component>
+    <buchungen-component *ngIf="content==='buchungen'" #buchungen></buchungen-component>
+    <auswertung-component *ngIf="content==='auswertung'" #auswertung>Yo!</auswertung-component>
+    <app-verwaltung *ngIf="content==='verwaltung  '"></app-verwaltung>
+  </div>
 
-  <!--input type="text" id="message" *ngIf="(user | async)?.uid" placeholder="What is it that you do?" (keyup.enter)="Send($event.target.value)" [(ngModel)]="msgVal" />
-  <div id="details-container">
 
-      <p *ngFor="let item of items | async">{{item.parkId}}</p>
-  </div-->
-</div>
-<div class="centered-content">
-  <p>User: {{userId}} {{userParkId}} {{userAdmin}}</p>
-</div>
+  <!--
+    <md-tab-group>
+      <md-tab label="Kalender">
+        <kalender-component #kalender>Yo!</kalender-component>
+      </md-tab>
+      <md-tab label="Übersicht">
+        <app-overview></app-overview>
+      </md-tab>
+      <md-tab label="Buchungen">
+        <buchungen-component #buchungen></buchungen-component>
+      </md-tab>
+      <md-tab *ngIf="(userAdmin)" label="Auswertung">
+        <auswertung-component #auswertung>Yo!</auswertung-component>
+      </md-tab>
+      <md-tab *ngIf="(userAdmin)" label="Nutzerverwaltung">
+        <app-verwaltung></app-verwaltung>
+      </md-tab>
+    </md-tab-group>
+
+  <div class="row columns">
+    <button md-button (click)="login()" *ngIf="!(user | async)?.uid">Anonymous Login</button>
+    <button md-raised-button (click)="logout()" *ngIf="(user | async)?.uid">Logout</button>
+  </div>
+  <div class="centered-content">
+    <p>User: {{userId}} {{userParkId}} {{userAdmin}}</p>
+  </div>
+     -->
+
+</md-sidenav-container>

@@ -29,3 +29,18 @@ img {
     display:block;
     margin-bottom:12px;
 }
+
+md-sidenav {
+  width: 200px;
+}
+
+.wrapper {
+  display: flex; /* use the flex model */
+  min-height: 100%;
+  flex-direction: column; /* learn more: http://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/ */
+}
+
+.content {
+  flex: 1;
+  background-color: blue;
+}

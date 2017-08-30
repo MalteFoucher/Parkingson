@@ -14,11 +14,11 @@ import {
   MdButtonModule,
   MdCheckboxModule,
   MdDatepickerModule,
-  MdDialogModule, MdGridListModule,
-  MdInputContainer, MdInputModule,
+  MdDialogModule, MdGridListModule, MdIconModule,
+  MdInputContainer, MdInputModule, MdListModule,
   MdNativeDateModule,
-  MdSelectModule, MdSnackBarModule,
-  MdTabsModule
+  MdSelectModule, MdSidenavModule, MdSnackBarModule,
+  MdTabsModule, MdToolbarModule
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
@@ -76,6 +76,10 @@ export const firebaseConfig = {
     MdInputModule,
     MdSnackBarModule,
     MdGridListModule,
+    MdToolbarModule,
+    MdSidenavModule,
+    MdIconModule,
+    MdListModule,
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule

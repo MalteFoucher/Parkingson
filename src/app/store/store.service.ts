@@ -15,7 +15,7 @@ export class Store {
   get oververviewUser() {
     const ret = this.ovUser != null ? this.ovUser : this.eUser;
 
-    console.log("overviewUser: " + ret);
+    console.log('overviewUser: ' + ret);
 
     return ret;
   }
@@ -43,7 +43,7 @@ export class Store {
   }
 
   getEmailToUid(uid: string): string {
-    //Durchsucht die email2Role-Daten nach der übergebenen Uid und gibt die zugehörige Email zurück
+    // Durchsucht die email2Role-Daten nach der übergebenen Uid und gibt die zugehörige Email zurück
     const e2rKeys = Object.keys(this.emailToRole);
     for (const ek in e2rKeys) {
       if (this.emailToRole[e2rKeys[ek]].uid == uid) return e2rKeys[ek].replace(/!/g, '.');
@@ -65,7 +65,7 @@ export class Store {
   getPidToUid(uid: string): string {
     const e2rKeys = Object.keys(this.emailToRole);
     for (const ek in e2rKeys) {
-      if (this.emailToRole[e2rKeys[ek]].uid == uid) return this.emailToRole[e2rKeys[ek]].parkId;
+      if (this.emailToRole[e2rKeys[ek]].uid === uid) return this.emailToRole[e2rKeys[ek]].parkId;
     }
     return null;
   }
