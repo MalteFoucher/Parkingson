@@ -5,20 +5,20 @@
   <md-tab-group #tabGroup>
     <md-tab label="Login">
       <p>Email</p>
-      <input [(ngModel)]="user_email">
+      <input type="text" [(ngModel)]="user_email">
       <p></p>
       <p>Password</p>
-      <input [(ngModel)]="user_password">
+      <input type="password" [(ngModel)]="user_password">
       <div [innerHTML]="innerHtmlString"></div>
 
     </md-tab>
 
     <md-tab label="Register">
       <p>Email</p>
-      <input [(ngModel)]="user_email">
+      <input type="text" [(ngModel)]="user_email">
       <p></p>
       <p>Password</p>
-      <input [(ngModel)]="user_password">
+      <input type="password" [(ngModel)]="user_password">
     </md-tab>
   </md-tab-group>
   <a (click)="onPasswordReset()">Passwort vergessen?</a>
