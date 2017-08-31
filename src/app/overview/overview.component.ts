@@ -242,7 +242,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   info(day) {
-    return day.pId != null ? 'P' + day.pId : day.free != null ? '#' + day.free : '';
+    return day.state !== 1 && day.pId != null ? 'P' + day.pId : day.free != null ? '#' + day.free : '';
   }
 
   changeUser() {

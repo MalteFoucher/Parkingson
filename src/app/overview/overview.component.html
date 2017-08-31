@@ -1,16 +1,19 @@
 <div *ngIf="mietDay==null;else mietDayContent">
   <div class="row columns">
-
-    <md-input-container>
+    <md-input-container style="flex:2">
       <input mdInput [(ngModel)]="changeMail"/>
     </md-input-container>
-    <button md-button color="primary" (click)="changeUser()">Change User</button>
+    <button md-button color="primary" (click)="changeUser()" style="flex:1">Change User</button>
   </div>
 
   <div class="centered-content" style="margin-top: 10px; color: var(--myYellow)">
-    <button (click)="zurueck()"><md-icon class="md-24" color="primary">fast_rewind</md-icon></button>
+    <button (click)="zurueck()">
+      <md-icon class="md-24" color="primary">fast_rewind</md-icon>
+    </button>
     <h3 [innerHTML]="woche_von_bis" style="margin: 5px; color: #3f51b5">Kalender-Woche</h3>
-    <button (click)="weiter()"><md-icon class="md-24" color="primary">fast_forward</md-icon></button>
+    <button (click)="weiter()">
+      <md-icon class="md-24" color="primary">fast_forward</md-icon>
+    </button>
   </div>
   <div class="row columns">
     <table>
