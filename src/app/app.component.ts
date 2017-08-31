@@ -21,7 +21,7 @@ import {Store} from './store/store.service';
 
 export class AppComponent implements AfterViewInit {
   dialog: MdDialog;
-  //dialogRef: MdDialogRef;
+  // dialogRef: MdDialogRef;
 
   content = 'login';
 
@@ -39,7 +39,8 @@ export class AppComponent implements AfterViewInit {
   @ViewChild(AuswertungComponent)
   private auswertung: AuswertungComponent;
 
-  constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http, private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
+  constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http,
+              private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
     console.log('Constructor AppComponent');
 
     this.dialog = dialog;
@@ -54,12 +55,8 @@ export class AppComponent implements AfterViewInit {
             this.store.setEmailToRole(snapshot.val());
           }
         });
-
-        console.log('1');
-
         if (!user.emailVerified) {
-          console.log('2');
-          //Email-Adresse noch nicht verifiziert. Warnung und Button um Email zu versenden, anschließend ausloggen
+          // Email-Adresse noch nicht verifiziert. Warnung und Button um Email zu versenden, anschließend ausloggen
           const dialogRef = this.dialog.open(DialogComponent, {
             disableClose: true,
             data: {
@@ -73,10 +70,10 @@ export class AppComponent implements AfterViewInit {
           })
             .afterClosed().subscribe(selection => {
               if (selection) {
-                //OK Button geklickt, um Dialog zu schließen -> Ausloggen
+                // OK Button geklickt, um Dialog zu schließen -> Ausloggen
               } else {
-                //Email senden Button geklickt -> Ebenfalls ausloggen
-                //.then und .catch - Behandlung noch n bissel mager, aber funktioniert ja.
+                // Email senden Button geklickt -> Ebenfalls ausloggen
+                // .then und .catch - Behandlung noch n bissel mager, aber funktioniert ja.
                 user.sendEmailVerification().then(function () {
                   console.log('Email sent.');
                 }).catch(function (error) {
@@ -96,11 +93,9 @@ export class AppComponent implements AfterViewInit {
 
         const emailAsKey = user.email.replace(/\./g, '!');
 
-        //Statt email2Role, was völlig schwachsinnig war, einfach once aus der DB lesen!
+        // Statt email2Role, was völlig schwachsinnig war, einfach once aus der DB lesen!
         firebase.database().ref('/emailToRole/' + emailAsKey + '/').once('value', snapshot => {
-          console.log('email: ' + emailAsKey);
           const value = snapshot.val();
-          console.log('userValue: ' + value);
 
           if (value != null) {
             value.email = user.email;
@@ -109,7 +104,7 @@ export class AppComponent implements AfterViewInit {
 
             this.content = 'overview';
 
-            this.userAdmin = true; //snapshot.val()['admin'];
+            this.userAdmin = true;
             this.userParkId = value['parkId'];
             this.debugText = 'this.userParkId=' + this.userParkId;
 
@@ -118,7 +113,7 @@ export class AppComponent implements AfterViewInit {
               // this.kalender.setUserRights(this.userParkId, this.userAdmin);
             } else {
               console.log('---------- Der User ist inaktiv! ');
-              //Erst ein Dialog mit ner Fehlermeldung, danach ausloggen (wodurch LoginDialog hochkommt)
+              // Erst ein Dialog mit ner Fehlermeldung, danach ausloggen (wodurch LoginDialog hochkommt)
               const dialogRef = this.dialog.open(DialogComponent, {
                 disableClose: true,
                 data: {
@@ -135,11 +130,10 @@ export class AppComponent implements AfterViewInit {
           }
         });
         this.cdRef.detectChanges();
-      }
-      //Ausgeloggt...
-      else {
+      } else {
+        // Ausgeloggt...
         console.log('AAAAAAAAAAAAAAA Login Dialog AAAAAAAAAAAAAAAA');
-        //NOCH: Listener abmelden, KalenderView leeren
+        // NOCH: Listener abmelden, KalenderView leeren
         const dialogRef = this.dialog.open(LoginComponent, {
           disableClose: true
         });

@@ -14,18 +14,11 @@ export class Store {
 
   get oververviewUser() {
     const ret = this.ovUser != null ? this.ovUser : this.eUser;
-
-    console.log('overviewUser: ' + ret);
-
     return ret;
   }
 
   get vermieter(): boolean {
     const ret = this.oververviewUser.parkId != null && this.oververviewUser.parkId > 0;
-
-    console.log('user:  ' + JSON.stringify(this.oververviewUser));
-    console.log('vermieter:  ' + ret);
-
     return ret;
   }
 
@@ -34,7 +27,6 @@ export class Store {
   }
 
   setEmailToRole(snapshot: any) {
-    console.log('user:  ' + JSON.stringify(snapshot));
     this.emailToRole = snapshot;
   }
 
