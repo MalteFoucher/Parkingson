@@ -2,7 +2,7 @@
   <h3>Verwaltung</h3>
 </div>
 
-  <div class="row columns">
+  <div *ngIf="user.benutzerAdmin" class="row columns">
     <table>
       <tr><th></th><th class="text_col">Email</th><th class="number_col">Aktiv</th><th class="number_col">Buchungsv.</th><th class="number_col">Benutzerv.</th></tr>
       <tr *ngFor="let i of userArray; let ind = index">                        
@@ -15,6 +15,24 @@
         <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
       </tr>
     </table>  
+  </div>
+
+  <div *ngIf="user.buchungsAdmin" class="row columns">
+  <table>
+      <tr><th>Email</th><th>Parkplatz</th></tr>
+      <tr *ngFor="let i of userArray; let ind = index">                        
+        <td>{{i.email}}</td>
+        <!--td>{{i.parkId}}</td-->        
+        <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
+        <!--td><input mdInput [(ngModel)]="userArray[ind].parkId" (change)="onParkIdChange(ind)"/></td-->
+        <td>
+          <md-select placeholder={{userArray[ind].parkId}} floatPlaceholder="never" (change)="onSelectOptionChange($event)">
+          <md-option *ngFor="let pid of availableSpaces" [value]="pid">{{pid}}</md-option>
+          </md-select>
+        </td>
+        
+      </tr>
+    </table>      
   </div>
 
 

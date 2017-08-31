@@ -28,7 +28,8 @@ export class AppComponent implements AfterViewInit {
   user;
   title = 'app';
   userId: string;
-  userAdmin: boolean;
+  userBenutzerAdmin: boolean;
+  userBuchungsAdmin: boolean;
   userParkId = 0;
   debugText = 'debugText';
 
@@ -95,7 +96,8 @@ export class AppComponent implements AfterViewInit {
 
             this.content = 'overview';
 
-            this.userAdmin = true;
+            //this.userBenutzerAdmin = value.benutzerAdmin;
+            //this.userBuchungsAdmin = value.buchungsAdmin;
             this.userParkId = value['parkId'];
             this.debugText = 'this.userParkId=' + this.userParkId;
 
@@ -140,7 +142,7 @@ export class AppComponent implements AfterViewInit {
     this.afAuth.auth.signOut().then(() => this.user = null);
     this.userParkId = -1;
     // this.kalender.userParkId = -1;
-    this.userAdmin = false;
+    //this.userAdmin = false;
     // this.kalender.generateTable();
   }
 

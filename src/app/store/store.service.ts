@@ -73,7 +73,11 @@ export class Store {
     for (var dk in dataKeys) {
       //this.emailToRole[key][dataKeys[dk]] = data[dataKeys[data]];
       console.log ("Setze emailToRole["+key+"]["+dataKeys[dk]+"] = "+data[dataKeys[dk]]);
-    }
-    
+    }    
+  }
+
+  deleteFromE2R(key: string) {
+    console.log ("DELETE FROM E2R:");
+    this.emailToRole[key]={};
   }
 }

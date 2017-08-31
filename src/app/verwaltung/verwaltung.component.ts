@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase/app';
 //import * as moment from 'moment';
 import {Store} from '../store/store.service';
+import { MdDialog } from '@angular/material';
+import { DialogComponent } from '../dialog/dialog.component';
+//import { EmailService } from '../email.service';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-verwaltung',
@@ -11,22 +15,31 @@ import {Store} from '../store/store.service';
 export class VerwaltungComponent implements OnInit {
 
   userArray=[];
-  constructor(private store: Store) { }
+  availableSpaces=[1, 15, 123, 310];
+  user;
+  
+  constructor(private store: Store, private dialog: MdDialog, private http: HttpClient) { }
 
   ngOnInit() {
+    
     console.log("Verwaltung OnInit");
+    this.user = this.store.eUser;
+    console.log (this.user.benutzerAdmin, this.user.buchungsAdmin);
+
+    
+    
     var e2r = this.store.getEmailToRole();
     var e2rKeys = Object.keys(e2r);
 
     for (var ek in e2rKeys) {
-      var entry = e2r[e2rKeys[ek]];
-      console.log ("ENTRY: "+entry);
+      var entry = e2r[e2rKeys[ek]];      
       this.userArray.push( 
-        {email: e2rKeys[ek].replace(/!/g,'.'), parkId:entry.parkId, 
+        {email: e2rKeys[ek].replace(/!/g,'.'), 
+          parkId:entry.parkId, 
           isActive: entry.isActive, 
           benutzerAdmin: entry.benutzerAdmin, 
           buchungsAdmin: entry.buchungsAdmin,
-          uid: entry.uid});
+          uid: entry.uid});      
     }
   }
 
@@ -53,8 +66,7 @@ export class VerwaltungComponent implements OnInit {
       buchungsAdmin: this.userArray[index].buchungsAdmin});
   }
 
-  apply(index: number, data: any) {
-    //To Do: Der Apply-Button muss das auch im Store updaten!
+  apply(index: number, data: any) {    
     console.log ("Apply ... "+this.userArray[index].isActive,
         this.userArray[index].benutzerAdmin,
         this.userArray[index].buchungsAdmin);
@@ -71,8 +83,50 @@ export class VerwaltungComponent implements OnInit {
   }
 
   onDeleteUser(index: number) {
-    var email= this.userArray[index].email.replace(/\./g,'!');
+    var email= this.userArray[index].email;
+    var uid = this.userArray[index].uid;
     console.log ("User "+email +"("+this.userArray[index].uid+") soll gelöscht werden.");
-    
+
+    let dialogRef = this.dialog.open(DialogComponent, {
+          data:  {
+            //controller: this.controller,
+            titel: 'Benutzer löschen',
+            text:'Sind Sie sicher, dass Sie den User<br>'+email+'<br>wirklich löschen wollen?',            
+            yesButtonText: 'Ja',
+            yesButtonVisible: true,
+            noButtonText:'Nein',
+            noButtonVisible: true
+          }
+        });
+        dialogRef.afterClosed().subscribe(selection => {          
+          if (selection) {
+            console.log ("LÖSCHEN!");
+            var ref = firebase.database().ref('/emailToRole/'+this.userArray[index].email.replace(/\./g,'!'));
+            ref.remove()
+            .then( any => {
+              console.log("remove-then:");
+              this.userArray.splice(index,1);
+            });
+          
+
+          } 
+        });
   }
+
+onParkIdChange(index: number) {
+  console.log ("Park Id "+index+" changed:");
+  console.log (this.userArray[index].parkId);
+  //Muss man hier noch validieren! Ne Nummer von 1- ??? und noch nicht vergeben?
+  //var newNumber = 
+  if (isNaN(this.userArray[index].parkId)) {
+    console.log("Keine Nummer");
+  }
+
+}
+
+onSelectOptionChange(event: any) {
+  console.log("OSOC:"+Object.keys(event));
+  console.log (event["source"], event["value"] );
+}
+
 }

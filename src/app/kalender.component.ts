@@ -531,11 +531,11 @@ public generateTable() {
   }
 
 writeNewUser() {        
-    var newPostRef = firebase.database().ref('/emailToRole/michael@jatomix!de')
+    var newPostRef = firebase.database().ref('/emailToRole/malte_kun@web!de')
     .set({
       benutzerAdmin: false,
       buchungsAdmin: false,
-      isActive: false,
+      isActive: true,
       parkId: 0,
       uid: "sechsSiebenAcht"
     });

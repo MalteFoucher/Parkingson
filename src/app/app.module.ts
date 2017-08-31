@@ -3,7 +3,7 @@ import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {NgModule} from '@angular/core';
-// Import HttpClientModule from @angular/common/http
+
 import {HttpClientModule} from '@angular/common/http';
 
 import {AngularFireModule} from 'angularfire2';

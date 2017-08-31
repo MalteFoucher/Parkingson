@@ -74,14 +74,8 @@ export class LoginComponent {
       - und ob bereits Daten für diese Email in der DB stehen
       Erst dann der API Call! Im FirebaseFunctions-Listener wird die uid auf den richtigen Wert gesetzt!
     */
-    console.log('Register:');
-    console.log(this.user_email, this.user_password);
-    if (this.user_email.endsWith('deka.lu')) {
-      this.innerHtmlString = 'Bitte verwenden Sie Ihre DEKA E-Mail.';
-      //return;
-    }
+    
     // Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
-
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
     this.http.get('https://us-central1-parkplatztool.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
 
