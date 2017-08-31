@@ -86,14 +86,11 @@ export class AppComponent implements AfterViewInit {
           return;
         }
         this.userId = user.uid;
-        // this.kalender.setUserId(this.userId);
-        // this.buchungen.setUserId(this.userId);
         this.debugText = 'Eingeloggt als: ' + user.email;
         console.log(this.debugText);
 
         const emailAsKey = user.email.replace(/\./g, '!');
 
-        // Statt email2Role, was völlig schwachsinnig war, einfach once aus der DB lesen!
         firebase.database().ref('/emailToRole/' + emailAsKey + '/').once('value', snapshot => {
           const value = snapshot.val();
 
@@ -132,32 +129,6 @@ export class AppComponent implements AfterViewInit {
         this.cdRef.detectChanges();
       } else {
         // Ausgeloggt...
-        console.log('AAAAAAAAAAAAAAA Login Dialog AAAAAAAAAAAAAAAA');
-        // NOCH: Listener abmelden, KalenderView leeren
-        const dialogRef = this.dialog.open(LoginComponent, {
-          disableClose: true
-        });
-
-        dialogRef.componentInstance.setAuth(this.afAuth);
-        dialogRef.componentInstance.setSelf(dialogRef);
-
-        /*
-        this.dialogRef.afterClosed().subscribe(selection => {
-          console.log("Selection: "+selection);
-          let email= (this.dialogRef.componentInstance.user_email);
-          let pw= (this.dialogRef.componentInstance.user_password);
-          //LoginButton geklickt
-          if (selection) {
-            //this.afAuth.auth.signInWithEmailAndPassword("123@abc.de", "AbcGuy123");
-            this.afAuth.auth.signInWithEmailAndPassword(email, pw).catch(function(error) {
-              console.log("AppComponent Login: "+ error.message);
-            });
-          } else {
-            //RegisterButton geklickt
-
-          }
-        });
-        */
       }
     });
   }
@@ -182,46 +153,6 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
     firebase.database().ref('/config').once('value').then(v => this.store.setConfig(v.val()));
   }
-
-  // public getVermieter(): firebase.Promise<any> {
-  //   console.log('getVermieter()...');
-  //   if (!this.vermieterMap) {
-  //     console.log('Liegt noch nicht vor...');
-  //     const promise = firebase.database().ref('/emailToRole/').orderByChild('parkId').startAt(0).once('value');
-  //
-  //     //Wir geben erstmal ein Promise zum Selber-auswerten zurück aber gleichzeitig
-  //     //brauchen wir ja die vermieterMap sonst wäre ja total dämlich
-  //     promise.then((snapshot) => {
-  //       console.log('Response von Anfrage in AppComponent: ');
-  //       console.log(snapshot.val());
-  //       this.vermieterMap = snapshot.val(); //.json;
-  //       return this.vermieterMap;
-  //     });
-  //
-  //     return promise;
-  //   } else {
-  //     //Das müsste ich ja jetzt eigentlich in ein Promise wrappen ... iwie.
-  //     console.log('Liegt schon vor...');
-  //     return this.vermieterMap;
-  //   }
-  // }
-  //
-  // public getMieter(): any {
-  //   console.log('getMieter()...');
-  //   if (!this.vermieterMap) {
-  //     console.log('Liegt noch nicht vor...');
-  //     firebase.database().ref('/emailToRole/').orderByChild('parkId').startAt(0).once('value')
-  //       .then((snapshot) => {
-  //         console.log('Response von Anfrage: ');
-  //         console.log(snapshot.val());
-  //         this.vermieterMap = snapshot.val(); //.json;
-  //         return this.vermieterMap;
-  //       });
-  //   } else {
-  //     console.log('Liegt schon vor...');
-  //     return this.vermieterMap;
-  //   }
-  // }
 
   setContent(content) {
     this.content = content;

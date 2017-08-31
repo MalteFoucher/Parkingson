@@ -22,14 +22,13 @@
   </md-sidenav>
 
   <div style="height:100vh">
-    <!--
-        <app-login *ngIf="content==='login'"></app-login>
-    -->
-    <app-overview *ngIf="content==='overview'"></app-overview>
-    <kalender-component *ngIf="content==='kalender'" #kalender>Yo!</kalender-component>
-    <buchungen-component *ngIf="content==='buchungen'" #buchungen></buchungen-component>
-    <auswertung-component *ngIf="content==='auswertung'" #auswertung>Yo!</auswertung-component>
-    <app-verwaltung *ngIf="content==='verwaltung  '"></app-verwaltung>
+    <!--User: {{user | json}}-->
+    <app-login *ngIf="user==null"></app-login>
+    <app-overview *ngIf="user!=null && content=='overview'"></app-overview>
+    <kalender-component *ngIf="content=='kalender'" #kalender>Yo!</kalender-component>
+    <buchungen-component *ngIf="content=='buchungen'" #buchungen></buchungen-component>
+    <auswertung-component *ngIf="content=='auswertung'" #auswertung>Yo!</auswertung-component>
+    <app-verwaltung *ngIf="content=='verwaltung  '"></app-verwaltung>
   </div>
 
 
