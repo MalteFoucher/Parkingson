@@ -248,6 +248,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   changeUser() {
     let message;
     if (this.changeMail == null || this.changeMail.length === 0) {
+      this.changeMail = this.changeMail.toLowerCase();
       message = 'Bitte Mailadresse angeben.';
       this.snachBar.open(message, null, {duration: 2000});
     } else {
