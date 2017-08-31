@@ -4,7 +4,7 @@ import {AngularFireAuth} from 'angularfire2/auth';
 import {Observable} from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 
-import {MdButtonModule, MdDialog, MdDialogRef} from '@angular/material';
+import {MdButtonModule, MdDialog, MdDialogRef, MdSidenav} from '@angular/material';
 import {Http} from '@angular/http';
 import {KalenderComponent} from './kalender.component';
 import {LoginComponent} from './login/login.component';
@@ -32,12 +32,9 @@ export class AppComponent implements AfterViewInit {
   userParkId = 0;
   debugText = 'debugText';
 
-  @ViewChild(KalenderComponent)
-  private kalender: KalenderComponent;
-  @ViewChild(BuchungenComponent)
-  private buchungen: BuchungenComponent;
-  @ViewChild(AuswertungComponent)
-  private auswertung: AuswertungComponent;
+
+  @ViewChild(MdSidenav)
+  private sidenav: MdSidenav;
 
   constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http,
               private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
@@ -46,9 +43,7 @@ export class AppComponent implements AfterViewInit {
     this.dialog = dialog;
     firebase.auth().onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
-      // Eingeloggter user
       if (user) {
-        // Als erstes Mal (ob verified Email oder nicht juckt mich nicht) emailToRole besorgen
         firebase.database().ref('/emailToRole/').once('value', snapshot => {
           console.log('e2R abfragen...');
           if (snapshot.val()) {
@@ -56,7 +51,6 @@ export class AppComponent implements AfterViewInit {
           }
         });
         if (!user.emailVerified) {
-          // Email-Adresse noch nicht verifiziert. Warnung und Button um Email zu versenden, anschließend ausloggen
           const dialogRef = this.dialog.open(DialogComponent, {
             disableClose: true,
             data: {
@@ -145,9 +139,9 @@ export class AppComponent implements AfterViewInit {
   logout() {
     this.afAuth.auth.signOut().then(() => this.user = null);
     this.userParkId = -1;
-    this.kalender.userParkId = -1;
+    // this.kalender.userParkId = -1;
     this.userAdmin = false;
-    this.kalender.generateTable();
+    // this.kalender.generateTable();
   }
 
   ngAfterViewInit() {
@@ -156,6 +150,7 @@ export class AppComponent implements AfterViewInit {
 
   setContent(content) {
     this.content = content;
+    this.sidenav.close();
   }
 
 }
