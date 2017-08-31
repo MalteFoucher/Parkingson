@@ -65,4 +65,15 @@ export class Store {
   setConfig(config) {
     this.config = config;
   }
+
+  updateE2R(key: string, data: any) {
+    console.log ("UPDATE E2R:");
+    console.log (data);
+    var dataKeys = Object.keys(data);
+    for (var dk in dataKeys) {
+      //this.emailToRole[key][dataKeys[dk]] = data[dataKeys[data]];
+      console.log ("Setze emailToRole["+key+"]["+dataKeys[dk]+"] = "+data[dataKeys[dk]]);
+    }
+    
+  }
 }
