@@ -9,9 +9,9 @@
   </md-toolbar-row>
 </md-toolbar>
 
-<md-sidenav-container class="example-container" class="wrapper">
+<md-sidenav-container>
 
-  <md-sidenav #sidenav class="example-sidenav">
+  <md-sidenav #sidenav>
     <md-list>
       <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
       <md-list-item (click)="setContent('kalender')">Kalender</md-list-item>
@@ -21,7 +21,7 @@
     </md-list>
   </md-sidenav>
 
-  <div style="height:100vh">
+  <div>
     <app-login *ngIf="user==null"></app-login>
     <app-overview *ngIf="user!=null && content=='overview'"></app-overview>
     <kalender-component *ngIf="user!=null && content=='kalender'" #kalender>Yo!</kalender-component>

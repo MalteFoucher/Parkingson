@@ -1,6 +1,6 @@
 <md-tab-group #tabGroup>
   <md-tab label="Login">
-    <div class="row columns" style="margin:10px">
+    <div class="row columns">
       <p>Email</p>
       <input type="text" [(ngModel)]="user_email">
       <p>Password</p>
@@ -8,18 +8,20 @@
       <div [innerHTML]="innerHtmlString"></div>
     </div>
   </md-tab>
-
   <md-tab label="Register">
-    <p>Email</p>
-    <input type="text" [(ngModel)]="user_email">
-    <p>Password</p>
-    <input type="password" [(ngModel)]="user_password">
+    <div class="row columns">
+      <p>Email</p>
+      <input type="text" [(ngModel)]="user_email">
+      <p>Password</p>
+      <input type="password" [(ngModel)]="user_password">
+    </div>
   </md-tab>
 </md-tab-group>
-<a (click)="onPasswordReset()">Passwort vergessen?</a>
+<div class="row columns">
+  <a (click)="onPasswordReset()">Passwort vergessen?</a>
+</div>
 <div class="centered-content" style="margin-top: 10px">
   <button *ngIf="tabGroup.selectedIndex==0 && !success" md-raised-button (click)="login()">Login</button>
   <button *ngIf="tabGroup.selectedIndex==1 && !success" md-raised-button (click)="register()">Register</button>
-  <!-- Weiß nicht, ob das noch unterschieden werden muss, ob der Login- oder der Register-Button successfull war-->
   <button *ngIf="success" md-raised-button>Ok, cool!</button>
 </div>
