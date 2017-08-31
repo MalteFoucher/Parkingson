@@ -16,14 +16,15 @@ admin.initializeApp(functions.config().firebase);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
 
 //const from = 'ParkplatzTool <malte_kun@web.de>';
-const from = 'ParkplatzTool <malte@parkingtool-6cf77.firebaseapp.com>';
+const from = 'ParkplatzTool <service@parken-eagle.com>';
+//const helo = 'www.parken-eagle.com';
 const smtpConfig = {
+    //host: 'smtp.gmail.com',
     host: 'smtp-relay.gmail.com',
-    //host: 'smtp.web.de',
     port: 587,
     auth: {
-        user: 'malte@parkingtool-6cf77.firebaseapp.com',
-        pass: 'MalteMalte'
+        user: 'service@parken-eagle.com',
+        pass: '_C^M8dnN'
         //user: 'malte_kun@web.de',
         //pass: 'Koksun2014'
     }};
@@ -215,6 +216,7 @@ function sendEmail(mailOptions) {
 //...emails verschicken - debug! Kann später weg!
 
 exports.testEmail = functions.https.onRequest((req, response) => {
+  var to = req.query.to;
     console.log ("TESTEMAIL");
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {

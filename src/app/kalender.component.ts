@@ -42,6 +42,7 @@ export class KalenderComponent {
   userId: string="initKalenderUserId";
   userParkId: number=-1;
   userAdmin: boolean = false;
+  userEmail: string="";
   frist_tage: number=2;
   frist_stunde:number=(9.5*60); //Also in Minuten
   toggleState: any;
@@ -744,9 +745,10 @@ private writeNewbuchung() {
     this.generateTable();
   }
 
-  public setUserRights(pid:number, admin:boolean) {    
+  public setUserRights(pid:number, admin:boolean, email:string) {    
     this.userParkId=pid;
     this.userAdmin=admin;
+    this.userEmail=email;
     this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
     this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
     this.buli_status="Freigaben werden geladen...";
@@ -754,6 +756,6 @@ private writeNewbuchung() {
 
   emailTesten() {
     console.log("EMIALTESTEN");
-    this.emailService.sendEmail().subscribe(data => console.log(data));
+    this.emailService.sendEmail(this.userEmail).subscribe(data => console.log(data));
   }
 }

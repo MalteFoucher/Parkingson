@@ -1,17 +1,18 @@
 <div class="centered-content">
-  <h3>Nutzerverwaltung</h3>
+  <h3>Verwaltung</h3>
 </div>
 
   <div class="row columns">
     <table>
-      <tr><th class="text_col">Email</th><th class="number_col">Parkp.</th><th class="number_col">Aktiv</th><th class="number_col">Buchungsv.</th><th class="number_col">Benutzerv.</th><th class="number_col">Übernehmen</th></tr>
-      <tr *ngFor="let i of userArray">                        
+      <tr><th></th><th class="text_col">Email</th><th class="number_col">Aktiv</th><th class="number_col">Buchungsv.</th><th class="number_col">Benutzerv.</th></tr>
+      <tr *ngFor="let i of userArray; let ind = index">                        
+        <td><md-icon (click)="onDeleteUser(ind)">delete</md-icon></td>
         <td>{{i.email}}</td>
-        <td>{{i.parkId}}</td>
-        <td>{{i.isActive}}</td>
-        <td>{{i.isBuchungsAdmin}}</td>
-        <td>{{i.isUserAdmin}}</td>
-        <td><button >Apply</button></td>
+        <!--td>{{i.parkId}}</td-->        
+        <td><md-checkbox (change)="onIsActiveChange(ind)" [checked]="i.isActive"></md-checkbox></td>
+        <td><md-checkbox (change)="onBuchungChange(ind)" [checked]="i.buchungsAdmin"></md-checkbox></td>        
+        <td><md-checkbox (change)="onBenutzerChange(ind)" [checked]="i.benutzerAdmin"></md-checkbox></td>        
+        <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
       </tr>
     </table>  
   </div>
