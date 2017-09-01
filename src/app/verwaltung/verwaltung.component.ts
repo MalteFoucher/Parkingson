@@ -4,8 +4,11 @@ import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 import { MdDialog } from '@angular/material';
 import { DialogComponent } from '../dialog/dialog.component';
+import { SelectDialogComponent } from '../select-dialog/select-dialog.component';
 //import { EmailService } from '../email.service';
-import {HttpClient} from '@angular/common/http';
+
+import {MdSnackBar} from '@angular/material';
+
 
 @Component({
   selector: 'app-verwaltung',
@@ -15,10 +18,11 @@ import {HttpClient} from '@angular/common/http';
 export class VerwaltungComponent implements OnInit {
 
   userArray=[];
-  availableSpaces=[1, 15, 123, 310];
+  availableSpaces=['Kein Parkplatz',1, 15, 123, 310];
+  vergebeneParkplaetze=[];
   user;
   
-  constructor(private store: Store, private dialog: MdDialog, private http: HttpClient) { }
+  constructor(private store: Store, private dialog: MdDialog, private snackBar: MdSnackBar) { }
 
   ngOnInit() {
     
@@ -39,7 +43,8 @@ export class VerwaltungComponent implements OnInit {
           isActive: entry.isActive, 
           benutzerAdmin: entry.benutzerAdmin, 
           buchungsAdmin: entry.buchungsAdmin,
-          uid: entry.uid});      
+          uid: entry.uid});
+      if (entry.parkId>0) this.vergebeneParkplaetze.push(entry.parkId);
     }
   }
 
@@ -113,20 +118,102 @@ export class VerwaltungComponent implements OnInit {
         });
   }
 
-onParkIdChange(index: number) {
-  console.log ("Park Id "+index+" changed:");
-  console.log (this.userArray[index].parkId);
-  //Muss man hier noch validieren! Ne Nummer von 1- ??? und noch nicht vergeben?
-  //var newNumber = 
-  if (isNaN(this.userArray[index].parkId)) {
-    console.log("Keine Nummer");
+//Ab hier Funktionen für Buchungsverwalter
+
+//kann in der aktuellen minimal-lösung auch weg
+onParkIdClick(index: number) {
+  //Leider n bissel umständlich, weil ich die Werte nicht unmittelbar binden will, sondern
+  //erstmal auf Plausibilität checke, ob keine Werte doppelt vergeben werden.
+  
+  let dialogRef = this.dialog.open(SelectDialogComponent, {
+    data:  {            
+      titel: 'Parkplatz zuweisen',
+      text:'Wählen Sie den Parkplatz aus der Liste:',            
+      availableSpaces: this.availableSpaces,
+      yesButtonText: 'OK',
+      yesButtonVisible: true,
+      noButtonText:'Abbrechen',
+      noButtonVisible: true,
+      callback: this.dialogCallback,
+      scope: this,
+      indexOfUser: index
+      }
+  });
+
+/*
+  var value = parseInt((<HTMLInputElement>document.getElementById(""+index)).value);
+  console.log ("ParkId of #"+index+" changed to "+value);
+
+  if (isNaN( value )) { 
+    this.snackBar.open('Bitte geben Sie eine gültige Parkplatz-Nummer ein.', null, {duration: 2000});
+    return;
   }
 
+  this.snackBar.open('Parkplatz gewechselt zu '+value, null, {duration: 2000});
+  */
 }
 
-onSelectOptionChange(event: any) {
-  console.log("OSOC:"+Object.keys(event));
-  console.log (event["source"], event["value"] );
+dialogCallback(value: any, indexOfUser: number) {
+  console.log ("Callback! Selected Value:"+value+ "   indexOfUser:"+indexOfUser);
+
+  console.log("Index im available Spaces: "+this.availableSpaces.indexOf(value));
+
+  console.log ("Alter Wert des Users: ");
+  console.log(this.userArray[indexOfUser]);//.parkId);
+
+  var alterWert = this.userArray[indexOfUser].parkId;
+  if ( alterWert > 0 ) {
+    //in dem Fall können alter und neuer Wert einfach geswapped werden
+  }
+
+  //hier soll geschehen: der betreffende user kriegt sinene neuen wert
+  //der neue wert verlässt das availbale spaces arra<, dafür kommt
+  //der alte wert (falls vorhanden) dazu.
+  
 }
+//kann weg, wenn ich keine md-selct verwende
+onSelectOptionChange(event: any, user_index: number) {
+  console.log("OSOC: "+event['value'] + "@"+user_index);
+  var value_index = this.availableSpaces.findIndex(event['value']);
+  this.availableSpaces.splice(value_index,1);
+  this.userArray[user_index]=event['value'];
+
+}
+
+onParkIdChange(index:number) {
+  console.log(this.vergebeneParkplaetze);
+  var value = parseInt((<HTMLInputElement>document.getElementById(""+index)).value);
+  console.log ("ParkId of #"+index+" changed to "+value);
+
+  //Dummy Wert 400 für maxParkplatzId
+  if (isNaN( value ) || ( value<0 || value>400)) { 
+    this.snackBar.open('Bitte geben Sie eine gültige Parkplatz-Nummer ein.', null, {duration: 2000});
+    (<HTMLInputElement>document.getElementById(""+index)).value = this.userArray[index].parkId;
+    return;
+  }
+  
+  //Prüfen, ob schon jmd anderes diesen Parkplat hat    
+  if ( this.vergebeneParkplaetze.indexOf(value)>-1 )
+  {    
+    this.snackBar.open('Dieser Parkplatz ist bereits vergeben.', null, {duration: 2000});
+    (<HTMLInputElement>document.getElementById(""+index)).value = this.userArray[index].parkId;
+    return;
+  }
+  
+  var ref = firebase.database().ref('/emailToRole/'+this.userArray[index].email.replace(/\./g,'!'));
+    ref.update( {parkId: value} )
+    .then( result => {
+      this.snackBar.open('Parkplatz gewechselt zu '+value, null, {duration: 2000});
+      if (value>0) this.vergebeneParkplaetze.push(value);
+      this.store.updateE2R( this.userArray[index].email.replace(/\./g,'!'),  {parkId: value});
+      this.userArray[index].parkId=value;
+    })
+    .catch(error => {
+      console.log ("ERROR: "+error);
+    });
+
+  
+}
+
 
 }

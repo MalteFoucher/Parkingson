@@ -15,6 +15,8 @@ import {HttpClientModule} from '@angular/common/http';
 
 import { EmailService } from './email.service';
 
+import {Store} from './store/store.service';
+import {Vermieter} from './auswertung/vermieter';
 
 @Component({
   selector: 'kalender-component',
@@ -27,9 +29,12 @@ export class KalenderComponent {
   @ViewChild('adminModeCB') adminButton: MdCheckbox;
   @ViewChild('nurFreigabenCB') nurFreigaben: MdCheckbox;
   
+  parkplatzrows: any[] = new Array();
+  vermieterArray: Vermieter[] = new Array();
+  parkplatzMap={};
+  
   nurFreigabenAnzeigen: boolean=false;
   
-  buli_status: string = "Bitte einloggen...";
   dialog: MdDialog;
   kw: number = 0;
   year: number = 2017;
@@ -57,14 +62,74 @@ export class KalenderComponent {
 
   //controller: any;
 
-  constructor(dialog: MdDialog, private emailService: EmailService) {
+  constructor(dialog: MdDialog, private store: Store, private emailService: EmailService) {
     this.dialog=dialog;
     this.kw = parseInt(moment().format('WW'));
     this.year = parseInt(moment().format('YYYY'));
+
+    /*this.vermieterArray = this.store.getAlleVermieter();
+    for (var v in this.vermieterArray) {
+      this.parkplatzrows.push( {
+        jan_t: "2/5",
+        feb_t: "3/6",
+        mar_t: "0/2",
+        apr_t: "1/1",
+        mai_t: "1/3",
+        jun_t: "2/5",
+        jul_t: "3/6",
+        aug_t: "0/2",
+        sep_t: "1/1",
+        okt_t: "1/3",
+        nov_t: "2/5",
+        dez_t: "2/2"
+      })
+    }*/
+    //this.nodeRef=
+    
+    firebase.database().ref('/buchungen3/'+this.year+'/').on('value', data => {
+      console.log ("JahresÜbersicht-Listener");
+      var dayKeys = Object.keys( data.val() );
+      //console.log(dayKeys);
+      for (var dk in dayKeys) {
+        var monat = moment().dayOfYear(parseInt(dayKeys[dk])).month();
+        console.log ("Monat: "+monat);
+        //console.log (dayKeys[dk]);
+        var buchungsKeys = Object.keys(data.val()[dayKeys[dk]]);
+        //console.log (buchungsKeys);
+        for (var bk in buchungsKeys) {
+          
+          var buchung = data.val()[dayKeys[dk]][buchungsKeys[bk]];
+          console.log (buchungsKeys[bk]+": "+buchung.mId, buchung.vId, buchung.pId);
+          var gebucht=0;
+          //grad nicht sicher, ob mId beim Freigeben angelegt wird.
+          if (buchung.mId && buchung.mId != "") gebucht=1;
+          
+          if (!(buchung.vId in this.parkplatzMap)) {            
+            
+            this.parkplatzMap[buchung.vId][monat] = { 
+              email: this.store.getEmailToUid(buchung.vId),
+              pId: buchung.pId, //oder auch vom Store beziehen? Nö..
+              freigaben: 1,
+              davon_gebucht: gebucht
+            };
+          } else {
+            this.parkplatzMap[buchung.vId][monat].freigaben++;
+            this.parkplatzMap[buchung.vId][monat].davon_gebucht=+gebucht;
+          }
+        }
+      }
+      console.log (" ___ ");
+      console.log (this.parkplatzMap);
+      for (var pmKeys in this.parkplatzMap) {
+        console.log (this.parkplatzMap[pmKeys]); //die User
+      }
+    });
     
 
 //    this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
 //    this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
+
+  
   }
 
   setUserId(uid: string):void {
@@ -83,7 +148,7 @@ export class KalenderComponent {
     this.nodeRef.orderByChild('parkId').off('value', this.buchungListener);
     this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
     this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
-    this.buli_status="Freigaben werden geladen...";
+  
   }
 
   private getVonBisString(): string {
@@ -232,7 +297,6 @@ public generateTable() {
       console.log ("tablerow "+i+": "+this.tablerow);
       
     }
-    this.buli_status= ""+alle_freigaben+" Freigaben, davon "+(alle_freigaben - davon_gebucht)+" verfügbar.";
     // Letzte Reihe mit FreigabeButtons erzeugen und der Buchungen-HashMap zufügen.
     // Class ist wichtig für CSS-Darstellung, die id(zb.'montag') für das wiederfinden in der Map.    
     if (this.userParkId>0 && !this.adminButton.checked) {
@@ -750,12 +814,87 @@ private writeNewbuchung() {
     this.userAdmin=admin;
     this.userEmail=email;
     this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
-    this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
-    this.buli_status="Freigaben werden geladen...";
+    this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);    
   }
 
   emailTesten() {
     console.log("EMIALTESTEN");
     this.emailService.sendEmail(this.userEmail).subscribe(data => console.log(data));
   }
+
+//CSV
+
+getAsText(files: any[]) {
+  console.log ("fuck you ");
+  console.log(files);
+  var fileToRead= new Blob(files[0]);// <Blob> files[0];
+      var reader = new FileReader();
+
+      // Read file into memory as UTF-8      
+      reader.readAsText(fileToRead);
+      // Handle errors load
+      reader.onload = this.loadHandler;
+      reader.onerror = this.errorHandler
+      ;}
+
+    loadHandler(event) {
+      var csv = event.target.result;
+      this.processData(csv);
+    }
+
+     processData(csv) {
+        var allTextLines = csv.split(/\r\n|\n/);
+        var lines = [];
+        for (var i=0; i<allTextLines.length; i++) {
+            var data = allTextLines[i].split(';');
+                var tarr = [];
+                for (var j=0; j<data.length; j++) {
+                    tarr.push(data[j]);
+                }
+                lines.push(tarr);
+        }
+      console.log(lines);
+    }
+
+    errorHandler(evt) {
+      if(evt.target.error.name == "NotReadableError") {
+          alert("Canno't read file !");
+      }
+    }
+
+handleFileSelect(evt) {
+  var files = evt.target.files;
+  console.log ("HFS");
+  console.log (files[0], typeof(files[0]));
+
+  
+  var reader = new FileReader();
+  reader.readAsText(files[0]);
+  reader.onload = function(event) {    
+    var tokens = event.target['result'].split(";");
+    console.log (tokens.length);
+
+  var lines = event.target['result'].split(/\n/);
+
+  for (var l in lines){
+    var tokens = lines[l].split(";");
+    console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
+    var parkId=parseInt(tokens[5]);
+    if (isNaN(parkId)) parkId=0;    
+    console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
+    
+    firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
+      .set({
+        benutzerAdmin: false,
+        buchungsAdmin: false,
+        parkId: parkId,
+        isActive: false,
+        uid: 'not set yet'
+    });
+    
+  }
+  console.log (lines.length +" Einträge fertig.");
+
+  }   
+}
 }

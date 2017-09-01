@@ -1,12 +1,12 @@
+<button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
+<p>Initialbefüllung</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
 
-<button (click)="emailTesten()"> Test-Email an {{userEmail}} </button>
 <div class="centered-content" style="margin-top: 10px; color: var(--myYellow)">
   <md-checkbox #nurFreigabenCB (change)="onNurFreigabenChange()" style="margin-right: 5px">Nur verfügbare anzeigen</md-checkbox>
   <button (click)="wocheUmblaettern(-7)"><i class="fa fa-toggle-left fa-2x" style="color: #3f51b5"></i></button>
   <h3 [innerHTML]="woche_von_bis" style="margin: 5px; color: darkgrey">Kalender-Woche</h3>
   <button (click)="wocheUmblaettern(7)"><i class="fa fa-toggle-right fa-2x"  style="color: #3f51b5"></i></button>
-  <md-checkbox #adminModeCB *ngIf='(userAdmin)' style="margin-left: 5px" (change)="onAdminButtonChange()">Admin-Modus</md-checkbox>
-  
+  <md-checkbox #adminModeCB *ngIf='(userAdmin)' style="margin-left: 5px" (change)="onAdminButtonChange()">Admin-Modus</md-checkbox>  
 </div>
 
 <!--div class= "centered-content" [innerHTML]="woche_von_bis">debugText</div>
@@ -14,29 +14,14 @@
 
 <div class="row columns">
   <table>
-    <tr><th>Mon</th><th>Die</th><th>Mit</th><th>Don</th><th>Frei</th></tr>
-    <tr *ngFor="let row of tablerows">
-      <td class={{row.montagClass}} (click)=onItemClickListener($event) id={{row.montagId}}>
-        {{row.montag.parkId}}
-      </td>
-      <td class={{row.dienstagClass}} (click)=onItemClickListener($event) id={{row.dienstagId}}>
-        {{row.dienstag.parkId}}
-      </td>
-      <td class={{row.mittwochClass}} (click)=onItemClickListener($event) id={{row.mittwochId}}>
-        {{row.mittwoch.parkId}}
-      </td>
-      <td class={{row.donnerstagClass}} (click)=onItemClickListener($event) id={{row.donnerstagId}}>
-        {{row.donnerstag.parkId}}
-      </td>
-      <td class={{row.freitagClass}} (click)=onItemClickListener($event) id={{row.freitagId}}>
-        {{row.freitag.parkId}}
-      </td>
+    <tr><th>PId</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Okt</th><th>Nov</th><th>Dez</th></tr>
+    <tr *ngFor="let p of parkplatzrows">
+      <td>{{p.id}}</td><td>{{p.jan_t}}</td><td>{{p.feb_t}}</td><td>{{p.mar_t}}</td><td>{{p.apr_t}}</td>
+      <td>{{p.mai_t}}</td><td>{{p.jun_t}}</td><td>{{p.jul_t}}</td><td>{{p.aug_t}}</td><td>{{p.sep_t}}</td>
+      <td>{{p.okt_t}}</td><td>{{p.nov_t}}</td><td>{{p.dez_t}}</td>
     </tr>
   </table>
 </div>
-<div class="centered-content">
-  <!--p *ngIf="tablerows.length==0">Keine verfügbaren Plätze in dieser Woche</p-->
-  <p>{{buli_status}}</p>  
-</div>
+
 <button md-raised-button (click)="writeNewBuchung()" id="neueFreigabeButton">writeNewBuchung()</button>
 <button md-raised-button (click)="writeNewUser()" >writeNewUser()</button>
