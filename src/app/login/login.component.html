@@ -21,7 +21,6 @@
   <a (click)="onPasswordReset()">Passwort vergessen?</a>
 </div>
 <div class="centered-content" style="margin-top: 10px">
-  <button *ngIf="tabGroup.selectedIndex==0 && !success" md-raised-button (click)="login()">Login</button>
-  <button *ngIf="tabGroup.selectedIndex==1 && !success" md-raised-button (click)="register()">Register</button>
-  <button *ngIf="success" md-raised-button>Ok, cool!</button>
+  <button *ngIf="tabGroup.selectedIndex==0" md-raised-button (click)="login()">Login</button>
+  <button *ngIf="tabGroup.selectedIndex==1" md-raised-button (click)="register()">Register</button>
 </div>

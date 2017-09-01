@@ -14,30 +14,16 @@ import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.c
 })
 export class LoginComponent {
   innerHtmlString = '';
-  success = false;
   user_email = '';
   user_password = '';
-  auth: AngularFireAuth;
-  self: MdDialogRef<LoginComponent>;
 
-  constructor(private http: HttpClient, private dialog: MdDialog) {
-  }
-
-  setAuth(auth: AngularFireAuth) {
-    this.auth = auth;
-  }
-
-  setSelf(self: MdDialogRef<LoginComponent>) {
-    //Verweis auf sich selbst, damit er auf sich selbst .close aufrufen kann...!?
-    this.self = self;
+  constructor(private auth: AngularFireAuth, private http: HttpClient, private dialog: MdDialog) {
   }
 
   login() {
     this.auth.auth.signInWithEmailAndPassword(this.user_email, this.user_password)
       .then((promise: any) => {
         this.innerHtmlString = 'Erfolgreich angemeldet.';
-        this.success = true;
-        this.self.close();
       })
       .catch((error: any) => {
         console.log('LoginComponent Error ' + error.message);
@@ -74,12 +60,7 @@ export class LoginComponent {
             console.log('then data: ' + data);
             console.log(Object.keys(data));
             console.log(data.uid);
-            this.success = true;
             this.innerHtmlString = 'Sie haben sich erfolgreich registriert!';
-            //Im AuthState-Listener wird jetzt das Active-Flag abgefragen
-            this.self.close();
-
-
           })
           .catch(error => {
             console.log('error : ' + error);

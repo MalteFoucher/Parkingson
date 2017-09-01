@@ -34,6 +34,7 @@ import {Store} from './store/store.service';
 import {ChooseSpotComponent} from './choose-spot/choose-spot.component';
 import {VerwaltungComponent} from './verwaltung/verwaltung.component';
 import {EmailService} from './email.service';
+import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 
 
 export const firebaseConfig = {
@@ -58,8 +59,10 @@ export const firebaseConfig = {
     TextInputDialogComponent,
     OverviewComponent,
     ChooseSpotComponent,
-    VerwaltungComponent
+    VerwaltungComponent,
+    ConfirmDialogComponent,
   ],
+  entryComponents: [DialogComponent, ConfirmDialogComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -86,7 +89,7 @@ export const firebaseConfig = {
   ],
   providers: [AppComponent, Store, EmailService],
   //Warum muss ich meine ganzen selbsgebauten Komponenten eigetlich bootstrappen?
-  bootstrap: [AppComponent, DialogComponent, AdminDialogComponent, LoginComponent, BuchungenComponent, TextInputDialogComponent]
+  bootstrap: [AppComponent, LoginComponent]
 })
 
 export class AppModule {
