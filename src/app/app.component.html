@@ -24,7 +24,7 @@
     </md-list>
   </md-sidenav>
 
-  <div>
+  <div style="min-height: 400px;">
     <app-login *ngIf="user==null"></app-login>
     <app-overview *ngIf="user!=null && content=='overview'"></app-overview>
     <kalender-component *ngIf="user!=null && content=='kalender'" #kalender>Yo!</kalender-component>
