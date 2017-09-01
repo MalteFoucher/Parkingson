@@ -226,30 +226,31 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   const ppText = "Parkplatz " + pId +  " am " + date.format("DD.MM.YYYY");
 
   if(!prev.exists()) {
-    buchung(ppText + " freigegeben.");
+    buchung(ppText + " freigegeben.", dataVal.mId);
   }
   else if (!data.exists()) {
     const mId = prevVal.mId;
     console.log("mId: " + mId);
+    console.log("prevVal.vId: " + prevVal.vId);
     if(mId!=null) {
-      buchung('Buchung von ' + ppText + ' vom Vermieter storniert.');
+      buchung('Buchung von ' + ppText + ' vom Vermieter storniert.', prevVal.vId, mId);
     } else {
-      buchung('Freigabe von ' + ppText + ' aufgehoben.');
+      buchung('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId);
     }
   }else {
     const mId = dataVal.mId;
     buchung("mId: " + mId);
     if(mId!=null) {
       getUser(mId);
-      buchung(ppText + ' gebucht.')
+      buchung(ppText + ' gebucht.', dataVal.vId, mId);
     } else {
-      buchung('Buchung von ' + ppText + ' vom Mieter storniert.');
+      buchung('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vIds);
     }
   }
 });
 
-const buchung = (text) => {
-  console.log('moment: ' + moment());
+const buchung = (text, ...uids ) => {
+  console.log("uids: " + JSON.stringify(uids));
   console.log(text);
 }
 
