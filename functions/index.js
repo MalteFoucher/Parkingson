@@ -11,7 +11,7 @@ const cors = require('cors')({origin:true});
 const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
- 
+
 //const gmailEmail = 'maltewolfcastle';//encodeURIComponent(functions.config().g);
 //const gmailPassword = 'AllesWirdGut2017';//encodeURIComponent(functions.config().gmail.password);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
@@ -32,14 +32,14 @@ const smtpConfig = {
 
 const transporter = nodemailer.createTransport(smtpConfig);
 
-/*Funktion, die einen User löscht. 
-exports.deleteUser = functions.https.onRequest((req, response) => {    
+/*Funktion, die einen User löscht.
+exports.deleteUser = functions.https.onRequest((req, response) => {
 
     //Wenn ich die uid habe, könnte ich darüber auch die Email und darüber auch
     //an die EmailAsKey kommen...
     //var emailAsKey = req.query.e2rKey;
     var uid=req.query.uid;
-    
+
     console.log ("DeleteUser:"+emailAsKey+" / "+uid);
     response.writeHead(200, {'Content-Type': 'text/plain'});
 
@@ -55,18 +55,18 @@ exports.deleteUser = functions.https.onRequest((req, response) => {
         })
         .catch (function (error) {
           console.log ("Fehler beim Löschen aus DB."+error);
-        });        
+        });
     })
     .catch (function (error) {
         console.log("Fehler beim aus Auth löschen!"+error);
     });
-    
-    
+
+
 })
 */
 exports.onRemoveUser = functions.database.ref('/emailToRole/{emailKey}')
-    .onDelete(event => {        
-        var removedEntry= event.data.previous.val();        
+    .onDelete(event => {
+        var removedEntry= event.data.previous.val();
         admin.auth().deleteUser(removedEntry.uid);
         console.log ("User "+removedEntry.uid+" wurde gelöscht!");
     });
@@ -78,7 +78,7 @@ exports.welcomeUser = functions.auth.user().onCreate(event => {
     const user = event.data;
     const email = user.email;
     const emailAsKey = email.replace(/\./g, '!');
-    
+
     var db = admin.database();
     var ref = db.ref('/emailToRole/' + emailAsKey);
     //Die eben generierte UserId im DB-Eintrag ergänzen
@@ -201,7 +201,39 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
             .catch(function (error) {
                 //console.log("Error, weil "+error);
                 res.end("failure:"+error);
-            })  
+            })
   });
 })
+
+exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWrite(event => {
+  // const eventSnapshot = event.data;
+  console.log("event: " + JSON.stringify(event));
+  const data = event.data;
+  console.log("data: " + JSON.stringify(data));
+
+  const prev = data.previous;
+  console.log("prev: " + JSON.stringify(prev));
+
+  if(!prev.exists()) {
+    console.log("Parkplatz freigeben.");
+  }
+  else if (!data.exists()) {
+    const mId = prev.val().mId;
+    console.log("mId: " + mId);
+    if(mId!=null) {
+      console.log('Buchung vom Vermieter storniert.');
+    } else {
+      console.log('Freigabe aufgehoben.');
+    }
+  }else {
+    const mId = data.val().mId;
+    console.log("mId: " + mId);
+    if(mId!=null) {
+      console.log('Parkplatz gebucht.')
+    } else {
+      console.log('Buchung vom Mieter storniert.');
+    }
+  }
+});
+
 
