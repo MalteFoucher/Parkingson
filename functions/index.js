@@ -2,6 +2,7 @@
 'use strict';
 const functions = require('firebase-functions');
 const nodemailer = require('nodemailer');
+const moment = require('moment');
 
 //cors ist für Cross Origin Header
 const cors = require('cors')({origin:true});
@@ -217,11 +218,15 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   const dataVal = data.val();
   const prevVal = prev.val();
 
+  const date = moment();
+  date.year(event.params.year);
+  date.dayOfYear(event.params.day);
+
   const pId = dataVal ? dataVal.pId : prevVal.pId;
-  const ppText = "Parkplatz " + pId;
+  const ppText = "Parkplatz " + pId +  " am " + date.format("DD.MM.YYYY");
 
   if(!prev.exists()) {
-    console.log(ppText + " freigeben.");
+    buchung(ppText + " freigegeben.");
   }
   else if (!data.exists()) {
     const mId = prevVal.mId;
@@ -244,6 +249,7 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
 });
 
 const buchung = (text) => {
+  console.log('moment: ' + moment());
   console.log(text);
 }
 
