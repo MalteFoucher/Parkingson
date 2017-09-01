@@ -1,6 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
-import {MdDialogModule} from '@angular/material';
 
 @Component({
   selector: 'app-dialog', //wird eh nie fix im HTML stehen, schmeißt deshalb auch nen Error.
@@ -29,7 +28,7 @@ export class DialogComponent implements OnInit {
 
     if (data.buchung) this.vermieter = data.buchung.vermieter;
     this.userPid = data.userPid;
-    
+
    }
 
   ngOnInit() {

@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as moment from 'moment';
 import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
-import {MdSnackBar} from '@angular/material';
+import {MdDialog, MdSnackBar} from '@angular/material';
 
 enum ParkState {
   GREEN, RED, YELLOW, GRAY
@@ -32,7 +32,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.query.off();
   }
 
-  constructor(public store: Store, private snachBar: MdSnackBar) {
+  constructor(public store: Store, private snachBar: MdSnackBar, private dialog: MdDialog) {
     this.JSON = JSON;
   }
 
@@ -205,6 +205,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       // Test mit enum - wie?
       if (day.state === 0) {
         console.log('green');
+        // this.dialog.open('')
         dayRef.child(day.key).child('mId').remove();
       } else if (day.state === 1) {
         console.log('red');

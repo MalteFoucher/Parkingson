@@ -11,22 +11,16 @@ import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.c
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
-  //providers: [AppComponent]
 })
 export class LoginComponent {
-  // innerHtmlString = '[Leer], [Leer] zum Anmelden mit Adminrechten.';
   innerHtmlString = '';
   success = false;
   user_email = '';
   user_password = '';
-  parentApp: AppComponent;
   auth: AngularFireAuth;
   self: MdDialogRef<LoginComponent>;
-  dialog: MdDialog;
 
-  constructor(private afAuth: AngularFireAuth, private http: HttpClient, dialog: MdDialog) {
-    this.auth = afAuth;
-    this.dialog = dialog;
+  constructor(private http: HttpClient, private dialog: MdDialog) {
   }
 
   setAuth(auth: AngularFireAuth) {
@@ -38,23 +32,7 @@ export class LoginComponent {
     this.self = self;
   }
 
-  /*@Output()
-  loginClicked:EventEmitter<string> = new EventEmitter();
-  @Output()
-  registerClicked:EventEmitter<string> = new EventEmitter();
-
-  triggerLoginEvent() {
-    this.loginClicked.emit('unnötig');
-  }
-  */
   login() {
-
-    //Natürlich nur vorläufig!
-    // if (this.user_email === '' && this.user_password === '') {
-    //   this.user_email = 'malte_kun@web.de';
-    //   this.user_password = 'qweasd';
-    // }
-
     this.auth.auth.signInWithEmailAndPassword(this.user_email, this.user_password)
       .then((promise: any) => {
         this.innerHtmlString = 'Erfolgreich angemeldet.';
@@ -74,7 +52,7 @@ export class LoginComponent {
       - und ob bereits Daten für diese Email in der DB stehen
       Erst dann der API Call! Im FirebaseFunctions-Listener wird die uid auf den richtigen Wert gesetzt!
     */
-    
+
     // Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
     this.http.get('https://us-central1-parkplatztool.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
