@@ -62,7 +62,8 @@ export const firebaseConfig = {
     VerwaltungComponent,
     ConfirmDialogComponent,
   ],
-  entryComponents: [DialogComponent, ConfirmDialogComponent],
+  entryComponents: [DialogComponent, ConfirmDialogComponent, AdminDialogComponent,
+    LoginComponent, BuchungenComponent, TextInputDialogComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -88,8 +89,7 @@ export const firebaseConfig = {
     AngularFireAuthModule
   ],
   providers: [AppComponent, Store, EmailService],
-  //Warum muss ich meine ganzen selbsgebauten Komponenten eigetlich bootstrappen?
-  bootstrap: [AppComponent, LoginComponent]
+  bootstrap: [AppComponent]
 })
 
 export class AppModule {
