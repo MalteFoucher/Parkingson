@@ -32,10 +32,11 @@ export class AppComponent implements AfterViewInit {
   userBuchungsAdmin: boolean;
   userParkId = 0;
   debugText = 'debugText';
-
+  contentHeight: '400px';
 
   @ViewChild(MdSidenav)
   private sidenav: MdSidenav;
+
 
   constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http,
               private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {

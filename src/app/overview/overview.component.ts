@@ -90,7 +90,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 });
                 if (this.store.vermieter) {
                   const vValues = dayValues.filter(v => v.vId === this.store.oververviewUser.uid);
-                  console.log('vValues: ' + JSON.stringify(vValues));
                   if (vValues.length > 0) {
                     const vValue = vValues[0];
                     entry.key = vValue.key;
@@ -99,7 +98,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
                 } else {
                   if (dayValues.length > 0) {
                     const mValues = dayValues.filter(v => v.mId === this.store.oververviewUser.uid);
-                    console.log('mValues: ' + JSON.stringify(mValues));
                     if (mValues.length > 0) {
                       const mValue = mValues[0];
                       entry.key = mValue.key;
@@ -108,7 +106,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
                       state = ParkState.GREEN;
                     } else {
                       const freeValues = dayValues.filter(v => v.mId == null);
-                      console.log('freeValues: ' + JSON.stringify(freeValues));
                       if (freeValues.length > 0) {
                         state = ParkState.YELLOW;
                         entry.free = freeValues.length;
@@ -150,9 +147,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
       const weekDay = firstDayInWeek.day(i);
       ret.push({year: weekDay.year(), dayOfYear: weekDay.dayOfYear()});
     }
-
-    console.log('week: ' + JSON.stringify(ret));
-
     return ret;
   }
 
@@ -174,7 +168,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
     const now = moment();
     if (now.isAfter(border)) {
-      console.log('gesperrt');
       this.snachBar.open('Die Bearbeitung ist für diesen Tag gesperrt', null, {duration: 2000});
       return;
     }
@@ -182,36 +175,30 @@ export class OverviewComponent implements OnInit, OnDestroy {
     const dayRef = this.ref.child(day.year).child(day.dayOfYear);
 
     if (this.store.vermieter) {
-      console.log('vermieter');
       // Test mit enum - wie?
       if (day.state === 0) {
-        console.log('green');
         dayRef.push({vId: this.store.oververviewUser.uid, pId: this.store.oververviewUser.parkId});
       } else if (day.state === 1) {
-        console.log('red');
-
         border.subtract(2, 'days');
         if (now.isAfter(border)) {
           this.mietDay = day;
         } else {
-          dayRef.child(day.key).remove();
+          if (confirm('Reservierung wirklich stornieren?')) {
+            dayRef.child(day.key).remove();
+          }
         }
       } else if (day.state === 2) {
-        console.log('yellow');
         dayRef.child(day.key).remove();
       }
     } else {
-      console.log('mieter');
       // Test mit enum - wie?
       if (day.state === 0) {
-        console.log('green');
-        // this.dialog.open('')
-        dayRef.child(day.key).child('mId').remove();
+        if (confirm('Reservierung wirklich stornieren?')) {
+          dayRef.child(day.key).child('mId').remove();
+        }
       } else if (day.state === 1) {
-        console.log('red');
         this.mietDay = day;
       } else if (day.state === 2) {
-        console.log('yellow');
         this.mietDay = day;
       }
     }

@@ -62,8 +62,7 @@ export const firebaseConfig = {
     VerwaltungComponent,
     ConfirmDialogComponent,
   ],
-  entryComponents: [DialogComponent, ConfirmDialogComponent, AdminDialogComponent,
-    LoginComponent, BuchungenComponent, TextInputDialogComponent],
+  entryComponents: [DialogComponent, ConfirmDialogComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -89,7 +88,7 @@ export const firebaseConfig = {
     AngularFireAuthModule
   ],
   providers: [AppComponent, Store, EmailService],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent, AdminDialogComponent, LoginComponent, BuchungenComponent, TextInputDialogComponent]
 })
 
 export class AppModule {

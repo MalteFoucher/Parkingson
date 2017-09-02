@@ -1,10 +1,12 @@
 <div class="row columns">
-  <button md-button (click)="close()" color="primary">Abbrechen</button>
+  <button md-fab class="close-button-pos" (click)="close()" color="primary">
+    <md-icon>close</md-icon>
+  </button>
 </div>
 
-<div class="centered-content" style="margin-top: 10px; color: var(--myYellow)">
+<div class="header">
   <h3 style="margin: 5px; color: #3f51b5">
-    {{chunks!=null?'Freie':'Keine freien'}} Parkpläte am {{datum}}
+    {{chunks!=null?'Freie':'Keine freien'}} Parkplätze am {{datum}}
   </h3></div>
 
 <div class="row columns">

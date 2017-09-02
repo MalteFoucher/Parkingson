@@ -24,6 +24,7 @@
     </md-list>
   </md-sidenav>
 
+  <!--<div [ngStyle]="{'min-height':contentHeight}">-->
   <div style="min-height: 400px;">
     <app-login *ngIf="user==null"></app-login>
     <app-overview *ngIf="user!=null && content=='overview'"></app-overview>
