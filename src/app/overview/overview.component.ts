@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
-import {ParkConst} from "../util/const";
+import {ParkConst} from '../util/const';
 
 enum ParkState {
   GREEN, RED, YELLOW, GRAY
@@ -88,14 +88,18 @@ export class OverviewComponent implements OnInit, OnDestroy {
                   ret.key = k;
                   return ret;
                 });
-                if (this.store.vermieter) {
+                let vermieter = this.store.vermieter;
+                if (vermieter) {
                   const vValues = dayValues.filter(v => v.vId === this.store.oververviewUser.uid);
                   if (vValues.length > 0) {
                     const vValue = vValues[0];
                     entry.key = vValue.key;
                     state = vValue.mId == null ? ParkState.YELLOW : ParkState.RED;
+                    entry.state = state;
+                    vermieter = this.vermieterIsMieter(entry);
                   }
-                } else {
+                }
+                if (!vermieter) {
                   if (dayValues.length > 0) {
                     const mValues = dayValues.filter(v => v.mId === this.store.oververviewUser.uid);
                     if (mValues.length > 0) {
@@ -154,6 +158,12 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.calcValues();
   }
 
+  vermieterIsMieter(day): boolean {
+    const border = this.getDayBorder(day);
+    const now = moment();
+    return day.state === 2 && now.isBefore(border) && now.isAfter(border.subtract(2, 'days'));
+  }
+
   dayClick(day) {
     const border = this.getDayBorder(day);
 
@@ -165,13 +175,15 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
     const dayRef = this.ref.child(day.year).child(day.dayOfYear);
 
-    if (this.store.vermieter) {
+    let vermieter = this.store.vermieter;
+    if (vermieter) {
       // Test mit enum - wie?
       if (day.state === 0) {
         dayRef.push({vId: this.store.oververviewUser.uid, pId: this.store.oververviewUser.parkId});
       } else if (day.state === 1) {
         border.subtract(2, 'days');
         if (now.isAfter(border)) {
+          vermieter = false;
           this.mietDay = day;
         } else {
           if (confirm('Reservierung wirklich stornieren?')) {
@@ -181,7 +193,8 @@ export class OverviewComponent implements OnInit, OnDestroy {
       } else if (day.state === 2) {
         dayRef.child(day.key).remove();
       }
-    } else {
+    }
+    if (!vermieter)  {
       // Test mit enum - wie?
       if (day.state === 0) {
         if (confirm('Reservierung wirklich stornieren?')) {
@@ -195,7 +208,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private getDayBorder(day) {
+  getDayBorder(day) {
     const sperrzeit = this.store.config['sperrzeit'];
 
     const border = moment();
