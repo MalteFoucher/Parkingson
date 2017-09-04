@@ -33,11 +33,29 @@ export class LoginComponent {
 
   register() {
     /*Bevor der Prozess angestoßen wird, gucken ob
-      - die Email deka.lu enthält
       - das PW den DEKA Richtlinien entspricht
       - und ob bereits Daten für diese Email in der DB stehen
       Erst dann der API Call! Im FirebaseFunctions-Listener wird die uid auf den richtigen Wert gesetzt!
     */
+      this.innerHtmlString="";
+      //Überprüft das Passwort auf DEKA-Konformität
+      const kleinBS = /[a-z]/;
+      const grossBS = /[A-Z]/;
+      const ziffern = /[0-9]/;
+      const sonderz = /\W/;
+
+      var zeichenTypenUsed=0;
+      
+      if (kleinBS.test(this.user_password)) zeichenTypenUsed++;
+      if (grossBS.test(this.user_password)) zeichenTypenUsed++;
+      if (ziffern.test(this.user_password)) zeichenTypenUsed++;
+      if (sonderz.test(this.user_password)) zeichenTypenUsed++;
+
+      if (! (this.user_password.length>=10 && zeichenTypenUsed>=3) ) {
+        this.innerHtmlString = 'Das eingegebene Passwort entspricht nicht den DEKA-Richtlinien! Verwenden Sie min. 10 Zeichen, darin<br>Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.';
+        return;
+      }
+      
 
     // Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...

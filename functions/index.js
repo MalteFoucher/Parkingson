@@ -165,23 +165,28 @@ exports.email = functions.https.onRequest((req, response) => {
 
 
 exports.b3getJahre = functions.https.onRequest((req, res) => {
-    res.writeHead(200, {'Content-Type': 'application/json'});
+  cors (req, res, () => {  
     admin.database().ref('/buchungen3/').once('value')
-        .then (function (snapshot) {
+        .then (snapshot => {
+            res.writeHead(200, {'Content-Type': 'text/plain'});        
             var keys = Object.keys(snapshot.val());
-            var response={};
+            var response="";
             for (var k in keys) {
-                response[k]=keys[k];
+                response+=keys[k]+";";
+                console.log (keys[k] + "; hinzugefügt!")
             }
-            console.log ("Response von b3getJahre: ");
-            console.log (response);
+            console.log ("Response von b3gJ: "+response);
             res.end(response);
         })
         .catch(function (error) {
             console.log(error);
-            res.end({failure:error});
+            res.end("error");
         })
+  })
 })
+
+
+
 
 exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
   cors (req, res, () => {
