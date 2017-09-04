@@ -26,6 +26,14 @@ export class Store {
     return !this.vermieter;
   }
 
+  get benutzerAdmin(): boolean {
+    return this.eUser.benutzerAdmin;
+  }
+
+  get buchungsAdmin(): boolean {
+    return this.eUser.buchungsAdmin;
+  }
+
   setEmailToRole(snapshot: any) {
     this.emailToRole = snapshot;
   }
@@ -67,17 +75,17 @@ export class Store {
   }
 
   updateE2R(key: string, data: any) {
-    console.log ("UPDATE E2R:");
-    console.log (data);
+    console.log("UPDATE E2R:");
+    console.log(data);
     var dataKeys = Object.keys(data);
     for (var dk in dataKeys) {
       //this.emailToRole[key][dataKeys[dk]] = data[dataKeys[data]];
-      console.log ("Setze emailToRole["+key+"]["+dataKeys[dk]+"] = "+data[dataKeys[dk]]);
-    }    
+      console.log("Setze emailToRole[" + key + "][" + dataKeys[dk] + "] = " + data[dataKeys[dk]]);
+    }
   }
 
   deleteFromE2R(key: string) {
-    console.log ("DELETE FROM E2R:");
-    this.emailToRole[key]={};
+    console.log("DELETE FROM E2R:");
+    this.emailToRole[key] = {};
   }
 }
