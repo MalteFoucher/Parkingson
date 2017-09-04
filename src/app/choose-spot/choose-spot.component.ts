@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import {Store} from '../store/store.service';
+import {ParkConst} from "../util/const";
 
 @Component({
   selector: 'app-choose-spot',
@@ -33,7 +34,7 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.datum = moment().year(this.day.year).dayOfYear(this.day.dayOfYear).format('DD.MM.YYYY');
 
-    this.ref = firebase.database().ref('/buchungen3').child(String(this.day.year)).child(String(this.day.dayOfYear));
+    this.ref = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD).child(String(this.day.year)).child(String(this.day.dayOfYear));
     this.query = this.ref.orderByChild('mId').equalTo(null);
     this.query.on('value', snapshot => {
       const value = snapshot.val();

@@ -3,6 +3,7 @@ import * as moment from 'moment';
 import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
+import {ParkConst} from "../util/const";
 
 enum ParkState {
   GREEN, RED, YELLOW, GRAY
@@ -62,7 +63,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
       firstDayValue = 1;
     }
 
-    this.ref = firebase.database().ref('/buchungen3');
+    this.ref = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD);
     this.query = this.ref.child(this.year).orderByKey().startAt(String(firstDayValue)).endAt(String(lastDayValue));
     this.query.on('value', (snapshot) => {
         const value = snapshot.val();
@@ -266,7 +267,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
         const border = this.getDayBorder(entry);
         if (now.isBefore(border)) {
           if (entry.free > 0) {
-            const ref = firebase.database().ref('/buchungen3').child(entry.year).child(entry.dayOfYear);
+            const ref = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD).child(entry.year).child(entry.dayOfYear);
             ref.orderByChild('mId')
               .limitToFirst(1).once('value').then(snapshot => {
               const value = snapshot.val();

@@ -17,6 +17,7 @@ import { EmailService } from './email.service';
 
 import {Store} from './store/store.service';
 import {Vermieter} from './auswertung/vermieter';
+import {ParkConst} from "./util/const";
 
 @Component({
   selector: 'kalender-component',
@@ -26,8 +27,8 @@ import {Vermieter} from './auswertung/vermieter';
 
 export class KalenderComponent {
 
-      testPassword:string="";  
-  
+      testPassword:string="";
+
   //Für das Jahres-Dropdown
   yearValues: number[] = new Array();
   myYear: number;
@@ -35,9 +36,9 @@ export class KalenderComponent {
   parkplatzrows: any[] = new Array();
   vermieterArray: Vermieter[] = new Array();
   parkplatzMap={};
-  
+
   nurFreigabenAnzeigen: boolean=false;
-  
+
   dialog: MdDialog;
   kw: number = 0;
   moment_today = moment();
@@ -65,20 +66,20 @@ export class KalenderComponent {
 
   constructor(dialog: MdDialog, private store: Store, private emailService: EmailService, private http: HttpClient) {
     this.dialog=dialog;
-    
+
 
     // Firebase Function aufrufen, die alle Jahre zurückliefert, zu denen Buchungen vorliegen
     this.http.get ( "https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
-    .subscribe(data => {    
+    .subscribe(data => {
       var tokens = data.toString().split(";");
       for (var t=0; t<tokens.length-1;t++) {
         this.yearValues.push ( parseInt(tokens[t]) );
       }
-  
+
     }, err => {
       this.yearValues.push ( moment().year() );
     });
-  
+
   }
 
   ngOnInit() {
@@ -87,7 +88,7 @@ export class KalenderComponent {
 
 
   generateTable() {
-    firebase.database().ref('/buchungen3/'+this.myYear+'/').on('value', data => {
+    firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + this.myYear+'/').on('value', data => {
       console.log ("JahresÜbersicht-Listener");
       var dayKeys = Object.keys( data.val() );
       //console.log(dayKeys);
@@ -98,7 +99,7 @@ export class KalenderComponent {
         var buchungsKeys = Object.keys(data.val()[dayKeys[dk]]);
         //console.log (buchungsKeys);
         for (var bk in buchungsKeys) {
-          
+
           var buchung = data.val()[dayKeys[dk]][buchungsKeys[bk]];
           console.log (buchungsKeys[bk]+": "+buchung.mId, buchung.vId, buchung.pId);
           var gebucht=0;
@@ -108,24 +109,24 @@ export class KalenderComponent {
           }
           console.log (gebucht);
           //console.log (this.parkplatzMap);
-          
+
           //Prüfen, ob Vermieter schon angelegt und falls nicht, anlegen!
-          if (!(buchung.vId in this.parkplatzMap)) {            
+          if (!(buchung.vId in this.parkplatzMap)) {
             this.parkplatzMap[buchung.vId]={
               email: buchung.vId,//this.store.getEmailToUid(buchung.vId),
-              pId: buchung.pId};                        
-          } 
+              pId: buchung.pId};
+          }
             //Vermieter jetzt definitiv angelegt, aber auch der Monat?
             if (!(monat in this.parkplatzMap[buchung.vId])) {
               console.log ("Für "+buchung.vId + " den Monat "+ monat+" angelegt.");
-              this.parkplatzMap[buchung.vId][monat] = { 
+              this.parkplatzMap[buchung.vId][monat] = {
               freigaben: 1,
               davon_gebucht: gebucht};
             } else {
               this.parkplatzMap[buchung.vId][monat].freigaben++;
               this.parkplatzMap[buchung.vId][monat].davon_gebucht=+gebucht;
-            }                        
-          
+            }
+
         }
       }
       console.log (" ___ ");
@@ -140,7 +141,7 @@ export class KalenderComponent {
           10:{frei:0,buch:0},11:{frei:0,buch:0} },
           total: '0'
         };
-        
+
         //arrayEntry[email]= user.parkId;
         var sum_frei=0
         var sum_buch=0;
@@ -150,30 +151,30 @@ export class KalenderComponent {
             sum_frei+=user[month]['freigaben'];
             sum_buch+=user[month]['davon_gebucht'];
           }
-        }   
+        }
         arrayEntry['total']= sum_buch+"/"+sum_frei;//((sum_buch/sum_frei)*100).toFixed(2);
         this.parkplatzrows.push(arrayEntry);
       }
     });
-    
+
 
   }
   setUserId(uid: string):void {
     this.userId=uid;
   }
 
-  
+
 //debug
   writeNewBuchung() {
-    var tag = <number> moment().dayOfYear() ;    
+    var tag = <number> moment().dayOfYear() ;
     //tag += Math.round( (Math.random() * 90)-45 );
     tag = Math.round( Math.random()*60);
     var pp = Math.round( Math.random()*250);
     console.log ("WnB: "+this.myYear+" / "+ tag+" /" +pp);
     var mmt = moment().year(this.myYear).dayOfYear(tag);
     console.log ( "Tag "+tag+" in "+this.myYear+" entspricht: " + mmt.format('DD.MM.YYYY'));
-    //Year und Tag kommen im endeffekt dann von der selectierten zelle natürlich 
-    var b3nodeRef=firebase.database().ref('/buchungen3/'+this.myYear+'/'+tag);
+    //Year und Tag kommen im endeffekt dann von der selectierten zelle natürlich
+    var b3nodeRef=firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + this.myYear+'/'+tag);
 
     var newPostRef = b3nodeRef.push();
     newPostRef.set({
@@ -183,7 +184,7 @@ export class KalenderComponent {
     });
   }
 
-writeNewUser() {        
+writeNewUser() {
     var newPostRef = firebase.database().ref('/emailToRole/malte_kun@web!de')
     .set({
       benutzerAdmin: false,
@@ -192,10 +193,10 @@ writeNewUser() {
       parkId: 0,
       uid: "sechsSiebenAcht"
     });
-    
+
   }
 
-  
+
 //debug
 private writeNewbuchung() {
     console.log ("WNB: NodeRef:");
@@ -208,24 +209,24 @@ private writeNewbuchung() {
         tag: 4,
         datum: "24.08.2017"
       });
-    
+
   }
 
-  
-  
+
+
   private getEmailToUid(uid: string, callbackFunction: any, callbackData: any) {
-    firebase.database().ref("/emailToRole/").orderByChild('uid').equalTo(uid).once('value').then( function(snapshot) {               
+    firebase.database().ref("/emailToRole/").orderByChild('uid').equalTo(uid).once('value').then( function(snapshot) {
        callbackFunction(snapshot.val(), callbackData);
     });
   }
-  
-  
-  public setUserRights(pid:number, admin:boolean, email:string) {    
+
+
+  public setUserRights(pid:number, admin:boolean, email:string) {
     this.userParkId=pid;
     this.userAdmin=admin;
     this.userEmail=email;
     //this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
-    //this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);    
+    //this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
   }
 
   emailTesten() {
@@ -240,7 +241,7 @@ getAsText(files: any[]) {
   var fileToRead= new Blob(files[0]);// <Blob> files[0];
       var reader = new FileReader();
 
-      // Read file into memory as UTF-8      
+      // Read file into memory as UTF-8
       reader.readAsText(fileToRead);
       // Handle errors load
       reader.onload = this.loadHandler;
@@ -277,10 +278,10 @@ getAsText(files: any[]) {
     console.log ("HFS");
     console.log (files[0], typeof(files[0]));
 
-    
+
     var reader = new FileReader();
     reader.readAsText(files[0]);
-    reader.onload = function(event) {    
+    reader.onload = function(event) {
       var tokens = event.target['result'].split(";");
       console.log (tokens.length);
 
@@ -290,9 +291,9 @@ getAsText(files: any[]) {
       var tokens = lines[l].split(";");
       console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
       var parkId=parseInt(tokens[5]);
-      if (isNaN(parkId)) parkId=0;    
+      if (isNaN(parkId)) parkId=0;
       console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
-      
+
       firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
         .set({
           benutzerAdmin: false,
@@ -301,16 +302,16 @@ getAsText(files: any[]) {
           isActive: false,
           uid: 'not set yet'
       });
-      
+
     }
     console.log (lines.length +" Einträge fertig.");
-  }   
+  }
 }
 
 getJahre() {
   console.log ("GetJahre")
   this.http.get ( "https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
-  //.map((res:Response) => res.json())  
+  //.map((res:Response) => res.json())
   .subscribe(data => {
     console.log ("Subscription!");
     console.log(data);
@@ -320,7 +321,7 @@ getJahre() {
   }, err => {
     console.log (err);
   });
-  
+
 }
 evalPW() {
   console.log ("Eval PW: "+this.testPassword);
@@ -330,7 +331,7 @@ evalPW() {
   const sonderz = /\W/;
 
   var zeichenTypenUsed=0;
-  
+
   if (kleinBS.test(this.testPassword)) zeichenTypenUsed++;
   if (grossBS.test(this.testPassword)) zeichenTypenUsed++;
   if (ziffern.test(this.testPassword)) zeichenTypenUsed++;
@@ -340,7 +341,7 @@ evalPW() {
   console.log (valide);
 }
   public onYearChanged() {
-    console.log ("OYC: "+this.myYear);    
+    console.log ("OYC: "+this.myYear);
     delete this.parkplatzrows;
     this.parkplatzrows= new Array();
     delete this.parkplatzMap;
