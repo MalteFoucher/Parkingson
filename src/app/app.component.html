@@ -1,6 +1,6 @@
 <md-toolbar color="primary" style="flex-wrap: wrap">
   <div style="flex:1">
-    <button md-icon-button (click)="sidenav.open()">
+    <button md-icon-button (click)="sidenav.open()" style="cursor:pointer">
       <md-icon class="md-24">menu</md-icon>
     </button>
     Parkplatztool
@@ -16,11 +16,13 @@
 
   <md-sidenav #sidenav>
     <md-list>
-      <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>      
+      <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
       <md-list-item (click)="setContent('buchungen')">Buchungen</md-list-item>
       <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('auswertung')">Auswertung</md-list-item>
-      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>
-      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht / Test-Kram</md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung
+      </md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht / Test-Kram
+      </md-list-item>
     </md-list>
   </md-sidenav>
 
