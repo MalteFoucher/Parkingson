@@ -230,7 +230,7 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   const ppText = "Parkplatz " + pId +  " am " + date.format("DD.MM.YYYY");
 
   if(!prev.exists()) {
-    buchung(ppText + " freigegeben.", dataVal.mId);
+    buchung(ppText + " freigegeben.", dataVal.mId, null);
   }
   else if (!data.exists()) {
     const mId = prevVal.mId;
@@ -239,12 +239,12 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
     if(mId!=null) {
       buchung('Buchung von ' + ppText + ' vom Vermieter storniert.', prevVal.vId, mId);
     } else {
-      buchung('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId);
+      buchung('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId, mId);
     }
   } else {
     var mId = dataVal.mId;
     const prevMId = prevVal != null ? prevVal.mId : null;
-    buchung("mId: " + mId);
+    console.log("mId: " + mId);
     if(mId!=null) {
       if(prevMId!= null){
         mId = prevVal;
@@ -253,13 +253,14 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
 
       buchung(ppText + ' gebucht.', dataVal.vId, mId);
     } else {
-      buchung('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vIds);
+      buchung('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vId, mId);
     }
   }
 });
 
-const buchung = (text, ...uids ) => {
-  console.log("uids: " + JSON.stringify(uids));
+const buchung = (text, vermieter, mieter ) => {
+  console.log("vermieter: " + vermieter);
+  console.log("mieter: " + mieter);
   console.log(text);
 }
 
