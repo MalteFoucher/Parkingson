@@ -38,12 +38,12 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE",
-  authDomain: "parkplatztool.firebaseapp.com",
-  databaseURL: "https://parkplatztool.firebaseio.com",
-  projectId: "parkplatztool",
-  storageBucket: "parkplatztool.appspot.com",
-  messagingSenderId: "110161579432"
+  apiKey: 'AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE',
+  authDomain: 'parkplatztool.firebaseapp.com',
+  databaseURL: 'https://parkplatztool.firebaseio.com',
+  projectId: 'parkplatztool',
+  storageBucket: 'parkplatztool.appspot.com',
+  messagingSenderId: '110161579432'
 
 };
 
@@ -62,7 +62,7 @@ export const firebaseConfig = {
     VerwaltungComponent,
     ConfirmDialogComponent,
   ],
-  entryComponents: [DialogComponent, ConfirmDialogComponent],
+  entryComponents: [DialogComponent, ConfirmDialogComponent, AdminDialogComponent, LoginComponent, BuchungenComponent, TextInputDialogComponent],
   imports: [
     BrowserModule,
     FormsModule,
@@ -88,7 +88,7 @@ export const firebaseConfig = {
     AngularFireAuthModule
   ],
   providers: [AppComponent, Store, EmailService],
-  bootstrap: [AppComponent, AdminDialogComponent, LoginComponent, BuchungenComponent, TextInputDialogComponent]
+  bootstrap: [AppComponent]
 })
 
 export class AppModule {
