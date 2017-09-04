@@ -28,11 +28,8 @@ export class AppComponent implements AfterViewInit {
   user;
   title = 'app';
   userId: string;
-  userBenutzerAdmin: boolean;
-  userBuchungsAdmin: boolean;
   userParkId = 0;
   debugText = 'debugText';
-  contentHeight: '400px';
 
   @ViewChild(MdSidenav)
   private sidenav: MdSidenav;
