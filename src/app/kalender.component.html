@@ -2,8 +2,14 @@
 <p>Initialbefüllung</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
 
 <div class="centered-content" style="margin-top: 10px">
-  Jahresübersicht (Auswahl d.Jahres fehlt)
+  Jahresübersicht
 </div>
+<div class="centered-content">
+  <md-select placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">    
+    <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>  
+  </md-select>  
+</div>
+
 <div>
   <table>
     <tr><th>PId</th><th>Jan</th><th>Feb</th><th>Mar</th><th>Apr</th><th>Mai</th><th>Jun</th><th>Jul</th><th>Aug</th><th>Sep</th><th>Okt</th><th>Nov</th><th>Dez</th><th>∑</tr>

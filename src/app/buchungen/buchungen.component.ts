@@ -3,6 +3,7 @@ import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import { Buchung } from '../buchung';
 import {Store} from '../store/store.service';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'buchungen-component',
@@ -20,17 +21,25 @@ export class BuchungenComponent implements OnInit {
   public myYear; 
   public myMonth;
   
-  constructor(public store: Store) { 
-    var now = moment();
-    this.yearValues.push ( now.year() );
-    this.monthValues.push ( this.monatNamen[now.months()] );   
-    //this.buchungValues.push ( "Jahr und Monat auswählen...");
+  constructor(private store: Store, private http: HttpClient) { 
+    var now = moment();    
+    this.monthValues.push ( this.monatNamen[now.months()] );       
   }
 
   ngOnInit() {
 
     // Firebase Function aufrufen, die alle Jahre zurückliefert, zu denen Buchungen vorliegen
-    // Vorerst schreib ich ins Dropdownmenü aber einfach ne 2017 und fertig.
+    this.http.get ( "https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
+    .subscribe(data => {    
+      var tokens = data.toString().split(";");
+      for (var t=0; t<tokens.length-1;t++) {
+        this.yearValues.push ( parseInt(tokens[t]) );
+      }
+  
+    }, err => {
+      this.yearValues.push ( moment().year() );
+    });
+  
   }
 
   public setUserId(id: string) {
@@ -51,8 +60,7 @@ export class BuchungenComponent implements OnInit {
 
     //Arguments when ordered by Key müssen Strings sein
     var startDay = "" + buchungszeitraum_start.dayOfYear();
-    var endDay = "" + buchungszeitraum_ende.dayOfYear();
-    
+    var endDay = "" + buchungszeitraum_ende.dayOfYear();    
 
     firebase.database().ref("/buchungen3/"+this.myYear).orderByKey().startAt(startDay).endAt(endDay).once('value', snapshot => {      
       this.buchungsArray=[];      
