@@ -19,7 +19,7 @@ import {Store} from './store/store.service';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent implements AfterViewInit {
+export class AppComponent {
   dialog: MdDialog;
   // dialogRef: MdDialogRef;
 
@@ -43,6 +43,7 @@ export class AppComponent implements AfterViewInit {
     firebase.auth().onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
       if (user) {
+        firebase.database().ref('/config').once('value').then(v => this.store.setConfig(v.val()));
         firebase.database().ref('/emailToRole/').once('value', snapshot => {
           console.log('e2R abfragen...');
           if (snapshot.val()) {
@@ -94,8 +95,6 @@ export class AppComponent implements AfterViewInit {
 
             this.content = 'overview';
 
-            //this.userBenutzerAdmin = value.benutzerAdmin;
-            //this.userBuchungsAdmin = value.buchungsAdmin;
             this.userParkId = value['parkId'];
             this.debugText = 'this.userParkId=' + this.userParkId;
 
@@ -139,13 +138,6 @@ export class AppComponent implements AfterViewInit {
   logout() {
     this.afAuth.auth.signOut().then(() => this.user = null);
     this.userParkId = -1;
-    // this.kalender.userParkId = -1;
-    //this.userAdmin = false;
-    // this.kalender.generateTable();
-  }
-
-  ngAfterViewInit() {
-    firebase.database().ref('/config').once('value').then(v => this.store.setConfig(v.val()));
   }
 
   setContent(content) {
