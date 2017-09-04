@@ -4,6 +4,7 @@ import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
 import {ParkConst} from '../util/const';
+import {ConfirmDialogComponent} from "../confirm-dialog/confirm-dialog.component";
 
 enum ParkState {
   GREEN, RED, YELLOW, GRAY
@@ -186,20 +187,24 @@ export class OverviewComponent implements OnInit, OnDestroy {
           vermieter = false;
           this.mietDay = day;
         } else {
-          if (confirm('Reservierung wirklich stornieren?')) {
-            dayRef.child(day.key).remove();
-          }
+          this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
+            if (result) {
+              dayRef.child(day.key).remove();
+            }
+          });
         }
       } else if (day.state === 2) {
         dayRef.child(day.key).remove();
       }
     }
-    if (!vermieter)  {
+    if (!vermieter) {
       // Test mit enum - wie?
       if (day.state === 0) {
-        if (confirm('Reservierung wirklich stornieren?')) {
-          dayRef.child(day.key).child('mId').remove();
-        }
+        this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
+          if (result) {
+            dayRef.child(day.key).child('mId').remove();
+          }
+        });
       } else if (day.state === 1) {
         this.mietDay = day;
       } else if (day.state === 2) {

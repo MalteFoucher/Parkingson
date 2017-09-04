@@ -1,3 +1,13 @@
-<p>
-  confirm-dialog works!
-</p>
+<!--<div class="row">-->
+  <!--<h2></h2>-->
+  <!--<div class="columns">-->
+    <!--<button md-raised-button (click)="dialogRef.close('ok')">OK</button>-->
+    <!--<button md-raised-button (click)="dialogRef.close()">Abbrechen</button>-->
+  <!--</div>-->
+<!--</div>-->
+
+<md-dialog-content>Möchten Sie die Reservierung wirklich stornieren?</md-dialog-content>
+<md-dialog-actions>
+  <button md-button [md-dialog-close]="true">OK</button>
+  <button md-button md-dialog-close>Abrechen</button>
+</md-dialog-actions>

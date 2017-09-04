@@ -4,9 +4,7 @@ import {DialogComponent} from '../dialog/dialog.component';
 
 @Component({
   selector: 'app-confirm-dialog',
-  template: `
-    <h2>Hi! I am modal dialog!</h2>
-    <button md-raised-button (click)="dialogRef.close()">Close dialog</button>`,
+  templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.css']
 })
 export class ConfirmDialogComponent implements OnInit {
