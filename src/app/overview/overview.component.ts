@@ -243,7 +243,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
       firebase.database().ref('/emailToRole').child(this.changeMail.replace('.', '!')).once('value').then(snapshot => {
         const value = snapshot.val();
         if (value != null) {
-          this.store.eUser = value;
+          value.email = this.changeMail;
+          this.store.ovUser = value;
+          this.changeMail = null;
           message = 'Aktiver Benutzer ist jetzt ' + this.changeMail;
           this.calcValues();
         } else {
