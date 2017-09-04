@@ -1,4 +1,8 @@
 <div *ngIf="mietDay==null;else mietDayContent">
+  <button *ngIf="store.mieter" md-fab class="magic-button-pos" (click)="magic()" color="primary">
+    <md-icon>done_all</md-icon>
+  </button>
+
   <div class="row columns">
     <md-input-container style="flex:2">
       <input mdInput [(ngModel)]="changeMail"/>

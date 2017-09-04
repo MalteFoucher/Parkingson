@@ -67,13 +67,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
     this.query.on('value', (snapshot) => {
         const value = snapshot.val();
 
-        console.log('value: ' + JSON.stringify(value));
-
-
         this.weeks.forEach(week => {
           week.forEach(entry => {
             const day = entry.dayOfYear;
-
 
             let state = entry.year !== this.year ? ParkState.GRAY : this.store.vermieter ? ParkState.GREEN : ParkState.RED;
             if (state === 0) {
@@ -156,15 +152,7 @@ export class OverviewComponent implements OnInit, OnDestroy {
   }
 
   dayClick(day) {
-    const sperrzeit = this.store.config['sperrzeit'];
-    console.log('sperrzeit: ' + sperrzeit);
-
-    const border = moment();
-    const splits = sperrzeit.split(':');
-    border.year(day.year);
-    border.dayOfYear(day.dayOfYear);
-    border.hour(Number(splits[0]));
-    border.minute(Number(splits[1]));
+    const border = this.getDayBorder(day);
 
     const now = moment();
     if (now.isAfter(border)) {
@@ -202,6 +190,18 @@ export class OverviewComponent implements OnInit, OnDestroy {
         this.mietDay = day;
       }
     }
+  }
+
+  private getDayBorder(day) {
+    const sperrzeit = this.store.config['sperrzeit'];
+
+    const border = moment();
+    const splits = sperrzeit.split(':');
+    border.year(day.year);
+    border.dayOfYear(day.dayOfYear);
+    border.hour(Number(splits[0]));
+    border.minute(Number(splits[1]));
+    return border;
   }
 
   chooseSlotClosed() {
@@ -253,5 +253,25 @@ export class OverviewComponent implements OnInit, OnDestroy {
       });
     }
 
+  }
+
+  magic() {
+    const now = moment();
+    this.weeks.forEach(week => {
+      week.forEach(entry => {
+        const border = this.getDayBorder(entry);
+        if (now.isBefore(border)) {
+          if (entry.free > 0) {
+            const ref = firebase.database().ref('/buchungen3').child(entry.year).child(entry.dayOfYear);
+            ref.orderByChild('mId')
+              .limitToFirst(1).once('value').then(snapshot => {
+              const value = snapshot.val();
+              const key = Object.keys(value)[0];
+              ref.child(key).update({mId: this.store.oververviewUser.uid});
+            });
+          }
+        }
+      });
+    });
   }
 }
