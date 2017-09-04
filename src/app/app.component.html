@@ -16,11 +16,11 @@
 
   <md-sidenav #sidenav>
     <md-list>
-      <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
-      <md-list-item (click)="setContent('kalender')">Test-Kram</md-list-item>
+      <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>      
       <md-list-item (click)="setContent('buchungen')">Buchungen</md-list-item>
-      <md-list-item (click)="setContent('auswertung')">Auswertung</md-list-item>
-      <md-list-item (click)="setContent('verwaltung')">Verwaltung</md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('auswertung')">Auswertung</md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht / Test-Kram</md-list-item>
     </md-list>
   </md-sidenav>
 

@@ -27,11 +27,11 @@ export class Store {
   }
 
   get benutzerAdmin(): boolean {
-    return this.eUser.benutzerAdmin;
+    return this.eUser  && this.eUser.benutzerAdmin;
   }
 
   get buchungsAdmin(): boolean {
-    return this.eUser.buchungsAdmin;
+    return this.eUser  && this.eUser.buchungsAdmin;
   }
 
   setEmailToRole(snapshot: any) {
