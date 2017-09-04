@@ -165,10 +165,10 @@ exports.email = functions.https.onRequest((req, response) => {
 
 
 exports.b3getJahre = functions.https.onRequest((req, res) => {
-  cors (req, res, () => {  
+  cors (req, res, () => {
     admin.database().ref('/buchungen3/').once('value')
         .then (snapshot => {
-            res.writeHead(200, {'Content-Type': 'text/plain'});        
+            res.writeHead(200, {'Content-Type': 'text/plain'});
             var keys = Object.keys(snapshot.val());
             var response="";
             for (var k in keys) {
@@ -212,7 +212,6 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
 })
 
 exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWrite(event => {
-  // const eventSnapshot = event.data;
   console.log("event: " + JSON.stringify(event));
   const data = event.data;
   console.log("data: " + JSON.stringify(data));
@@ -242,11 +241,16 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
     } else {
       buchung('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId);
     }
-  }else {
-    const mId = dataVal.mId;
+  } else {
+    var mId = dataVal.mId;
+    const prevMId = prevVal != null ? prevVal.mId : null;
     buchung("mId: " + mId);
     if(mId!=null) {
-      getUser(mId);
+      if(prevMId!= null){
+        mId = prevVal;
+        data.ref.update({mId: mId});
+      }
+
       buchung(ppText + ' gebucht.', dataVal.vId, mId);
     } else {
       buchung('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vIds);
