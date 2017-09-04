@@ -69,6 +69,9 @@ export class OverviewComponent implements OnInit, OnDestroy {
 
         this.weeks.forEach(week => {
           week.forEach(entry => {
+            entry.free = null;
+            entry.pId = null;
+
             const day = entry.dayOfYear;
 
             let state = entry.year !== this.year ? ParkState.GRAY : this.store.vermieter ? ParkState.GREEN : ParkState.RED;
@@ -97,7 +100,6 @@ export class OverviewComponent implements OnInit, OnDestroy {
                     if (mValues.length > 0) {
                       const mValue = mValues[0];
                       entry.key = mValue.key;
-                      entry.free = null;
                       entry.pId = mValue.pId;
                       state = ParkState.GREEN;
                     } else {
