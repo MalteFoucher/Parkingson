@@ -11,7 +11,7 @@ import { AdminDialogComponent } from './admin-dialog/admin-dialog.component';
 import {Http, Response} from '@angular/http';
 import {NgModule} from '@angular/core';
 // Import HttpClientModule from @angular/common/http
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 import { EmailService } from './email.service';
 
@@ -28,7 +28,8 @@ export class KalenderComponent {
 
   @ViewChild('adminModeCB') adminButton: MdCheckbox;
   @ViewChild('nurFreigabenCB') nurFreigaben: MdCheckbox;
-  
+
+      testPassword:string="";  
   parkplatzrows: any[] = new Array();
   vermieterArray: Vermieter[] = new Array();
   parkplatzMap={};
@@ -62,7 +63,7 @@ export class KalenderComponent {
 
   //controller: any;
 
-  constructor(dialog: MdDialog, private store: Store, private emailService: EmailService) {
+  constructor(dialog: MdDialog, private store: Store, private emailService: EmailService, private http: HttpClient) {
     this.dialog=dialog;
     this.kw = parseInt(moment().format('WW'));
     this.year = parseInt(moment().format('YYYY'));
@@ -103,25 +104,52 @@ export class KalenderComponent {
           var gebucht=0;
           //grad nicht sicher, ob mId beim Freigeben angelegt wird.
           if (buchung.mId && buchung.mId != "") gebucht=1;
+          console.log (this.parkplatzMap);
           
+          //Prüfen, ob Vermieter schon angelegt und falls nicht, anlegen!
           if (!(buchung.vId in this.parkplatzMap)) {            
-            
-            this.parkplatzMap[buchung.vId][monat] = { 
-              email: this.store.getEmailToUid(buchung.vId),
-              pId: buchung.pId, //oder auch vom Store beziehen? Nö..
+            this.parkplatzMap[buchung.vId]={
+              email: buchung.vId,//this.store.getEmailToUid(buchung.vId),
+              pId: buchung.pId};                        
+          } 
+            //Vermieter jetzt definitiv angelegt, aber auch der Monat?
+            if (!(monat in this.parkplatzMap[buchung.vId])) {
+              console.log ("Für "+buchung.vId + " den Monat "+ monat+" angelegt.");
+              this.parkplatzMap[buchung.vId][monat] = { 
               freigaben: 1,
-              davon_gebucht: gebucht
-            };
-          } else {
-            this.parkplatzMap[buchung.vId][monat].freigaben++;
-            this.parkplatzMap[buchung.vId][monat].davon_gebucht=+gebucht;
-          }
+              davon_gebucht: gebucht};
+            } else {
+              this.parkplatzMap[buchung.vId][monat].freigaben++;
+              this.parkplatzMap[buchung.vId][monat].davon_gebucht=+gebucht;
+            }                        
+          
         }
       }
       console.log (" ___ ");
-      console.log (this.parkplatzMap);
+      //console.log (this.parkplatzMap);
       for (var pmKeys in this.parkplatzMap) {
-        console.log (this.parkplatzMap[pmKeys]); //die User
+        console.log ("User: "+this.parkplatzMap[pmKeys]); //die User
+        var user=this.parkplatzMap[pmKeys];
+        var arrayEntry={
+          parkId: user.email,
+          monat: { 0:{frei:0,buch:0},1:{frei:0,buch:0},2:{frei:0,buch:0},3:{frei:0,buch:0},4:{frei:0,buch:0},
+          5:{frei:0,buch:0},6:{frei:0,buch:0},7:{frei:0,buch:0},8:{frei:0,buch:0},9:{frei:0,buch:0},
+          10:{frei:0,buch:0},11:{frei:0,buch:0} },
+          total: '0'
+        };
+        
+        //arrayEntry[email]= user.parkId;
+        var sum_frei=0
+        var sum_buch=0;
+        for (var month = 0; month<12;month++) {
+          if (user[month]) {
+            arrayEntry['monat'][month]= {frei: user[month]['freigaben'], buch: user[month]['davon_gebucht']};
+            sum_frei+=user[month]['freigaben'];
+            sum_buch+=user[month]['davon_gebucht'];
+          }
+        }   
+        arrayEntry['total']= sum_buch+"/"+sum_frei;//((sum_buch/sum_frei)*100).toFixed(2);
+        this.parkplatzrows.push(arrayEntry);
       }
     });
     
@@ -825,7 +853,6 @@ private writeNewbuchung() {
 //CSV
 
 getAsText(files: any[]) {
-  console.log ("fuck you ");
   console.log(files);
   var fileToRead= new Blob(files[0]);// <Blob> files[0];
       var reader = new FileReader();
@@ -862,39 +889,71 @@ getAsText(files: any[]) {
       }
     }
 
-handleFileSelect(evt) {
-  var files = evt.target.files;
-  console.log ("HFS");
-  console.log (files[0], typeof(files[0]));
+  handleFileSelect(evt) {
+    var files = evt.target.files;
+    console.log ("HFS");
+    console.log (files[0], typeof(files[0]));
 
-  
-  var reader = new FileReader();
-  reader.readAsText(files[0]);
-  reader.onload = function(event) {    
-    var tokens = event.target['result'].split(";");
-    console.log (tokens.length);
-
-  var lines = event.target['result'].split(/\n/);
-
-  for (var l in lines){
-    var tokens = lines[l].split(";");
-    console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
-    var parkId=parseInt(tokens[5]);
-    if (isNaN(parkId)) parkId=0;    
-    console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
     
-    firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
-      .set({
-        benutzerAdmin: false,
-        buchungsAdmin: false,
-        parkId: parkId,
-        isActive: false,
-        uid: 'not set yet'
-    });
-    
-  }
-  console.log (lines.length +" Einträge fertig.");
+    var reader = new FileReader();
+    reader.readAsText(files[0]);
+    reader.onload = function(event) {    
+      var tokens = event.target['result'].split(";");
+      console.log (tokens.length);
 
+    var lines = event.target['result'].split(/\n/);
+
+    for (var l in lines){
+      var tokens = lines[l].split(";");
+      console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
+      var parkId=parseInt(tokens[5]);
+      if (isNaN(parkId)) parkId=0;    
+      console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
+      
+      firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
+        .set({
+          benutzerAdmin: false,
+          buchungsAdmin: false,
+          parkId: parkId,
+          isActive: false,
+          uid: 'not set yet'
+      });
+      
+    }
+    console.log (lines.length +" Einträge fertig.");
   }   
+}
+
+getJahre() {
+  console.log ("GetJahre")
+  this.http.get ( "https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
+  //.map((res:Response) => res.json())  
+  .subscribe(data => {
+    console.log ("Subscription!");
+    console.log(data);
+    //var tokens = data.toString().split(";");
+    //console.log (tokens);
+
+  }, err => {
+    console.log (err);
+  });
+  
+}
+evalPW() {
+  console.log ("Eval PW: "+this.testPassword);
+  const kleinBS = /[a-z]/;
+  const grossBS = /[A-Z]/;
+  const ziffern = /[0-9]/;
+  const sonderz = /\W/;
+
+  var zeichenTypenUsed=0;
+  
+  if (kleinBS.test(this.testPassword)) zeichenTypenUsed++;
+  if (grossBS.test(this.testPassword)) zeichenTypenUsed++;
+  if (ziffern.test(this.testPassword)) zeichenTypenUsed++;
+  if (sonderz.test(this.testPassword)) zeichenTypenUsed++;
+
+  var valide = this.testPassword.length>=10 && zeichenTypenUsed>=3;
+  console.log (valide);
 }
 }
