@@ -103,8 +103,11 @@ export class KalenderComponent {
           console.log (buchungsKeys[bk]+": "+buchung.mId, buchung.vId, buchung.pId);
           var gebucht=0;
           //grad nicht sicher, ob mId beim Freigeben angelegt wird.
-          if (buchung.mId && buchung.mId != "") gebucht=1;
-          console.log (this.parkplatzMap);
+          if (buchung.mId && buchung.mId != "") {
+            gebucht=1;
+          }
+          console.log (gebucht);
+          //console.log (this.parkplatzMap);
           
           //Prüfen, ob Vermieter schon angelegt und falls nicht, anlegen!
           if (!(buchung.vId in this.parkplatzMap)) {            
