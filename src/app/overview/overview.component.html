@@ -3,14 +3,16 @@
     <md-icon>done_all</md-icon>
   </button>
 
-  <div class="row columns" *ngIf="this.store.benutzerAdmin">
-    <md-input-container style="flex:2">
-      <input mdInput [(ngModel)]="changeMail"/>
-    </md-input-container>
-    <button md-button color="primary" (click)="changeUser()" style="flex:1">Change User</button>
-  </div>
-  <div class="row columns">
-    {{this.store.oververviewUser.email}}
+  <div *ngIf="this.store.benutzerAdmin">
+    <div class="row columns">
+      <md-input-container style="flex:2">
+        <input mdInput [(ngModel)]="changeMail"/>
+      </md-input-container>
+      <button md-button color="primary" (click)="changeUser()" style="flex:1">Change User</button>
+    </div>
+    <div class="row columns">
+      {{this.store.oververviewUser.email}}
+    </div>
   </div>
 
   <div class="centered-content" style="margin-top: 10px; color: var(--myYellow)">
