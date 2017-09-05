@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {DialogComponent} from '../dialog/dialog.component';
 
@@ -9,7 +9,7 @@ import {DialogComponent} from '../dialog/dialog.component';
 })
 export class ConfirmDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MdDialogRef<DialogComponent>) {
+  constructor(public dialogRef: MdDialogRef<DialogComponent>, private changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit() {

@@ -194,6 +194,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
             if (result) {
               dayRef.child(day.key).remove();
+              this.changeDetector.detectChanges();
             }
           });
         }
@@ -207,6 +208,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
           if (result) {
             dayRef.child(day.key).child('mId').remove();
+            this.changeDetector.detectChanges();
           }
         });
       } else if (day.state === 1) {
@@ -215,6 +217,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.mietDay = day;
       }
     }
+    this.changeDetector.detectChanges();
   }
 
   getDayBorder(day) {
@@ -231,6 +234,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   chooseSlotClosed() {
     this.mietDay = null;
+    this.changeDetector.detectChanges();
   }
 
   weiter() {
