@@ -4,6 +4,7 @@ import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 import { MdDialog } from '@angular/material';
 import { DialogComponent } from '../dialog/dialog.component';
+import { AdminDialogComponent } from '../admin-dialog/admin-dialog.component';
 // import { SelectDialogComponent } from '../select-dialog/select-dialog.component';
 //import { EmailService } from '../email.service';
 
@@ -18,7 +19,7 @@ import {MdSnackBar} from '@angular/material';
 export class VerwaltungComponent implements OnInit {
 
   userArray=[];
-  availableSpaces=['Kein Parkplatz',1, 15, 123, 310];
+  //availableSpaces=['Kein Parkplatz',1, 15, 123, 310];
   vergebeneParkplaetze=[];
   user;
 
@@ -153,6 +154,7 @@ onParkIdClick(index: number) {
   */
 }
 
+/*
 dialogCallback(value: any, indexOfUser: number) {
   console.log ("Callback! Selected Value:"+value+ "   indexOfUser:"+indexOfUser);
 
@@ -179,7 +181,7 @@ onSelectOptionChange(event: any, user_index: number) {
   this.userArray[user_index]=event['value'];
 
 }
-
+*/
 onParkIdChange(index:number) {
   console.log(this.vergebeneParkplaetze);
   var value = parseInt((<HTMLInputElement>document.getElementById(""+index)).value);
@@ -215,5 +217,51 @@ onParkIdChange(index:number) {
 
 }
 
-
+createNewUser() {
+  //Dialog aufmachen
+  let dialogRef = this.dialog.open(AdminDialogComponent, {
+     data:  {
+       titel: 'Neuen User anlegen',
+       text:'Geben Sie die E-Mail-Adresse des neuen Users an:',
+       yesButtonText: 'OK',
+       yesButtonVisible: true,
+       noButtonText:'Abbrechen',
+       noButtonVisible: true
+       }
+  });
+  dialogRef.afterClosed().subscribe(selection => {
+    if(selection) {
+      var email=dialogRef.componentInstance.getNewEmail();
+      //email validieren: vorhandensein von : @deka.lu, nochwas?
+      if ( !email.includes('@deka.lu') ) {
+        //Snackbar mit Fehlermeldung
+        this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
+      } else {        
+        email=email.replace(/\./g,'!');
+        console.log ("Erstelle neuen Knoten: /emailToRole/"+email);
+        
+        var newPostRef = firebase.database().ref('/emailToRole/'+email+'/')
+        .set({
+          benutzerAdmin: false,
+          buchungsAdmin: false,
+          isActive: false,
+          parkId: 0,
+          uid: "overwrite me!"
+        }).then(data=>{
+          this.snackBar.open('User erfolgreich angelegt.', null, {duration: 2000});
+        });            
+        var newUser={email: email,
+          parkId:0,
+          isActive:false,
+          benutzerAdmin: false,
+          buchungsAdmin: false,
+          uid: "overwrite me!"
+        };
+        this.store.pushToE2R(newUser);
+        this.userArray.push(newUser);
+        
+      }  
+    }
+  });
+}
 }

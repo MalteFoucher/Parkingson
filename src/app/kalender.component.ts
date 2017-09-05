@@ -292,16 +292,18 @@ getAsText(files: any[]) {
       console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
       var parkId=parseInt(tokens[5]);
       if (isNaN(parkId)) parkId=0;
+      
       console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
+      //am besten natürlich die richtige Email, ansosnten [2].[1]@deka.lu und umlaute beachten
 
-      firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
+      /*firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
         .set({
           benutzerAdmin: false,
           buchungsAdmin: false,
           parkId: parkId,
           isActive: false,
           uid: 'not set yet'
-      });
+      });*/
 
     }
     console.log (lines.length +" Einträge fertig.");

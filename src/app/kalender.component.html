@@ -1,10 +1,7 @@
-<button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
-<p>Initialbefüllung</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
-
 <div class="centered-content" style="margin-top: 10px">
   <h3>Jahresübersicht</h3>
 </div>
-<div class="centered-content">
+<div class="centered-content" style="margin-top: 5px; margin-bottom: 5px">
   <md-select placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">    
     <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>  
   </md-select>  
@@ -32,9 +29,13 @@
   </table>
 </div>
 
+<!--
+<button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
+<p>Initialbefüllung</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
 <button md-raised-button (click)="writeNewBuchung()">writeNewBuchung()</button>
 <button md-raised-button (click)="writeNewUser()" >writeNewUser()</button>
 <button md-raised-button (click)="getJahre()" >getJahre()</button>
 <p> Passwort überprüfen:</p>
 <input [(ngModel)]="testPassword">
 <button md-raised-button (click)="evalPW()" >PW prüfen!</button>
+-->

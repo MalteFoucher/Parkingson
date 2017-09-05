@@ -25,6 +25,7 @@ export class BuchungenComponent implements OnInit {
   constructor(private store: Store, private http: HttpClient) {
     var now = moment();
     this.monthValues.push ( this.monatNamen[now.months()] );
+    this.userId = store.getUserId();
   }
 
   ngOnInit() {
@@ -65,6 +66,9 @@ export class BuchungenComponent implements OnInit {
 
     firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + this.myYear).orderByKey().startAt(startDay).endAt(endDay).once('value', snapshot => {
       this.buchungsArray=[];
+      
+      if (!snapshot.val()) {console.log ("Keine Values im Snapshot!");return;}
+
       var tagesKeys = Object.keys( snapshot.val() );
       for (var tk in tagesKeys) {
         let buchungsKeys = Object.keys( snapshot.val()[tagesKeys[tk]] );
@@ -72,30 +76,38 @@ export class BuchungenComponent implements OnInit {
           var buchung = snapshot.val()[tagesKeys[tk]][buchungsKeys[bk]];
 
           if ( buchung.vId == this.userId ) {
-            //console.log ("user ist vId: vermietet an:"+buchung.mId);
+            console.log ("user ist vId: vermietet an:"+buchung.mId);
 
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Vermietet an: ";
-            let email = this.store.getEmailToUid( buchung.mId );
-            if (email) {
-              buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
+            if (buchung.mId) {
+              let email = this.store.getEmailToUid( buchung.mId );            
+              if (email) {
+                buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
+              } else {
+                buchung["partner"] = "Unbekannte UserId";
+              }
             } else {
-              buchung["partner"] = "Unbekannte UserId";
+              buchung["partner"] = "Niemanden";
             }
             this.buchungsArray.push( buchung );
           }
           if ( buchung.mId == this.userId ) {
-            //console.log ("user ist mId: gemietet von:"+buchung.vId);
-            //Hier werde ich wohl nicht prüfen müssen, ob vId=="". Obwohl sicherer wäre es.
+            console.log ("user ist mId: gemietet von:"+buchung.vId);
+            
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Gemietet von: ";
-            //if mId=="" -> Niemanden
-            let email = this.store.getEmailToUid( buchung.vId );
-            if (email) {
-              buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
+            //Hier werde ich wohl nicht prüfen müssen, ob vId=="". Aber kostet ja nix.
+            if (buchung.vId) {
+              let email = this.store.getEmailToUid( buchung.vId );
+              if (email) {
+                buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
+              } else {
+                buchung["partner"] = "Unbekannte UserId";
+              }
             } else {
-              buchung["partner"] = "Unbekannte UserId";
-            }
+              buchung["partner"] = "Niemanden";
+            }  
             this.buchungsArray.push( buchung );
           }
         }

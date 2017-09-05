@@ -1,25 +1,7 @@
 <h2 md-dialog-title>{{titel}}</h2>
 <md-dialog-content>{{text}}</md-dialog-content>
-
-  <md-select [(ngModel)]="myVermieterState" placeholder="Vermieter" floatPlaceholder="never" #vermieterSelect (change)="onSelectChange()">
-    <md-option *ngFor="let v of vermieterArray" [value]="v">{{v}}</md-option>
-  </md-select>
-  <br>
-  <div [ngSwitch]="modus">
-  <div *ngSwitchCase="'EDITIEREN'">
-    <md-select placeholder="Mieter" id="selectMieter">
-            
-      <!--md-option *ngFor="let v of vermieterArray">{{v}}</md-option-->
-      
-    </md-select>  
-    <br>
-    <md-checkbox>Zahlung vom Mieter geleistet</md-checkbox>
-    <br>
-    <md-checkbox>Zahlung vom Vermieter erhalten</md-checkbox>
-  </div>
-
-  <md-dialog-actions style="margin-right: 5px">
+<input placeholder="E-Mail" [(ngModel)]="newUserEmail">
+<md-dialog-actions style="margin-right: 5px">
     <button *ngIf="yesButtonVisible==true" md-raised-button [md-dialog-close]="true">{{yesButtonText}}</button>    
     <button *ngIf="noButtonVisible==true" md-raised-button [md-dialog-close]="false">{{noButtonText}}</button>    
-    <button *ngIf="deleteButtonVisible==true" md-raised-button [md-dialog-close]="delete">{{deleteButtonText}}</button>
-  </md-dialog-actions>
+</md-dialog-actions>

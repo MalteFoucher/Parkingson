@@ -15,6 +15,7 @@
         <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
       </tr>
     </table>  
+    <button md-raised-button (click)="createNewUser()" >Neuen Nutzer anlegen</button>
   </div>
 
   <div *ngIf="user.buchungsAdmin" class="row columns">
@@ -24,14 +25,11 @@
       <tr *ngFor="let i of userArray; let ind = index">                        
         <td>{{i.email}}</td>
         <!--td>{{i.parkId}}</td-->        
-        <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
-        
+        <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->        
         <!--td><input [attr.id]="ind" value={{userArray[ind].parkId}} (click)="onParkIdChange(ind)"/></td-->
-        <td><input [attr.id]="ind" value={{userArray[ind].parkId}} (change)="onParkIdChange(ind)"/></td>
-        
-        
+        <td><input [attr.id]="ind" value={{userArray[ind].parkId}} (change)="onParkIdChange(ind)"/></td>              
       </tr>
-    </table>      
+    </table>          
   </div>
 
 
