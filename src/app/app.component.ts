@@ -1,4 +1,4 @@
-import {AfterViewChecked, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 
 import {MdDialog, MdSidenav} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
@@ -9,7 +9,7 @@ declare var firebase: any;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 
 export class AppComponent implements AfterViewChecked {
@@ -19,7 +19,6 @@ export class AppComponent implements AfterViewChecked {
   user;
   title = 'app';
   userId: string;
-  userParkId = 0;
   debugText = 'debugText';
 
   @ViewChild(MdSidenav)
@@ -29,12 +28,11 @@ export class AppComponent implements AfterViewChecked {
   }
 
   constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
-    console.log('Constructor AppComponent');
-
     this.dialog = dialog;
     firebase.auth().onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
       if (user) {
+        console.log('eingeloggt');
         firebase.database().ref('/config').once('value').then(v => this.store.setConfig(v.val()));
         firebase.database().ref('/emailToRole/').once('value', snapshot => {
           console.log('e2R abfragen...');
@@ -66,7 +64,7 @@ export class AppComponent implements AfterViewChecked {
                   console.log('An error happened.');
                 });
               }
-              firebase.auth().signOut();
+              this.logout();
             });
 
           return;
@@ -81,21 +79,15 @@ export class AppComponent implements AfterViewChecked {
           const value = snapshot.val();
 
           if (value != null) {
-            value.email = user.email;
-            this.user = value;
-            this.store.eUser = value;
-
-            this.content = 'overview';
-
-            this.userParkId = value['parkId'];
-            this.debugText = 'this.userParkId=' + this.userParkId;
-
             if (value['isActive']) {
               console.log('---------- Der User ist aktiv! Alles gut! ----------');
-              // this.kalender.setUserRights(this.userParkId, this.userAdmin);
+              value.email = user.email;
+              this.user = value;
+              this.store.eUser = value;
+              this.content = 'overview';
+              this.cdRef.detectChanges();
             } else {
               console.log('---------- Der User ist inaktiv! ');
-              // Erst ein Dialog mit ner Fehlermeldung, danach ausloggen (wodurch LoginDialog hochkommt)
               const dialogRef = this.dialog.open(DialogComponent, {
                 disableClose: true,
                 data: {
@@ -106,14 +98,17 @@ export class AppComponent implements AfterViewChecked {
                 }
               })
                 .afterClosed().subscribe(selection => {
-                  firebase.auth().signOut();
+                  this.logout();
                 });
             }
           }
         });
-        this.cdRef.detectChanges();
+        // this.cdRef.detectChanges();
       } else {
         // Ausgeloggt...
+        console.log('ausgeloggt');
+        this.user = null;
+        cdRef.detectChanges();
       }
     });
   }
@@ -123,13 +118,11 @@ export class AppComponent implements AfterViewChecked {
     firebase.auth().signInWithEmailAndPassword(email, pw).catch(function (error) {
       console.log('error from log: ' + error.message);
       this.dialogRef.componentInstance.fb_status = error.message;
-      this.cdRef.detectChanges();
     });
   }
 
   logout() {
-    firebase.auth().signOut().then(() => this.user = null);
-    this.userParkId = -1;
+    firebase.auth().signOut();
   }
 
   setContent(content) {
