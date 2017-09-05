@@ -342,6 +342,16 @@ evalPW() {
   var valide = this.testPassword.length>=10 && zeichenTypenUsed>=3;
   console.log (valide);
 }
+
+evalEmail() {
+  console.log ("Eval Email: "+this.testPassword);
+  this.testPassword=this.testPassword.toLowerCase();
+  this.testPassword.replace(/ö/g,'oe');
+  this.testPassword.replace(/ä/g,'oe');
+  this.testPassword.replace(/ü/g,'ue');
+  this.testPassword.replace(/ß/g,'ss');
+  console.log (this.testPassword);  
+}
   public onYearChanged() {
     console.log ("OYC: "+this.myYear);
     delete this.parkplatzrows;

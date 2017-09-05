@@ -24,7 +24,7 @@ export class BuchungenComponent implements OnInit {
 
   constructor(private store: Store, private http: HttpClient) {
     var now = moment();
-    this.monthValues.push ( this.monatNamen[now.months()] );
+    this.monthValues.push ( this.monatNamen[now.month()] );
     this.userId = store.getUserId();
   }
 

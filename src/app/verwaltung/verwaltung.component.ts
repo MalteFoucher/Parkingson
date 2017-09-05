@@ -231,6 +231,11 @@ createNewUser() {
         //Snackbar mit Fehlermeldung
         this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
       } else {
+        email=email.replace(/ö/g,'oe');
+        email=email.replace(/ä/g,'oe');
+        email=email.replace(/ü/g,'ue');
+        email=email.replace(/ß/g,'ss');
+
         email=email.replace(/\./g,'!');
         console.log ("Erstelle neuen Knoten: /emailToRole/"+email);
 
