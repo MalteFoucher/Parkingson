@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import * as firebase from 'firebase/app';
+declare var firebase: any;
 import { MdDatepicker, MdDatepickerModule, MdSelectModule,MdSelect,MdDialog } from '@angular/material';
 import * as moment from 'moment';
 import { Auswertung } from './auswertung';

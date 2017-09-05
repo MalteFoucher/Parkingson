@@ -1,17 +1,10 @@
-import {Component, ViewChild, AfterViewInit, ChangeDetectorRef} from '@angular/core';
-import {AngularFireDatabase, FirebaseListObservable} from 'angularfire2/database';
-import {AngularFireAuth} from 'angularfire2/auth';
-import {Observable} from 'rxjs/Observable';
-import * as firebase from 'firebase/app';
+import {AfterViewChecked, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 
-import {MdButtonModule, MdDialog, MdDialogRef, MdSidenav} from '@angular/material';
-import {Http} from '@angular/http';
-import {KalenderComponent} from './kalender.component';
-import {LoginComponent} from './login/login.component';
-import {AuswertungComponent} from './auswertung/auswertung.component';
-import {BuchungenComponent} from './buchungen/buchungen.component';
+import {MdDialog, MdSidenav} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
 import {Store} from './store/store.service';
+
+declare var firebase: any;
 
 @Component({
   selector: 'app-root',
@@ -19,10 +12,8 @@ import {Store} from './store/store.service';
   styleUrls: ['./app.component.css']
 })
 
-export class AppComponent {
+export class AppComponent implements AfterViewChecked {
   dialog: MdDialog;
-  // dialogRef: MdDialogRef;
-
   content = 'login';
 
   user;
@@ -34,9 +25,10 @@ export class AppComponent {
   @ViewChild(MdSidenav)
   private sidenav: MdSidenav;
 
+  ngAfterViewChecked(): void {
+  }
 
-  constructor(public afAuth: AngularFireAuth, public af: AngularFireDatabase, private http: Http,
-              private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
+  constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
     console.log('Constructor AppComponent');
 
     this.dialog = dialog;
@@ -74,7 +66,7 @@ export class AppComponent {
                   console.log('An error happened.');
                 });
               }
-              afAuth.auth.signOut();
+              firebase.auth().signOut();
             });
 
           return;
@@ -114,7 +106,7 @@ export class AppComponent {
                 }
               })
                 .afterClosed().subscribe(selection => {
-                  afAuth.auth.signOut();
+                  firebase.auth().signOut();
                 });
             }
           }
@@ -128,7 +120,7 @@ export class AppComponent {
 
 
   login(email: string, pw: string) {
-    this.afAuth.auth.signInWithEmailAndPassword(email, pw).catch(function (error) {
+    firebase.auth().signInWithEmailAndPassword(email, pw).catch(function (error) {
       console.log('error from log: ' + error.message);
       this.dialogRef.componentInstance.fb_status = error.message;
       this.cdRef.detectChanges();
@@ -136,7 +128,7 @@ export class AppComponent {
   }
 
   logout() {
-    this.afAuth.auth.signOut().then(() => this.user = null);
+    firebase.auth().signOut().then(() => this.user = null);
     this.userParkId = -1;
   }
 

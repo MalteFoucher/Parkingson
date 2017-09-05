@@ -1,5 +1,5 @@
 import { Component , OnInit} from '@angular/core';
-import * as firebase from 'firebase/app';
+declare var firebase: any;
 import * as moment from 'moment';
 import { Buchung } from './buchung';
 import { Tablerow } from './tablerow';
@@ -292,7 +292,7 @@ getAsText(files: any[]) {
       console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
       var parkId=parseInt(tokens[5]);
       if (isNaN(parkId)) parkId=0;
-      
+
       console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
       //am besten natürlich die richtige Email, ansosnten [2].[1]@deka.lu und umlaute beachten
 

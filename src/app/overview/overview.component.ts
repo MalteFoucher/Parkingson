@@ -1,15 +1,11 @@
-import {
-  AfterContentChecked,
-  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy,
-  OnInit
-} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import * as moment from 'moment';
-import * as firebase from 'firebase/app';
+
+declare var firebase: any;
 import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
 import {ParkConst} from '../util/const';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
-import {AngularFireDatabase} from 'angularfire2/database';
 
 enum ParkState {
   GREEN, RED, YELLOW, GRAY
@@ -32,16 +28,14 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   changeMail;
 
-  private ref: firebase.database.Reference;
-  private query: firebase.database.Query;
+  private ref;
+  private query;
 
   ngOnDestroy(): void {
     this.query.off();
-    this.changeDetector.detectChanges();
   }
 
-  constructor(public store: Store, private snachBar: MdSnackBar, private dialog: MdDialog,
-              private changeDetector: ChangeDetectorRef, private afDb: AngularFireDatabase) {
+  constructor(public store: Store, private snachBar: MdSnackBar, private dialog: MdDialog, private changeDetector: ChangeDetectorRef) {
     this.JSON = JSON;
   }
 
@@ -73,15 +67,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     this.ref = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD);
     this.query = this.ref.child(this.year).orderByKey().startAt(String(firstDayValue)).endAt(String(lastDayValue));
-    // this.afDb.list(ParkConst.BUCHUNGEN_PFAD + this.year, {
-    //   query: {
-    //     startAt: String(firstDayValue),
-    //     endAt: String(lastDayValue)
-    //   }
-    // }).subscribe(value => {
     this.query.on('value', (snapshot) => {
-        // this.query.once('value').then( (snapshot) => {
-        console.log('on ref');
         const value = snapshot.val();
 
         console.log('value: ' + value);
@@ -141,15 +127,9 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
             }
           });
         });
+        this.changeDetector.detectChanges();
       }
     );
-    // this.detectChanges();
-  }
-
-  private detectChanges() {
-    // this.changeDetector.reattach();
-    // this.changeDetector.detectChanges();
-    // this.changeDetector.detach();
   }
 
   parkplatzColor(state: ParkState) {
@@ -179,7 +159,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   ngOnInit() {
-    // this.changeDetector.detach();
     this.day = moment();
     this.calcValues();
   }
@@ -236,7 +215,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.mietDay = day;
       }
     }
-    this.detectChanges();
   }
 
   getDayBorder(day) {

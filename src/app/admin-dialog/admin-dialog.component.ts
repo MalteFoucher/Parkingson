@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, ViewChild} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
 import {MdDialogModule, MdSelect} from '@angular/material';
-import * as firebase from 'firebase/app';
+declare var firebase: any;
 
 @Component({
   selector: 'app-admin-dialog', //wird eh nie fix im HTML stehen, schmeißt deshalb auch nen Error.
@@ -21,7 +21,7 @@ export class AdminDialogComponent implements OnInit {
   yesButtonText: string = "JA";
   noButtonVisible: boolean = false;
   noButtonText: string = "NEIN";
-  
+
 
   constructor(@Inject(MD_DIALOG_DATA) public data: any) {
     console.log("AdminDialog-Konstruktor");
@@ -30,7 +30,7 @@ export class AdminDialogComponent implements OnInit {
     this.yesButtonText = data.yesButtonText;
     this.yesButtonVisible = data.yesButtonVisible;
     this.noButtonText = data.noButtonText;
-    this.noButtonVisible = data.noButtonVisible;    
+    this.noButtonVisible = data.noButtonVisible;
   }
 
   ngOnInit() {
@@ -42,5 +42,5 @@ export class AdminDialogComponent implements OnInit {
     return this.newUserEmail;
   }
 
-  
+
 }

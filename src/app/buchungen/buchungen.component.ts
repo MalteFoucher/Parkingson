@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import * as firebase from 'firebase/app';
+declare var firebase: any;
 import * as moment from 'moment';
 import { Buchung } from '../buchung';
 import {Store} from '../store/store.service';
@@ -66,7 +66,7 @@ export class BuchungenComponent implements OnInit {
 
     firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + this.myYear).orderByKey().startAt(startDay).endAt(endDay).once('value', snapshot => {
       this.buchungsArray=[];
-      
+
       if (!snapshot.val()) {console.log ("Keine Values im Snapshot!");return;}
 
       var tagesKeys = Object.keys( snapshot.val() );
@@ -81,7 +81,7 @@ export class BuchungenComponent implements OnInit {
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Vermietet an: ";
             if (buchung.mId) {
-              let email = this.store.getEmailToUid( buchung.mId );            
+              let email = this.store.getEmailToUid( buchung.mId );
               if (email) {
                 buchung["partner"] = '<a href="mailto:'+ email +'">'+email+'</a>';
               } else {
@@ -94,7 +94,7 @@ export class BuchungenComponent implements OnInit {
           }
           if ( buchung.mId == this.userId ) {
             console.log ("user ist mId: gemietet von:"+buchung.vId);
-            
+
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
             buchung["text"] = "Gemietet von: ";
             //Hier werde ich wohl nicht prüfen müssen, ob vId=="". Aber kostet ja nix.
@@ -107,7 +107,7 @@ export class BuchungenComponent implements OnInit {
               }
             } else {
               buchung["partner"] = "Niemanden";
-            }  
+            }
             this.buchungsArray.push( buchung );
           }
         }

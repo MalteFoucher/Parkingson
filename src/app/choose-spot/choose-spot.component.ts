@@ -1,8 +1,9 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import {Store} from '../store/store.service';
 import {ParkConst} from "../util/const";
+
+declare var firebase: any;
 
 @Component({
   selector: 'app-choose-spot',
@@ -21,8 +22,8 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   slots = [];
   chunks;
 
-  private query: firebase.database.Query;
-  private ref: firebase.database.Reference;
+  private query;
+  private ref;
 
   constructor(private store: Store) {
   }

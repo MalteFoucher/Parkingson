@@ -6,19 +6,21 @@ import {NgModule} from '@angular/core';
 
 import {HttpClientModule} from '@angular/common/http';
 
-import {AngularFireModule} from 'angularfire2';
-import {AngularFireDatabaseModule} from 'angularfire2/database';
-import {AngularFireAuthModule} from 'angularfire2/auth';
-
 import {
   MdButtonModule,
   MdCheckboxModule,
   MdDatepickerModule,
-  MdDialogModule, MdGridListModule, MdIconModule,
-  MdInputContainer, MdInputModule, MdListModule,
+  MdDialogModule,
+  MdGridListModule,
+  MdIconModule,
+  MdInputModule,
+  MdListModule,
   MdNativeDateModule,
-  MdSelectModule, MdSidenavModule, MdSnackBarModule,
-  MdTabsModule, MdToolbarModule
+  MdSelectModule,
+  MdSidenavModule,
+  MdSnackBarModule,
+  MdTabsModule,
+  MdToolbarModule
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
@@ -83,9 +85,9 @@ export const firebaseConfig = {
     MdSidenavModule,
     MdIconModule,
     MdListModule,
-    AngularFireModule.initializeApp(firebaseConfig),
-    AngularFireDatabaseModule,
-    AngularFireAuthModule
+    // AngularFireModule.initializeApp(firebaseConfig),
+    // AngularFireDatabaseModule,
+    // AngularFireAuthModule
   ],
   providers: [AppComponent, Store, EmailService],
   bootstrap: [AppComponent]

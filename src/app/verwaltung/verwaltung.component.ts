@@ -1,15 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import * as firebase from 'firebase/app';
-//import * as moment from 'moment';
+import {Component, OnInit} from '@angular/core';
 import {Store} from '../store/store.service';
-import { MdDialog } from '@angular/material';
-import { DialogComponent } from '../dialog/dialog.component';
-import { AdminDialogComponent } from '../admin-dialog/admin-dialog.component';
-// import { SelectDialogComponent } from '../select-dialog/select-dialog.component';
-//import { EmailService } from '../email.service';
-
-import {MdSnackBar} from '@angular/material';
-
+import {MdDialog, MdSnackBar} from '@angular/material';
+import {DialogComponent} from '../dialog/dialog.component';
+import {AdminDialogComponent} from '../admin-dialog/admin-dialog.component';
+declare var firebase: any;
 
 @Component({
   selector: 'app-verwaltung',
@@ -236,10 +230,10 @@ createNewUser() {
       if ( !email.includes('@deka.lu') ) {
         //Snackbar mit Fehlermeldung
         this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
-      } else {        
+      } else {
         email=email.replace(/\./g,'!');
         console.log ("Erstelle neuen Knoten: /emailToRole/"+email);
-        
+
         var newPostRef = firebase.database().ref('/emailToRole/'+email+'/')
         .set({
           benutzerAdmin: false,
@@ -249,7 +243,7 @@ createNewUser() {
           uid: "overwrite me!"
         }).then(data=>{
           this.snackBar.open('User erfolgreich angelegt.', null, {duration: 2000});
-        });            
+        });
         var newUser={email: email,
           parkId:0,
           isActive:false,
@@ -259,8 +253,8 @@ createNewUser() {
         };
         this.store.pushToE2R(newUser);
         this.userArray.push(newUser);
-        
-      }  
+
+      }
     }
   });
 }

@@ -1,10 +1,7 @@
-import {Component, Output, EventEmitter} from '@angular/core';
-import {AppComponent} from '../app.component';
-import {AngularFireAuth} from 'angularfire2/auth';
-import * as firebase from 'firebase/app';
+import {AfterViewChecked, Component} from '@angular/core';
+declare var firebase: any;
 import {HttpClient} from '@angular/common/http';
-//import { HttpModule } from '@angular/http';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import {MdDialog} from '@angular/material';
 import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.component';
 
 @Component({
@@ -12,16 +9,19 @@ import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.c
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewChecked{
   innerHtmlString = '';
   user_email = '';
   user_password = '';
 
-  constructor(private auth: AngularFireAuth, private http: HttpClient, private dialog: MdDialog) {
+  ngAfterViewChecked(): void {
+  }
+
+  constructor(private http: HttpClient, private dialog: MdDialog) {
   }
 
   login() {
-    this.auth.auth.signInWithEmailAndPassword(this.user_email, this.user_password)
+    firebase.auth().signInWithEmailAndPassword(this.user_email, this.user_password)
       .then((promise: any) => {
         this.innerHtmlString = 'Erfolgreich angemeldet.';
       })
@@ -45,7 +45,7 @@ export class LoginComponent {
       const sonderz = /\W/;
 
       var zeichenTypenUsed=0;
-      
+
       if (kleinBS.test(this.user_password)) zeichenTypenUsed++;
       if (grossBS.test(this.user_password)) zeichenTypenUsed++;
       if (ziffern.test(this.user_password)) zeichenTypenUsed++;
@@ -55,7 +55,7 @@ export class LoginComponent {
         this.innerHtmlString = 'Das eingegebene Passwort entspricht nicht den DEKA-Richtlinien! Verwenden Sie min. 10 Zeichen, darin<br>Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.';
         return;
       }
-      
+
 
     // Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
