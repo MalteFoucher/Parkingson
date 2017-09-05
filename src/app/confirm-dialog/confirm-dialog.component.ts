@@ -15,4 +15,17 @@ export class ConfirmDialogComponent implements OnInit {
   ngOnInit() {
   }
 
+  ok() {
+    console.log('ok');
+    this.dialogRef.close('ok');
+    this.changeDetector.detectChanges();
+  }
+
+  close() {
+    console.log('close');
+    this.dialogRef.close();
+    this.changeDetector.detectChanges();
+  }
+
+
 }

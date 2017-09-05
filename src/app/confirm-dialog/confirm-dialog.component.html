@@ -8,6 +8,6 @@
 
 <md-dialog-content>Möchten Sie die Reservierung wirklich stornieren?</md-dialog-content>
 <md-dialog-actions>
-  <button md-button [md-dialog-close]="true">OK</button>
-  <button md-button md-dialog-close>Abrechen</button>
+  <button md-button (click)="ok()">OK</button>
+  <button md-button (click)="close()">Abrechen</button>
 </md-dialog-actions>
