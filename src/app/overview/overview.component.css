@@ -35,3 +35,22 @@
   background-color: #64cf53;
 }
 
+.legende {
+  min-height: 20px;
+  min-width: 20px;
+  margin-right: 20px;
+  border-radius: 4px;
+}
+
+.color-green {
+  background-color: #64cf53;
+}
+
+.color-yellow {
+  background-color: #FFC107;
+}
+
+.color-red {
+  background-color: #de4e4e;
+}
+

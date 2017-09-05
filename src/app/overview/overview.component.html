@@ -1,6 +1,6 @@
 <div *ngIf="mietDay==null;else mietDayContent">
   <button *ngIf="store.mieter" md-fab class="magic-button-pos" (click)="magic()" color="primary">
-    <md-icon>done_all</md-icon>
+    M
   </button>
 
   <div *ngIf="this.store.benutzerAdmin">
@@ -41,6 +41,23 @@
         </td>
       </tr>
     </table>
+    <md-list>
+      <md-list-item>
+        <div class="legende color-green"></div>
+
+        {{store.vermieter ? 'Parkplatz frei' : 'Parkplatz gebucht'}}
+      </md-list-item>
+      <md-list-item>
+        <div class="legende color-yellow"></div>
+        {{store.vermieter ? 'Parkplatz freigegeben' : 'Parkplätze verfügbar'}}
+      </md-list-item>
+      <md-list-item>
+        <div class="legende color-red"></div>
+        {{store.vermieter ? 'Parkplatz belegt' : 'Keine Parkplätze verfügbar'}}
+
+
+      </md-list-item>
+    </md-list>
   </div>
 </div>
 <ng-template #mietDayContent>
