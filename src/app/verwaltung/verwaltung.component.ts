@@ -227,7 +227,7 @@ createNewUser() {
   });
   dialogRef.afterClosed().subscribe(selection => {
     if(selection) {
-      var email=dialogRef.componentInstance.getNewEmail();
+      var email=dialogRef.componentInstance.getNewEmail().toLowerCase();
       //email validieren: vorhandensein von : @deka.lu, nochwas?
       if ( !email.includes('@deka.lu') ) {
         //Snackbar mit Fehlermeldung

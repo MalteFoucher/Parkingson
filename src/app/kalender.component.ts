@@ -305,6 +305,7 @@ export class KalenderComponent {
         var tokens = lines[l].split(";");
         //console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
         var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
+        emailAsKey = emailAsKey.toLowerCase();
         emailAsKey = emailAsKey.replace(/ö/g, 'oe')
         emailAsKey = emailAsKey.replace(/ä/g, 'oe')
         emailAsKey = emailAsKey.replace(/ü/g, 'ue')
