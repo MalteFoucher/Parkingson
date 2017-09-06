@@ -44,4 +44,6 @@ md-sidenav {
   background-color: blue;
 }
 
-
+md-list-item {
+  cursor: pointer;
+}
