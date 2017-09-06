@@ -195,8 +195,13 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
           //   if (result) {
           //     console.log("res: " + result);
           //     dayRef.child(day.key).remove();
-              this.changeDetector.detectChanges();
-            // }
+          if (confirm('Wirklich stornieren')) {
+            this.changeDetector.detectChanges();
+          }
+          else{
+            console.log("Cancel");
+          }
+          // }
           // });
         }
       } else if (day.state === 2) {
@@ -209,7 +214,11 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         // this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
         //   if (result) {
         //     console.log("res: " + result);
-            dayRef.child(day.key).child('mId').remove();
+        if (confirm('Wirklich stornieren')) {
+          dayRef.child(day.key).child('mId').remove();
+        }else{
+          console.log("Cancel");
+        }
         //   }
         // });
       } else if (day.state === 1) {

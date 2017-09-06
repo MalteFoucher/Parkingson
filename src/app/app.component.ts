@@ -5,6 +5,7 @@ import {DialogComponent} from './dialog/dialog.component';
 import {Store} from './store/store.service';
 
 import * as firebase from 'firebase/app';
+import {FirebaseApp} from "angularfire2";
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,6 @@ import * as firebase from 'firebase/app';
 })
 
 export class AppComponent implements AfterViewChecked {
-  dialog: MdDialog;
   content = 'login';
 
   user;
@@ -21,15 +21,17 @@ export class AppComponent implements AfterViewChecked {
   userId: string;
   debugText = 'debugText';
 
+  app: FirebaseApp;
+
   @ViewChild(MdSidenav)
   private sidenav: MdSidenav;
 
   ngAfterViewChecked(): void {
   }
 
-  constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store, private ngZone: NgZone) {
+  constructor(private cdRef: ChangeDetectorRef, public dialog: MdDialog, public store: Store, private ngZone: NgZone) {
     ngZone.runOutsideAngular(() => {
-      firebase.initializeApp({
+      this.app = firebase.initializeApp({
         apiKey: 'AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE',
         authDomain: 'parkplatztool.firebaseapp.com',
         databaseURL: 'https://parkplatztool.firebaseio.com',
@@ -38,7 +40,6 @@ export class AppComponent implements AfterViewChecked {
         messagingSenderId: '110161579432'
       });
     });
-
 
     firebase.auth().onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
