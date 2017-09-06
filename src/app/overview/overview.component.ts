@@ -1,7 +1,7 @@
 import {AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import * as moment from 'moment';
 
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
 import {ParkConst} from '../util/const';

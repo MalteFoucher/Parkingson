@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component} from '@angular/core';
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 import {HttpClient} from '@angular/common/http';
 import {MdDialog} from '@angular/material';
 import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.component';

@@ -1,7 +1,7 @@
 import {Component, OnInit, Inject, ViewChild} from '@angular/core';
 import {MD_DIALOG_DATA} from '@angular/material';
 import {MdDialogModule, MdSelect} from '@angular/material';
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-admin-dialog', //wird eh nie fix im HTML stehen, schmeißt deshalb auch nen Error.

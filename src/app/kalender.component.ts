@@ -1,5 +1,5 @@
 import { Component , OnInit} from '@angular/core';
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import { Buchung } from './buchung';
 import { Tablerow } from './tablerow';
@@ -296,7 +296,7 @@ getAsText(files: any[]) {
       emailAsKey=emailAsKey.replace(/ü/g,'ue')
       emailAsKey=emailAsKey.replace(/ß/g,'ss')
       emailAsKey=emailAsKey.replace(/ /g,'');
-      
+
 
       var parkId=parseInt(tokens[5]);
       if (isNaN(parkId)) parkId=0;
@@ -358,7 +358,7 @@ evalEmail() {
   this.testPassword.replace(/ä/g,'oe');
   this.testPassword.replace(/ü/g,'ue');
   this.testPassword.replace(/ß/g,'ss');
-  console.log (this.testPassword);  
+  console.log (this.testPassword);
 }
   public onYearChanged() {
     console.log ("OYC: "+this.myYear);

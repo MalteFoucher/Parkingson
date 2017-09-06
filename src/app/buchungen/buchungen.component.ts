@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import { Buchung } from '../buchung';
 import {Store} from '../store/store.service';

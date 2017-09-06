@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import {Store} from '../store/store.service';
 import {ParkConst} from "../util/const";
 
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-choose-spot',

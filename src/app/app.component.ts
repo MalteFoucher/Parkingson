@@ -1,10 +1,11 @@
-import {AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 
 import {MdDialog, MdSidenav} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
 import {Store} from './store/store.service';
+import {AngularFireAuth} from "angularfire2/auth";
 
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-root',
@@ -27,14 +28,14 @@ export class AppComponent implements AfterViewChecked {
   ngAfterViewChecked(): void {
   }
 
-  constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
+  constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store, private fAuth: AngularFireAuth) {
     this.dialog = dialog;
     dialog.afterOpen.subscribe(s => {
       cdRef.markForCheck();
     });
 
 
-    firebase.auth().onAuthStateChanged(user => {
+    fAuth.auth.onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
       if (user) {
         console.log('eingeloggt');

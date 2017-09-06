@@ -37,6 +37,9 @@ import {ChooseSpotComponent} from './choose-spot/choose-spot.component';
 import {VerwaltungComponent} from './verwaltung/verwaltung.component';
 import {EmailService} from './email.service';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
+import {AngularFireModule} from 'angularfire2';
+import {AngularFireDatabaseModule} from 'angularfire2/database';
+import {AngularFireAuthModule} from 'angularfire2/auth';
 
 
 export const firebaseConfig = {
@@ -85,9 +88,9 @@ export const firebaseConfig = {
     MdSidenavModule,
     MdIconModule,
     MdListModule,
-    // AngularFireModule.initializeApp(firebaseConfig),
-    // AngularFireDatabaseModule,
-    // AngularFireAuthModule
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule
   ],
   providers: [AppComponent, Store, EmailService],
   bootstrap: [AppComponent]

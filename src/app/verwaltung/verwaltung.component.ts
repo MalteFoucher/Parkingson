@@ -3,7 +3,7 @@ import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
 import {DialogComponent} from '../dialog/dialog.component';
 import {AdminDialogComponent} from '../admin-dialog/admin-dialog.component';
-declare var firebase: any;
+import * as firebase from 'firebase/app';
 
 @Component({
   selector: 'app-verwaltung',
