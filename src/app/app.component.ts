@@ -29,6 +29,11 @@ export class AppComponent implements AfterViewChecked {
 
   constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store) {
     this.dialog = dialog;
+    dialog.afterOpen.subscribe(s => {
+      cdRef.markForCheck();
+    });
+
+
     firebase.auth().onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
       if (user) {
@@ -66,7 +71,6 @@ export class AppComponent implements AfterViewChecked {
               }
               this.logout();
             });
-
           return;
         }
         this.userId = user.uid;
