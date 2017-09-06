@@ -52,7 +52,7 @@ export class LoginComponent implements AfterViewChecked{
       if (sonderz.test(this.user_password)) zeichenTypenUsed++;
 
       if (! (this.user_password.length>=10 && zeichenTypenUsed>=3) ) {
-        this.innerHtmlString = 'Das eingegebene Passwort entspricht nicht den DEKA-Richtlinien! Verwenden Sie min. 10 Zeichen, darin<br>Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.';
+        this.innerHtmlString = 'Das eingegebene Passwort entspricht nicht den Passwortrichtlinien! Verwenden Sie min. 10 Zeichen, darin<br>Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.';
         return;
       }
 

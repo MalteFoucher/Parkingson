@@ -47,7 +47,7 @@ export class AppComponent implements AfterViewChecked {
               titel: 'Email nicht verifiziert',
               text: 'Ihre E-Mail wurde noch nicht verifiziert.<br>Klicken Sie auf den Button, und<br>folgen Sie dem Link in der E-Mail.',
               yesButtonText: 'Ok',
-              yesButtonVisible: true,
+              yesButtonVisible: false,
               noButtonText: 'Email senden',
               noButtonVisible: true
             }

@@ -11,7 +11,7 @@ export class EmailService {
 
   
   sendEmail(email: string) {
-      console.log ("emailservice test");
+      console.log ("emailservice test an "+email);
     return this.http.get( "https://us-central1-parkplatztool.cloudfunctions.net/testEmail?to="+email)
     .map((res:Response) => res.json());    
   }
