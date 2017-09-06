@@ -1,4 +1,4 @@
-import {AfterViewChecked, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import * as moment from 'moment';
 
 import * as firebase from 'firebase/app';
@@ -35,7 +35,8 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.query.off();
   }
 
-  constructor(public store: Store, private snachBar: MdSnackBar, private dialog: MdDialog, private changeDetector: ChangeDetectorRef) {
+  constructor(public store: Store, private snachBar: MdSnackBar, private dialog: MdDialog,
+              private changeDetector: ChangeDetectorRef, private ngZone: NgZone) {
     this.JSON = JSON;
   }
 
@@ -191,18 +192,15 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
           vermieter = false;
           this.mietDay = day;
         } else {
-          // this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
-          //   if (result) {
-          //     console.log("res: " + result);
-          //     dayRef.child(day.key).remove();
-          if (confirm('Wirklich stornieren')) {
-            this.changeDetector.detectChanges();
-          }
-          else{
-            console.log("Cancel");
-          }
-          // }
-          // });
+          this.ngZone.run(() => {
+            this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
+              if (result === 'ok') {
+                console.log('res: ' + result);
+                dayRef.child(day.key).remove();
+                this.changeDetector.detectChanges();
+              }
+            });
+          });
         }
       } else if (day.state === 2) {
         dayRef.child(day.key).remove();
@@ -211,16 +209,14 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (!vermieter) {
       // Test mit enum - wie?
       if (day.state === 0) {
-        // this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
-        //   if (result) {
-        //     console.log("res: " + result);
-        if (confirm('Wirklich stornieren')) {
-          dayRef.child(day.key).child('mId').remove();
-        }else{
-          console.log("Cancel");
-        }
-        //   }
-        // });
+        this.ngZone.run(() => {
+          this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
+            if (result === 'ok') {
+              console.log('res: ' + result);
+              dayRef.child(day.key).child('mId').remove();
+            }
+          });
+        });
       } else if (day.state === 1) {
         this.mietDay = day;
       } else if (day.state === 2) {

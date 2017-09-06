@@ -9,7 +9,7 @@ import {DialogComponent} from '../dialog/dialog.component';
 })
 export class ConfirmDialogComponent implements OnInit {
 
-  constructor(public dialogRef: MdDialogRef<DialogComponent>, private changeDetector: ChangeDetectorRef) {
+  constructor(public dialogRef: MdDialogRef<ConfirmDialogComponent>) {
   }
 
   ngOnInit() {
@@ -18,13 +18,11 @@ export class ConfirmDialogComponent implements OnInit {
   ok() {
     console.log('ok');
     this.dialogRef.close('ok');
-    this.changeDetector.detectChanges();
   }
 
   close() {
     console.log('close');
     this.dialogRef.close();
-    this.changeDetector.detectChanges();
   }
 
 
