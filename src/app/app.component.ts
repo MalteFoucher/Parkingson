@@ -53,18 +53,19 @@ export class AppComponent implements AfterViewChecked {
           }
         });
         if (!user.emailVerified) {
-          const dialogRef = this.dialog.open(DialogComponent, {
-            disableClose: true,
-            data: {
-              titel: 'Email nicht verifiziert',
-              text: 'Ihre E-Mail wurde noch nicht verifiziert.<br>Klicken Sie auf den Button, und<br>folgen Sie dem Link in der E-Mail.',
-              yesButtonText: 'Logout',
-              yesButtonVisible: true,
-              noButtonText: 'Email senden',
-              noButtonVisible: true
-            }
-          })
-            .afterClosed().subscribe(selection => {
+          ngZone.run(() => {
+            this.dialog.open(DialogComponent, {
+              disableClose: true,
+              data: {
+                titel: 'Email nicht verifiziert',
+                text: 'Ihre E-Mail wurde noch nicht verifiziert.<br>Klicken Sie auf den Button, und<br>folgen Sie dem Link in der E-Mail.',
+                yesButtonText: 'Logout',
+                yesButtonVisible: true,
+                noButtonText: 'Email senden',
+                noButtonVisible: true
+              }
+            })
+              .afterClosed().subscribe(selection => {
               if (selection) {
                 // OK Button geklickt, um Dialog zu schließen -> Ausloggen
               } else {
@@ -78,43 +79,44 @@ export class AppComponent implements AfterViewChecked {
               }
               this.logout();
             });
-          return;
-        }
-        this.userId = user.uid;
-        this.debugText = 'Eingeloggt als: ' + user.email;
-        console.log(this.debugText);
+          });
+        } else {
+          this.userId = user.uid;
+          this.debugText = 'Eingeloggt als: ' + user.email;
+          console.log(this.debugText);
 
-        const emailAsKey = user.email.replace(/\./g, '!');
+          const emailAsKey = user.email.replace(/\./g, '!');
 
-        firebase.database().ref('/emailToRole/' + emailAsKey + '/').once('value', snapshot => {
-          const value = snapshot.val();
+          firebase.database().ref('/emailToRole/' + emailAsKey + '/').once('value', snapshot => {
+            const value = snapshot.val();
 
-          if (value != null) {
-            if (value['isActive']) {
-              console.log('---------- Der User ist aktiv! Alles gut! ----------');
-              value.email = user.email;
-              this.user = value;
-              this.store.eUser = value;
-              this.content = 'overview';
-              this.cdRef.detectChanges();
-            } else {
-              console.log('---------- Der User ist inaktiv! ');
-              const dialogRef = this.dialog.open(DialogComponent, {
-                disableClose: true,
-                data: {
-                  titel: 'Userkonto inaktiv',
-                  text: 'Ihr Konto wurde noch nicht aktiviert.<br>Wenden Sie sich an die Hotline.',
-                  yesButtonText: 'Ok',
-                  yesButtonVisible: true
-                }
-              })
-                .afterClosed().subscribe(selection => {
-                  this.logout();
-                });
+            if (value != null) {
+              if (value['isActive']) {
+                console.log('---------- Der User ist aktiv! Alles gut! ----------');
+                value.email = user.email;
+                this.user = value;
+                this.store.eUser = value;
+                this.content = 'overview';
+                this.cdRef.detectChanges();
+              } else {
+                console.log('---------- Der User ist inaktiv! ');
+                const dialogRef = this.dialog.open(DialogComponent, {
+                  disableClose: true,
+                  data: {
+                    titel: 'Userkonto inaktiv',
+                    text: 'Ihr Konto wurde noch nicht aktiviert.<br>Wenden Sie sich an die Hotline.',
+                    yesButtonText: 'Ok',
+                    yesButtonVisible: true
+                  }
+                })
+                  .afterClosed().subscribe(selection => {
+                    this.logout();
+                  });
+              }
             }
-          }
-        });
-        // this.cdRef.detectChanges();
+          });
+          // this.cdRef.detectChanges();
+        }
       } else {
         // Ausgeloggt...
         console.log('ausgeloggt');
