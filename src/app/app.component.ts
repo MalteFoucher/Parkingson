@@ -1,9 +1,8 @@
-import {AfterViewChecked, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {AfterViewChecked, ChangeDetectorRef, Component, NgZone, ViewChild} from '@angular/core';
 
 import {MdDialog, MdSidenav} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
 import {Store} from './store/store.service';
-import {AngularFireAuth} from "angularfire2/auth";
 
 import * as firebase from 'firebase/app';
 
@@ -28,14 +27,20 @@ export class AppComponent implements AfterViewChecked {
   ngAfterViewChecked(): void {
   }
 
-  constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store, private fAuth: AngularFireAuth) {
-    this.dialog = dialog;
-    dialog.afterOpen.subscribe(s => {
-      cdRef.markForCheck();
+  constructor(private cdRef: ChangeDetectorRef, dialog: MdDialog, public store: Store, private ngZone: NgZone) {
+    ngZone.runOutsideAngular(() => {
+      firebase.initializeApp({
+        apiKey: 'AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE',
+        authDomain: 'parkplatztool.firebaseapp.com',
+        databaseURL: 'https://parkplatztool.firebaseio.com',
+        projectId: 'parkplatztool',
+        storageBucket: 'parkplatztool.appspot.com',
+        messagingSenderId: '110161579432'
+      });
     });
 
 
-    fAuth.auth.onAuthStateChanged(user => {
+    firebase.auth().onAuthStateChanged(user => {
       console.log('onAuthStateChanged');
       if (user) {
         console.log('eingeloggt');

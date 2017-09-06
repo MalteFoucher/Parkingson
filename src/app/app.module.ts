@@ -88,7 +88,7 @@ export const firebaseConfig = {
     MdSidenavModule,
     MdIconModule,
     MdListModule,
-    AngularFireModule.initializeApp(firebaseConfig),
+    // AngularFireModule.initializeApp(firebaseConfig),
     AngularFireDatabaseModule,
     AngularFireAuthModule
   ],
