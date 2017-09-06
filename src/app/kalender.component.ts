@@ -289,21 +289,29 @@ getAsText(files: any[]) {
 
     for (var l in lines){
       var tokens = lines[l].split(";");
-      console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
+      //console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
+      var emailAsKey=tokens[1]+"!"+tokens[0]+"@deka!lu";
+      emailAsKey=emailAsKey.replace(/ö/g,'oe')
+      emailAsKey=emailAsKey.replace(/ä/g,'oe')
+      emailAsKey=emailAsKey.replace(/ü/g,'ue')
+      emailAsKey=emailAsKey.replace(/ß/g,'ss')
+      emailAsKey=emailAsKey.replace(/ /g,'');
+      
+
       var parkId=parseInt(tokens[5]);
       if (isNaN(parkId)) parkId=0;
 
-      console.log ('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/'+parkId);
+      console.log ('/emailToRole/'+emailAsKey+'/: '+parkId);
       //am besten natürlich die richtige Email, ansosnten [2].[1]@deka.lu und umlaute beachten
 
-      /*firebase.database().ref('/emailToRole/'+tokens[4].replace(/\./g,'!')+'/')
+      firebase.database().ref('/emailToRole/'+emailAsKey+'/')
         .set({
           benutzerAdmin: false,
           buchungsAdmin: false,
           parkId: parkId,
           isActive: false,
           uid: 'not set yet'
-      });*/
+      });
 
     }
     console.log (lines.length +" Einträge fertig.");
