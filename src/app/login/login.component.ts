@@ -1,5 +1,5 @@
 import {AfterViewChecked, Component} from '@angular/core';
-import * as firebase from 'firebase/app';
+import * as firebase from 'firebase';
 import {HttpClient} from '@angular/common/http';
 import {MdDialog} from '@angular/material';
 import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.component';
@@ -20,18 +20,20 @@ export class LoginComponent implements AfterViewChecked{
   constructor(private http: HttpClient, private dialog: MdDialog) {
   }
 
-  login() {
+  login() {    
+    this.user_email=this.user_email.toLowerCase();
     firebase.auth().signInWithEmailAndPassword(this.user_email, this.user_password)
-      .then((promise: any) => {
+      .then((promise: any) => {        
         this.innerHtmlString = 'Erfolgreich angemeldet.';
       })
       .catch((error: any) => {
         console.log('LoginComponent Error ' + error.message);
         this.innerHtmlString = error.message;
-      });
+      });      
   }
 
   register() {
+    this.user_email=this.user_email.toLowerCase();
     /*Bevor der Prozess angestoßen wird, gucken ob
       - das PW den DEKA Richtlinien entspricht
       - und ob bereits Daten für diese Email in der DB stehen
@@ -57,7 +59,7 @@ export class LoginComponent implements AfterViewChecked{
       }
 
 
-    // Um PW-Richtlinien zu prüfen, gibts vielleicht iwas mit RegEx?
+    
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
     this.http.get('https://us-central1-parkplatztool.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
 
