@@ -17,19 +17,27 @@ admin.initializeApp(functions.config().firebase);
 //const gmailPassword = 'AllesWirdGut2017';//encodeURIComponent(functions.config().gmail.password);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
 
-//const from = 'ParkplatzTool <malte_kun@web.de>';
+//const from = 'ParkplatzTool <malte_kun@web.de>'; //bruacht Port:578
 const from = 'ParkplatzTool <service@parken-eagle.com>';
 
 const smtpConfig = {
     //host: 'smtp.web.de',
     host: 'smtp-relay.gmail.com',
-    port: 465,
+    port: 587,
+    //secure: true,
     auth: {
+        //type: 'OAuth2',
         user: 'service@parken-eagle.com',
         pass: '_C^M8dnN'
+        //
         //user: 'malte_kun@web.de',
-        //pass: 'Koksun2014'
-    }};
+        //pass: top secret
+    }
+    /*tls: {
+        secure: true
+        //rejectUnauthorized: false
+    }*/
+};
 
 const transporter = nodemailer.createTransport(smtpConfig);
 
@@ -126,6 +134,15 @@ function sendEmail(mailOptions) {
 //...emails verschicken - debug! Kann später weg!
 
 exports.testEmail = functions.https.onRequest((req, response) => {
+    transporter.verify(function(error, success) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log('Server is ready to take our message');
+        }
+        
+    });
+
   var to = req.query.to;
     console.log ("TESTEMAIL");
     response.writeHead(200, {'Content-Type': 'text/plain'});
