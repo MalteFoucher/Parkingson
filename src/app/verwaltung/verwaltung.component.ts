@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectorRef} from '@angular/core';
 import {Store} from '../store/store.service';
 import {MdDialog, MdSnackBar} from '@angular/material';
 import {DialogComponent} from '../dialog/dialog.component';
@@ -17,7 +17,7 @@ export class VerwaltungComponent implements OnInit {
   vergebeneParkplaetze=[];
   user;
 
-  constructor(private store: Store, private dialog: MdDialog, private snackBar: MdSnackBar) { }
+  constructor(private store: Store, private dialog: MdDialog, private snackBar: MdSnackBar, private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
 
@@ -39,8 +39,10 @@ export class VerwaltungComponent implements OnInit {
           benutzerAdmin: entry.benutzerAdmin,
           buchungsAdmin: entry.buchungsAdmin,
           uid: entry.uid});
+
       if (entry.parkId>0) this.vergebeneParkplaetze.push(entry.parkId);
     }
+    this.changeDetector.markForCheck();
   }
 
   onIsActiveChange(index: number) {
