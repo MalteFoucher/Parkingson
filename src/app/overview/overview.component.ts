@@ -71,8 +71,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.query.on('value', (snapshot) => {
         const value = snapshot.val();
 
-        console.log('value: ' + value);
-
         this.weeks.forEach(week => {
           week.forEach(entry => {
             entry.free = null;
@@ -165,9 +163,14 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   vermieterIsMieter(day): boolean {
-    const border = this.getDayBorder(day);
-    const now = moment();
-    return day.state === 2 && now.isBefore(border) && now.isAfter(border.subtract(2, 'days'));
+    let ret = true;
+    if (day.state === 1) {
+      const now = moment();
+      const border = this.getDayBorder(day);
+      const subBorder = border.clone().subtract(2, 'days');
+      ret = !(now.isBefore(border) && now.isAfter(subBorder));
+    }
+    return ret;
   }
 
   dayClick(day) {
