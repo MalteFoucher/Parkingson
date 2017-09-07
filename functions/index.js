@@ -140,7 +140,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
         } else {
             console.log('Server is ready to take our message');
         }
-        
+
     });
 
   var to = req.query.to;
@@ -244,19 +244,20 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   date.dayOfYear(event.params.day);
 
   const pId = dataVal ? dataVal.pId : prevVal.pId;
-  const ppText = "Parkplatz " + pId +  " am " + date.format("DD.MM.YYYY");
+  var datum = date.format("DD.MM.YYYY");
+  // const ppText = "Parkplatz " + pId +  " am " + ;
 
   if(!prev.exists()) {
-    buchungM(ppText + " freigegeben.", dataVal.mId, null);
+    // buchungM(ppText + " freigegeben.", dataVal.mId, null);
   }
   else if (!data.exists()) {
     const mId = prevVal.mId;
     console.log("mId: " + mId);
     console.log("prevVal.vId: " + prevVal.vId);
     if(mId!=null) {
-      buchungM('Buchung von ' + ppText + ' vom Vermieter storniert.', prevVal.vId, mId);
+      buchungM("Stornierung der Buchung",stornierungVermieterVermieter, stornierungVermieterMieter, prevVal.vId, mId,pId ,datum);
     } else {
-      buchungM('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId, mId);
+      // buchungM('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId, mId);
     }
   } else {
     var mId = dataVal.mId;
@@ -267,38 +268,57 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
         mId = prevVal;
         data.ref.update({mId: mId});
       }
-
-      buchungM(ppText + ' gebucht.', dataVal.vId, mId);
+      buchungM("Buchungsbestätigung", buchungVermieter, buchungMieter, dataVal.vId, mId,pId ,datum);
     } else {
-      buchungM('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vId, mId);
+      buchungM("Stornierung der Buchung", stornierungMieterVermieter, stornierungMieterMieter, dataVal.vId, prevMId,pId ,datum);
     }
   }
 });
 
-const buchungM = (text, vermieter, mieter ) => {
-  console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+text);
+const buchungVermieter = "Ihr Parkplatz #p wurde am #d durch #m gebucht.";
+const buchungMieter = "Sie haben den Parkplatz #p am #d von #v gebucht.";
+const stornierungVermieterVermieter = "Sie haben die Buchung von Parkplatz #p am #d von #m storniert.";
+const stornierungVermieterMieter = "Die Buchung des Parkplatzes #p am #d wurde von #v storniert.";
+const stornierungMieterVermieter = "Die Buchung des Parkplatzes #p am #d wurde von #m storniert.";
+const stornierungMieterMieter = "Sie haben die Buchung von Parkplatz #p von #v am #d storniert.";
+
+const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, datum) => {
+  console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter);
   //Jetzt die Email-Adressen zu den IDs beziehen
   var ref = admin.database().ref('/emailToRole/');
   //Vermieter dürfte ja stets !=null sein.
   ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {
-    //Vermieter-Adresse haben wir    
-    console.log ("Email des Vermieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));    
-    var uselessVariable = sendEmail({
-        from: from,
-        to: Object.keys(data.val())[0].replace(/!/g,'.'),        
-        subject: 'Änderung Buchungsstatus',
-        text: text}
-    );
+    //Vermieter-Adresse haben wir
+    var mailVermieter = Object.keys(data.val())[0].replace(/!/g,'.');
+    console.log ("Email des Vermieters: "+mailVermieter);
+
 
     if (mieter) {
         ref.orderByChild('uid').equalTo(mieter).once('value').then( data => {
-        //Mieter-Adresse haben wir auch        
-        console.log ("Email des Mieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));        
+        //Mieter-Adresse haben wir auch
+        var mailMieter = Object.keys(data.val())[0].replace(/!/g,'.');
+
+        console.log ("Email des Mieters: "+mailMieter);
+
+        textVermieter = textVermieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
+        textMieter = textMieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
+
+        console.log('subject: ' + subject);
+        console.log('textVermieter: ' + textVermieter);
+        console.log('textMieter: ' + textMieter);
+
+        var uselessVariable = sendEmail({
+        from: from,
+        to: mailVermieter,
+        subject: subject,
+        text: textVermieter}
+      );
+
         var uselessVariable = sendEmail({
             from: from,
-            to: Object.keys(data.val())[0].replace(/!/g,'.'),        
-            subject: 'Änderung Buchungsstatus',
-            text: text}
+            to: Object.keys(data.val())[0].replace(/!/g,'.'),
+            subject: subject,
+            text: textMieter}
         );
 
     },error => {
