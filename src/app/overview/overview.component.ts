@@ -77,7 +77,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
             entry.pId = null;
 
             const day = entry.dayOfYear;
-
             let state = entry.year !== this.year ? ParkState.GRAY : this.store.vermieter ? ParkState.GREEN : ParkState.RED;
             if (state === 0) {
               entry.pId = this.store.oververviewUser.parkId;
@@ -99,10 +98,12 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
                     entry.key = vValue.key;
                     state = vValue.mId == null ? ParkState.YELLOW : ParkState.RED;
                     entry.state = state;
-                    vermieter = this.vermieterIsMieter(entry);
+                    // vermieter = !this.vermieterIsMieter(entry);
                   }
                 }
                 if (!vermieter) {
+                  state = entry.year !== this.year ? ParkState.GRAY : ParkState.RED;
+                  entry.pId = null;
                   if (dayValues.length > 0) {
                     const mValues = dayValues.filter(v => v.mId === this.store.oververviewUser.uid);
                     if (mValues.length > 0) {
@@ -163,14 +164,10 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   vermieterIsMieter(day): boolean {
-    let ret = true;
-    if (day.state === 1) {
-      const now = moment();
-      const border = this.getDayBorder(day);
-      const subBorder = border.clone().subtract(2, 'days');
-      ret = !(now.isBefore(border) && now.isAfter(subBorder));
-    }
-    return ret;
+    const now = moment();
+    const clickDay = this.getDayBorder(day);
+    const clickDayM2 = clickDay.clone().subtract(2, 'days');
+    return day.state === 1 && now.isAfter(clickDayM2);
   }
 
   dayClick(day) {

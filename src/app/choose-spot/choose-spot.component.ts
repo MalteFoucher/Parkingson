@@ -1,9 +1,10 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as moment from 'moment';
 import {Store} from '../store/store.service';
 import {ParkConst} from "../util/const";
 
 import * as firebase from 'firebase/app';
+import {createChangeDetectorRef} from "@angular/core/src/view/refs";
 
 @Component({
   selector: 'app-choose-spot',
@@ -25,7 +26,7 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   private query;
   private ref;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private cdRef : ChangeDetectorRef) {
   }
 
   ngOnDestroy(): void {
@@ -38,16 +39,20 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
     this.ref = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD).child(String(this.day.year)).child(String(this.day.dayOfYear));
     this.query = this.ref.orderByChild('mId').equalTo(null);
     this.query.on('value', snapshot => {
+      console.log('snapshot: ' + snapshot);
       const value = snapshot.val();
+      console.log('value: ' + value);
       if (value != null) {
         console.log('v: ' + JSON.stringify(value));
         Object.keys(value).forEach(k => {
           const v = value[k];
           this.slots.push({key: k, pId: v.pId});
         });
-
         this.chunks = this.chunk(this.slots, 5);
+      } else {
+        this.chunks = null;
       }
+      this.cdRef.detectChanges();
     });
   }
 
