@@ -188,7 +188,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const dayRef = this.ref.child(day.year).child(day.dayOfYear);
 
-    let vermieter = this.store.vermieter;
+    const vermieter = this.store.vermieter;
     if (vermieter) {
       // Test mit enum - wie?
       if (day.state === 0) {
@@ -196,8 +196,8 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
       } else if (day.state === 1) {
         border.subtract(2, 'days');
         if (now.isAfter(border)) {
-          vermieter = false;
           this.mietDay = day;
+          this.snachBar.open('Eine Stornierung ist nicht mehr möglich.', null, {duration: 2000});
         } else {
           this.ngZone.run(() => {
             this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
@@ -211,7 +211,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       } else if (day.state === 2) {
         dayRef.child(day.key).remove();
-      }else if (day.state === 4) {
+      } else if (day.state === 4) {
         dayRef.child(day.key).child('mId').remove();
       }
     }
