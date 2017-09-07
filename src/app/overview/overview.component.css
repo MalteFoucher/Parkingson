@@ -19,6 +19,13 @@
   color: white;
 }
 
+.blue {
+  background-color: #2196F3;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  color: white;
+}
+
 .gray {
   background-color: gray;
   border-radius: 4px;
@@ -53,4 +60,8 @@
 .color-red {
   background-color: #de4e4e;
 }
+
+.color-blue {
+   background-color: #2196F3;
+ }
 

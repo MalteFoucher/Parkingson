@@ -8,7 +8,7 @@ import {ParkConst} from '../util/const';
 import {ConfirmDialogComponent} from '../confirm-dialog/confirm-dialog.component';
 
 enum ParkState {
-  GREEN, RED, YELLOW, GRAY
+  GREEN, RED, YELLOW, GRAY, BLUE
 }
 
 @Component({
@@ -90,15 +90,22 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
                   ret.key = k;
                   return ret;
                 });
-                let vermieter = this.store.vermieter;
+                const vermieter = this.store.vermieter;
                 if (vermieter) {
                   const vValues = dayValues.filter(v => v.vId === this.store.oververviewUser.uid);
                   if (vValues.length > 0) {
                     const vValue = vValues[0];
                     entry.key = vValue.key;
                     state = vValue.mId == null ? ParkState.YELLOW : ParkState.RED;
-                    entry.state = state;
-                    // vermieter = !this.vermieterIsMieter(entry);
+                    if (state === 1) {
+                      const mValues = dayValues.filter(v => v.mId === this.store.oververviewUser.uid);
+                      if (mValues.length > 0) {
+                        const mValue = mValues[0];
+                        entry.key = mValue.key;
+                        entry.pId = mValue.pId;
+                        state = ParkState.BLUE;
+                      }
+                    }
                   }
                 }
                 if (!vermieter) {
@@ -204,6 +211,8 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
       } else if (day.state === 2) {
         dayRef.child(day.key).remove();
+      }else if (day.state === 4) {
+        dayRef.child(day.key).child('mId').remove();
       }
     }
     if (!vermieter) {
