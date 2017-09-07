@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
 import {Buchung} from './buchung';
 import {Tablerow} from './tablerow';
 import {MdDialog, MdSnackBar} from '@angular/material';
-import {MdCheckbox} from '@angular/material';
+import {MdCheckbox, MdDatepicker} from '@angular/material';
 import {DialogComponent} from './dialog/dialog.component';
 import {AdminDialogComponent} from './admin-dialog/admin-dialog.component';
 
@@ -19,6 +19,7 @@ import {Store} from './store/store.service';
 import {Vermieter} from './auswertung/vermieter';
 import {ParkConst} from "./util/const";
 
+
 @Component({
   selector: 'kalender-component',
   templateUrl: './kalender.component.html',
@@ -27,7 +28,10 @@ import {ParkConst} from "./util/const";
 
 export class KalenderComponent {
 
+  @ViewChild('vonPicker') picker_von: MdDatepicker<Date>;
+
   testPassword: string = "";
+  jahrestag="?";
 
   //Für das Jahres-Dropdown
   yearValues: number[] = new Array();
@@ -313,19 +317,20 @@ export class KalenderComponent {
         emailAsKey = emailAsKey.replace(/ /g, '');
 
 
-        var parkId = parseInt(tokens[5]);
+        var parkId = parseInt(tokens[3]);
         if (isNaN(parkId)) parkId = 0;
 
         console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
         //am besten natürlich die richtige Email, ansosnten [2].[1]@deka.lu und umlaute beachten
 
+        //Muss 2 funktionen machen, update und set 
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
-          .set({
-            benutzerAdmin: false,
-            buchungsAdmin: false,
+          .update({
+            //benutzerAdmin: false,
+            //buchungsAdmin: false,
             parkId: parkId,
-            isActive: false,
-            uid: 'not set yet'
+            //isActive: false,
+            //uid: 'not set yet'
           });
 
       }
@@ -368,13 +373,37 @@ export class KalenderComponent {
   }
 
   evalEmail() {
-    console.log("Eval Email: " + this.testPassword);
+    /*console.log("Eval Email: " + this.testPassword);
     this.testPassword = this.testPassword.toLowerCase();
     this.testPassword.replace(/ö/g, 'oe');
     this.testPassword.replace(/ä/g, 'oe');
     this.testPassword.replace(/ü/g, 'ue');
     this.testPassword.replace(/ß/g, 'ss');
-    console.log(this.testPassword);
+    console.log(this.testPassword);*/
+    var vermieter="VplQA1HK7rVRWESUfNx07SKzadY2";
+    var mieter="YigUSZAZGYT607yegts1edNNqEC3";
+    var text ="Blablabla";
+    console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+text);
+  //Jetzt die Email-Adressen zu den IDs beziehen
+  var ref = firebase.database().ref('/emailToRole/');
+  //Vermieter dürfte ja stets !=null sein.
+  ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {
+    //Vermieter-Adresse haben wir
+    console.log ("Vermieter:");
+    console.log(Object.keys(data.val()));
+    console.log ("Email des Vermieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));
+    if (mieter) {
+        ref.orderByChild('uid').equalTo(mieter).once('value').then( data => {
+        //Mieter-Adresse haben wir auch
+        console.log ("Mieter:");
+        console.log (Object.keys(data.val()));
+        console.log ("Email des Mieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));
+        //Und nu? Email an beide? Bzw an alle !=null?
+    },error => {
+      console.log ("ERROR: "+error);
+    })
+    }
+  });
   }
 
   public onYearChanged() {
@@ -386,4 +415,11 @@ export class KalenderComponent {
     this.generateTable();
   }
 
+onDateChange() {
+    var vonMoment = moment().date(this.picker_von._selected.getDate());
+    vonMoment.month(this.picker_von._selected.getMonth());
+    vonMoment.year(this.picker_von._selected.getFullYear());
+    this.jahrestag=" "+vonMoment.dayOfYear();
+    console.log(this.jahrestag);
+}
 }

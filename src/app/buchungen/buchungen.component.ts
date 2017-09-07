@@ -29,7 +29,6 @@ export class BuchungenComponent implements OnInit {
   }
 
   ngOnInit() {
-
     // Firebase Function aufrufen, die alle Jahre zurückliefert, zu denen Buchungen vorliegen
     this.http.get ( "https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
     .subscribe(data => {
@@ -37,14 +36,16 @@ export class BuchungenComponent implements OnInit {
       for (var t=0; t<tokens.length-1;t++) {
         this.yearValues.push ( parseInt(tokens[t]) );
       }
-
     }, err => {
       this.yearValues.push ( moment().year() );
     });
+    this.myYear=moment().year();
+    this.myMonth=this.monatNamen[ moment().month() ];
 
   }
 
   public setUserId(id: string) {
+    console.log("SetUserId aufgerufen! Gibs ja garnicht!");
     this.userId = id;
   }
 
@@ -79,7 +80,7 @@ export class BuchungenComponent implements OnInit {
             console.log ("user ist vId: vermietet an:"+buchung.mId);
 
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
-            buchung["text"] = "Vermietet an: ";
+            buchung["text"] = "Mieter: ";
             if (buchung.mId) {
               let email = this.store.getEmailToUid( buchung.mId );
               if (email) {
@@ -88,7 +89,7 @@ export class BuchungenComponent implements OnInit {
                 buchung["partner"] = "Unbekannte UserId";
               }
             } else {
-              buchung["partner"] = "Niemanden";
+              buchung["partner"] = "Niemand";
             }
             this.buchungsArray.push( buchung );
           }
@@ -96,7 +97,7 @@ export class BuchungenComponent implements OnInit {
             console.log ("user ist mId: gemietet von:"+buchung.vId);
 
             buchung["datum"] = moment().dayOfYear(parseInt(tagesKeys[tk])).format('DD.MM.YYYY');
-            buchung["text"] = "Gemietet von: ";
+            buchung["text"] = "Vermieter: ";
             //Hier werde ich wohl nicht prüfen müssen, ob vId=="". Aber kostet ja nix.
             if (buchung.vId) {
               let email = this.store.getEmailToUid( buchung.vId );
@@ -106,7 +107,7 @@ export class BuchungenComponent implements OnInit {
                 buchung["partner"] = "Unbekannte UserId";
               }
             } else {
-              buchung["partner"] = "Niemanden";
+              buchung["partner"] = "Niemand";
             }
             this.buchungsArray.push( buchung );
           }

@@ -37,5 +37,10 @@
 <button md-raised-button (click)="getJahre()" >getJahre()</button>
 <p> Passwort überprüfen:</p>
 <input [(ngModel)]="testPassword">
-<button md-raised-button (click)="evalPW()" >PW prüfen!</button>
+<button md-raised-button (click)="evalEmail()" >Funktion Buchung testen</button>
+<input [mdDatepicker]="vonPicker" (click)="this.picker_von.open()" placeholder="Von...">
+<button [mdDatepickerToggle]="vonPicker"></button>
+<md-datepicker #vonPicker (dateChange)="onDateChange()"></md-datepicker>
+<button md-raised-button (click)="onDateChange()" >Jahrestag?</button>
+<!--p [(ngModel)]="jahrestag"></p-->
 >

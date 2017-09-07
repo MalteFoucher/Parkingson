@@ -247,16 +247,16 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   const ppText = "Parkplatz " + pId +  " am " + date.format("DD.MM.YYYY");
 
   if(!prev.exists()) {
-    buchung(ppText + " freigegeben.", dataVal.mId, null);
+    buchungM(ppText + " freigegeben.", dataVal.mId, null);
   }
   else if (!data.exists()) {
     const mId = prevVal.mId;
     console.log("mId: " + mId);
     console.log("prevVal.vId: " + prevVal.vId);
     if(mId!=null) {
-      buchung('Buchung von ' + ppText + ' vom Vermieter storniert.', prevVal.vId, mId);
+      buchungM('Buchung von ' + ppText + ' vom Vermieter storniert.', prevVal.vId, mId);
     } else {
-      buchung('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId, mId);
+      buchungM('Freigabe von ' + ppText + ' aufgehoben.', prevVal.vId, mId);
     }
   } else {
     var mId = dataVal.mId;
@@ -268,16 +268,43 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
         data.ref.update({mId: mId});
       }
 
-      buchung(ppText + ' gebucht.', dataVal.vId, mId);
+      buchungM(ppText + ' gebucht.', dataVal.vId, mId);
     } else {
-      buchung('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vId, mId);
+      buchungM('Buchung von ' + ppText + ' vom Mieter storniert.', dataVal.vId, mId);
     }
   }
 });
 
-const buchung = (text, vermieter, mieter ) => {
-  console.log("vermieter: " + vermieter);
-  console.log("mieter: " + mieter);
-  console.log(text);
+const buchungM = (text, vermieter, mieter ) => {
+  console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+text);
+  //Jetzt die Email-Adressen zu den IDs beziehen
+  var ref = admin.database().ref('/emailToRole/');
+  //Vermieter dürfte ja stets !=null sein.
+  ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {
+    //Vermieter-Adresse haben wir    
+    console.log ("Email des Vermieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));    
+    var uselessVariable = sendEmail({
+        from: from,
+        to: Object.keys(data.val())[0].replace(/!/g,'.'),        
+        subject: 'Änderung Buchungsstatus',
+        text: text}
+    );
+
+    if (mieter) {
+        ref.orderByChild('uid').equalTo(mieter).once('value').then( data => {
+        //Mieter-Adresse haben wir auch        
+        console.log ("Email des Mieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));        
+        var uselessVariable = sendEmail({
+            from: from,
+            to: Object.keys(data.val())[0].replace(/!/g,'.'),        
+            subject: 'Änderung Buchungsstatus',
+            text: text}
+        );
+
+    },error => {
+      console.log ("ERROR: "+error);
+    })
+    }
+  });
 }
 
