@@ -18,7 +18,7 @@ admin.initializeApp(functions.config().firebase);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
 
 //const from = 'ParkplatzTool <malte_kun@web.de>'; //bruacht Port:578
-const from = 'ParkplatzTool';// <service@parken-eagle.com>';
+const from = 'ParkplatzTool <service@parken-eagle.com>';
 
 const smtpConfig = {
     //host: 'smtp.web.de',
@@ -32,7 +32,7 @@ const smtpConfig = {
         //pass: '_C^M8dnN'
         //user: 'malte_kun@web.de',             //sendinblue
         //pass: 'darkwW6AQ7NPVh12'
-        user: 'm040b7a3',
+        user: 'm040b7a3',                       //Romans all-inkl.com
         pass: 'dARRzM2XVmCUy2Zh'
         
     }

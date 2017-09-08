@@ -114,6 +114,7 @@ export class LoginComponent implements AfterViewChecked{
             console.log('pw reset email sent');
           }).catch(function (error) {
             console.log('error beim versenden der pw reset email');
+            console.log (error.message);
           });
         }
       });

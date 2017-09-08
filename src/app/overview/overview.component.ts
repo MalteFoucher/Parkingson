@@ -308,13 +308,15 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
       message = 'Bitte Mailadresse angeben.';
       this.snachBar.open(message, null, {duration: 2000});
     } else {
-      firebase.database().ref('/emailToRole').child(this.changeMail.replace('.', '!')).once('value').then(snapshot => {
+      firebase.database().ref('/emailToRole').child(this.changeMail.replace(/\./g, '!')).once('value').then(snapshot => {
         const value = snapshot.val();
         if (value != null) {
           value.email = this.changeMail;
           this.store.ovUser = value;
-          this.changeMail = null;
+          //Hier war doch n Dreher oder? -Malte
           message = 'Aktiver Benutzer ist jetzt ' + this.changeMail;
+          this.changeMail = null;
+          
           this.calcValues();
         } else {
           message = 'Benutzer ' + this.changeMail + ' nicht gefunden.';
