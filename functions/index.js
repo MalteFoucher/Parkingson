@@ -18,20 +18,23 @@ admin.initializeApp(functions.config().firebase);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
 
 //const from = 'ParkplatzTool <malte_kun@web.de>'; //bruacht Port:578
-const from = 'ParkplatzTool <service@parken-eagle.com>';
+const from = 'ParkplatzTool';// <service@parken-eagle.com>';
 
 const smtpConfig = {
     //host: 'smtp.web.de',
-    host: 'smtp-relay.gmail.com',
-    port: 587,
-    //secure: true,
-    auth: {
-        //type: 'OAuth2',
-        user: 'service@parken-eagle.com',
-        pass: '_C^M8dnN'
-        //
-        //user: 'malte_kun@web.de',
-        //pass: top secret
+    //host: 'smtp-relay.gmail.com',
+    //host: 'smtp-relay.sendinblue.com',
+    host: 'w0088c85.kasserver.com',
+    //port: 587,    
+    port: 465,    
+    auth: {        
+        //user: 'service@parken-eagle.com',     //gsuite
+        //pass: '_C^M8dnN'
+        //user: 'malte_kun@web.de',             //sendinblue
+        //pass: 'darkwW6AQ7NPVh12'
+        user: 'm040b7a3',
+        pass: 'dARRzM2XVmCUy2Zh'
+        
     }
     /*tls: {
         secure: true
@@ -148,9 +151,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {
         from: from,
-        to: 'malte.foucher@deka.lu',
-        //to: 'malte_kun@web.de',
-        //to: 'foucherm@fh-trier.de',
+        to: 'malte.foucher@deka.lu',        
         subject: 'Hallo',
         text: 'plaintext version of the message',
         html: '<h1>Hey na! TestFunktion!</h1><p>Paragraph</p>'
@@ -160,25 +161,6 @@ exports.testEmail = functions.https.onRequest((req, response) => {
 })
 
 
-//Generiert und verschickt ne Email
-exports.email = functions.https.onRequest((req, response) => {
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-    var to = req.query.to;
-    var subject = req.query.subject;
-    var text  = req.query.text;
-    console.log ("Aufruf von email mit: "+to,subject, text);
-
-    var mailOptions = {
-        from: from,
-        to: to,
-        subject: subject,
-        text: text,
-        html: '<h1>ParkplatzTool</h1><p>'+text+'</p>'
-    };
-    var res = 'okay';
-    res=sendEmail(mailOptions);
-    response.end( res );
-})
 
 
 exports.b3getJahre = functions.https.onRequest((req, res) => {

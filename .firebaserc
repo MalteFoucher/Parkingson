@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "parkingtool-6cf77"
+    "default": "parkingtool-6cf77",
+    "noAlias": "parkplatztool"
   }
 }

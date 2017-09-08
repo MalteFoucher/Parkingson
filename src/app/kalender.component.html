@@ -24,12 +24,11 @@
       <td>{{p['monat'][9].buch}}/{{p['monat'][9].frei}}</td>
       <td>{{p['monat'][10].buch}}/{{p['monat'][10].frei}}</td>
       <td>{{p['monat'][11].buch}}/{{p['monat'][11].frei}}</td><td>{{p['total']}}</td>
-
     </tr>
   </table>
 </div>
 
-<
+
 <button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
 <p>Initialbefüllung</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
 <button md-raised-button (click)="writeNewBuchung()">writeNewBuchung()</button>
@@ -42,5 +41,3 @@
 <button [mdDatepickerToggle]="vonPicker"></button>
 <md-datepicker #vonPicker (dateChange)="onDateChange()"></md-datepicker>
 <button md-raised-button (click)="onDateChange()" >Jahrestag?</button>
-<!--p [(ngModel)]="jahrestag"></p-->
->

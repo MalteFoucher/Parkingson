@@ -117,7 +117,7 @@ export class KalenderComponent {
           //Prüfen, ob Vermieter schon angelegt und falls nicht, anlegen!
           if (!(buchung.vId in this.parkplatzMap)) {
             this.parkplatzMap[buchung.vId] = {
-              email: buchung.vId,//this.store.getEmailToUid(buchung.vId),
+              email: buchung.vId,
               pId: buchung.pId
             };
           }
@@ -230,14 +230,15 @@ export class KalenderComponent {
 
   }
 
-
+  /*Wird das ncoh genutzt?
   private getEmailToUid(uid: string, callbackFunction: any, callbackData: any) {
     firebase.database().ref("/emailToRole/").orderByChild('uid').equalTo(uid).once('value').then(function (snapshot) {
       callbackFunction(snapshot.val(), callbackData);
     });
-  }
+  }*/
 
 
+/*
   public setUserRights(pid: number, admin: boolean, email: string) {
     this.userParkId = pid;
     this.userAdmin = admin;
@@ -245,52 +246,13 @@ export class KalenderComponent {
     //this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
     //this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
   }
-
+*/
   emailTesten() {
     console.log("EMIALTESTEN");
     this.emailService.sendEmail(this.userEmail).subscribe(data => console.log(data));
   }
 
 //CSV
-
-  getAsText(files: any[]) {
-    console.log(files);
-    var fileToRead = new Blob(files[0]);// <Blob> files[0];
-    var reader = new FileReader();
-
-    // Read file into memory as UTF-8
-    reader.readAsText(fileToRead);
-    // Handle errors load
-    reader.onload = this.loadHandler;
-    reader.onerror = this.errorHandler
-    ;
-  }
-
-  loadHandler(event) {
-    var csv = event.target.result;
-    this.processData(csv);
-  }
-
-  processData(csv) {
-    var allTextLines = csv.split(/\r\n|\n/);
-    var lines = [];
-    for (var i = 0; i < allTextLines.length; i++) {
-      var data = allTextLines[i].split(';');
-      var tarr = [];
-      for (var j = 0; j < data.length; j++) {
-        tarr.push(data[j]);
-      }
-      lines.push(tarr);
-    }
-    console.log(lines);
-  }
-
-  errorHandler(evt) {
-    if (evt.target.error.name == "NotReadableError") {
-      alert("Canno't read file !");
-    }
-  }
-
   handleFileSelect(evt) {
     var files = evt.target.files;
     console.log("HFS");
@@ -323,7 +285,7 @@ export class KalenderComponent {
         console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
         //am besten natürlich die richtige Email, ansosnten [2].[1]@deka.lu und umlaute beachten
 
-        //Muss 2 funktionen machen, update und set 
+        //Muss eigentlich 2 funktionen machen, update und set 
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .update({
             //benutzerAdmin: false,
