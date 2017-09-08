@@ -27,11 +27,11 @@
   <div class="row columns">
     <table>
       <tr>
-        <th>Mon</th>
-        <th>Die</th>
-        <th>Mit</th>
-        <th>Don</th>
-        <th>Frei</th>
+        <th>Mo</th>
+        <th>Di</th>
+        <th>Mi</th>
+        <th>Do</th>
+        <th>Fr</th>
       </tr>
       <tr *ngFor="let week of weeks">
         <td *ngFor="let day of week" (click)="dayClick(day)" [class]="parkplatzColor(day.state)"
