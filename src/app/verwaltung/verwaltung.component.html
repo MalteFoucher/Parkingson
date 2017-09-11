@@ -1,40 +1,40 @@
 <div class="centered-content">
-  <h3>Verwaltung</h3>
+  <h3 class="title">Verwaltung</h3>
 </div>
 
   <div *ngIf="user.benutzerAdmin" class="row columns">
     <table>
       <tr><th></th><th class="text_col">Email</th><th class="number_col">Aktiv</th><th class="number_col">Buchungsv.</th><th class="number_col">Benutzerv.</th></tr>
-      <tr *ngFor="let i of userArray; let ind = index">                        
+      <tr *ngFor="let i of userArray; let ind = index">
         <td><md-icon (click)="onDeleteUser(ind)">delete</md-icon></td>
         <td>{{i.email}}</td>
-        <!--td>{{i.parkId}}</td-->        
+        <!--td>{{i.parkId}}</td-->
         <td><md-checkbox (change)="onIsActiveChange(ind)" [checked]="i.isActive"></md-checkbox></td>
-        <td><md-checkbox (change)="onBuchungChange(ind)" [checked]="i.buchungsAdmin"></md-checkbox></td>        
-        <td><md-checkbox (change)="onBenutzerChange(ind)" [checked]="i.benutzerAdmin"></md-checkbox></td>        
+        <td><md-checkbox (change)="onBuchungChange(ind)" [checked]="i.buchungsAdmin"></md-checkbox></td>
+        <td><md-checkbox (change)="onBenutzerChange(ind)" [checked]="i.benutzerAdmin"></md-checkbox></td>
         <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
       </tr>
-    </table>  
+    </table>
     <button md-raised-button (click)="createNewUser()" >Neuen Nutzer anlegen</button>
   </div>
 
   <div *ngIf="user.buchungsAdmin" class="row columns">
-  
+
   <table>
       <tr><th>Email</th><th>Parkplatz</th></tr>
-      <tr *ngFor="let i of userArray; let ind = index">                        
+      <tr *ngFor="let i of userArray; let ind = index">
         <td>{{i.email}}</td>
-        <!--td>{{i.parkId}}</td-->        
-        <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->        
+        <!--td>{{i.parkId}}</td-->
+        <!--td><button md-raised-button (click)="onApplyButton(ind)">Apply</button></td-->
         <!--td><input [attr.id]="ind" value={{userArray[ind].parkId}} (click)="onParkIdChange(ind)"/></td-->
-        <td><input [attr.id]="ind" value={{userArray[ind].parkId}} (change)="onParkIdChange(ind)"/></td>              
+        <td><input [attr.id]="ind" value={{userArray[ind].parkId}} (change)="onParkIdChange(ind)"/></td>
       </tr>
-    </table>          
+    </table>
   </div>
 
 
 
-  
+
   <!--md-datepicker #vonPicker>PICK1</md-datepicker>
   <input [mdDatepicker]="bisPicker">
   <md-datepicker #bisPicker>PICK2</md-datepicker>
