@@ -8,20 +8,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-  <link rel="stylesheet" type="text/css" href="/assets/styles.css" />
-  <link rel="stylesheet" type="text/css" href="/assets/indigo-pink.css" />
+  <link rel="stylesheet" type="text/css" href="./assets/styles.css" />
+  <!--link rel="stylesheet" type="text/css" href="/assets/indigo-pink.css" /-->
 
-  <link media="all" type="text/css" rel="stylesheet" href="/assets/foundation-flex.min.css">
+  <!--link media="all" type="text/css" rel="stylesheet" href="/assets/foundation-flex.min.css"-->
 
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!--link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"-->
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   
   <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
   <script src="emailHandler.js"></script>
+  
 </head>
 <body>
-    <div class="centered-content">
-    <h1>ParkplatzTool</h1>
-    <h3 id="header3">Name der Aktion</h3>
-    <p id="text">Blabla...</p>
-    </div>
+  <div class="centered-content">
+    <h1>ParkplatzTool</h1>    
+  </div>
+  <div class="centered-content">
+    <h3 id="header3">Aktion</h3>    
+  </div>
+
+  <div id="resetPasswordContainer">
+    <p>Bitte geben Sie Ihr neues Passwort ein. Verwenden Sie dafür mindestens 10 Zeichen, darunter Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen.</p>
+    <p id="resetPassword_userEmail">User's Email</p>
+    <input type="password" id="resetPassword_input">
+    <button id="resetPassword_applyButton" onclick="confirmNewPassword()">Übernehmen</button>
+    <p id="resetPassword_status"></p>
+  </div>
+  
+  <div id="verifyEmailContainer">
+    <p>Ihre E-Mail wird verifiziert...</p>
+    <p id="verifyEmail_status"></p>
+  </div>
+
 </body>

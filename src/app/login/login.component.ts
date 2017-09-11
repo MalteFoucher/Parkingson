@@ -101,12 +101,14 @@ export class LoginComponent implements AfterViewChecked{
         html: 'Geben Sie Ihre E-Mail-Adresse an,<br>an die der Reset-Link geschickt wird:<p></p>',
         email: this.user_email
       }
-    })
-      .afterClosed().subscribe(selection => {
+    });
+    dialogRef.afterClosed().subscribe(selection => {
+        console.log("After closed!");
         if (!selection) {
           //Abbruch Button geklickt, um Dialog zu schließen
         } else {
           //Email senden Button geklickt
+          this.user_email=dialogRef.componentInstance.user_email;
           //.then und .catch - Behandlung noch n bissel mager, aber funktioniert ja.
           const auth = firebase.auth();
           auth.sendPasswordResetEmail(this.user_email).then(function () {
