@@ -17,14 +17,19 @@
 <br>
 <div class="row columns">
 
-    <table>
-      <tr><th class="number_col">Datum</th><th class="text_col">Kontakt</th></tr>
-      <tr *ngFor="let i of buchungsArray">
-        <td>{{i.datum}}</td>
-        <td>{{i.text}}<div [innerHTML]="i.partner">!!</div></td>
-      </tr>
-    </table>
-  </div>
+  <table>
+    <tr>
+      <th class="number_col">Datum</th>
+      <th class="text_col">Kontakt</th>
+    </tr>
+    <tr *ngFor="let i of buchungsArray">
+      <td>{{i.datum}}</td>
+      <td>{{i.text}}
+        <div [innerHTML]="i.partner">!!</div>
+      </td>
+    </tr>
+  </table>
+</div>
 <!--p *ngFor="let bk in buchungValues">{{bk.mieter}}</p-->
 
 <!--div *ngFor='#key of yearKeys'>
