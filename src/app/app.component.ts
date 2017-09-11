@@ -140,7 +140,7 @@ export class AppComponent implements AfterViewChecked {
 
   setContent(content) {
     this.content = content;
-    this.sidenav.close();
+    this.ngZone.run(() => this.sidenav.close());
   }
 
 }
