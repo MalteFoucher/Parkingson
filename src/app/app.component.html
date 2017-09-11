@@ -19,12 +19,12 @@
       <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
       <md-list-item (click)="setContent('buchungen')">Buchungen</md-list-item>
       <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('auswertung')">Auswertung</md-list-item>
-      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>            
-      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht</md-list-item>    
+      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht</md-list-item>
     </md-list>
   </md-sidenav>
 
-  <div [ngStyle]="{'min-height': 'calc(100vh - 96px)'}">
+  <div [ngStyle]="{'min-height': 'calc(100% - 96px)'}">
     <app-login *ngIf="user==null"></app-login>
     <app-overview *ngIf="user!=null && content=='overview'"></app-overview>
     <kalender-component *ngIf="user!=null && content=='kalender'" #kalender>Yo!</kalender-component>
