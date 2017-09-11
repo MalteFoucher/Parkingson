@@ -1,29 +1,29 @@
 <div class="centered-content">
-  <h3>Übersicht Buchungen</h3>
+  <h3 class="title">Übersicht Buchungen</h3>
 </div>
 
 <div class="centered-content">
-  <md-select placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">    
-    <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>  
+  <md-select class="content-el" placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">
+    <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>
   </md-select>
 
-  <md-select placeholder="Monat" [(ngModel)]="myMonth" (change)="onMonthChanged()">    
-    <md-option *ngFor="let month of monatNamen" [value]="month">{{month}}</md-option>  
+  <md-select class="content-el" placeholder="Monat" [(ngModel)]="myMonth" (change)="onMonthChanged()">
+    <md-option *ngFor="let month of monatNamen" [value]="month">{{month}}</md-option>
   </md-select>
 
-  <button md-raised-button (click)="onGoButton()">GO!</button>    
-  
+  <button class="content-el" md-button color="primary" (click)="onGoButton()">GO!</button>
+
 </div>
 <br>
 <div class="row columns">
-  
+
     <table>
       <tr><th class="number_col">Datum</th><th class="text_col">Kontakt</th></tr>
-      <tr *ngFor="let i of buchungsArray">                
+      <tr *ngFor="let i of buchungsArray">
         <td>{{i.datum}}</td>
-        <td>{{i.text}}<div [innerHTML]="i.partner">!!</div></td>        
+        <td>{{i.text}}<div [innerHTML]="i.partner">!!</div></td>
       </tr>
-    </table>  
+    </table>
   </div>
 <!--p *ngFor="let bk in buchungValues">{{bk.mieter}}</p-->
 

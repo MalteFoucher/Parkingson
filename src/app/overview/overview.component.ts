@@ -178,7 +178,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   dayClick(day) {
-    console.log ("dayClick("+day+")");
+    console.log('dayClick(' + day + ')');
     const border = this.getDayBorder(day);
 
     const now = moment();
@@ -195,30 +195,29 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (day.state === 0) {
         dayRef.push({vId: this.store.oververviewUser.uid, pId: this.store.oververviewUser.parkId});
       } else if (day.state === 1) {
-        
+
         // PROBLEM: BEI DER STORNOFRIST HANDELT ES SICH UM ARBEITS-, NICHT WOCHENTAGE! Daher prüfen:
         // Sind unter den Tagen der (nun leider ja variablen) Frist Wochendend-Tage (5||6),
-        // falls ja: Frist verlängern.                
-        var daysToSubtract=this.store.config['tagesfrist'];        
-        console.log ("Geklickter Tag:"+border.format('DD.MM.YYYY')+" ("+border.weekday()+")");
-        for (var i=1; i<=daysToSubtract;i++)
-        {                    
-          console.log ("Tag -"+i+" der "+daysToSubtract+"-Tagesfrist:");
-          border.subtract(1,'days');
-          console.log (border.format('DD.MM.YYYY')+" : "+border.day());
-          if (border.day()==0) {
-            console.log ("Tag ist ein Sonntag -> Frist um 1 Tag verlängern!");
+        // falls ja: Frist verlängern.
+        let daysToSubtract = this.store.config['tagesfrist'];
+        console.log('Geklickter Tag:' + border.format('DD.MM.YYYY') + ' (' + border.weekday() + ')');
+        for (let i = 1; i <= daysToSubtract; i++) {
+          console.log('Tag -' + i + ' der ' + daysToSubtract + '-Tagesfrist:');
+          border.subtract(1, 'days');
+          console.log(border.format('DD.MM.YYYY') + ' : ' + border.day());
+          if (border.day() === 0) {
+            console.log('Tag ist ein Sonntag -> Frist um 1 Tag verlängern!');
             daysToSubtract++;
           }
-          if (border.day()==6) {
-            console.log ("Tag ist ein Samstag -> Frist um 1 Tag verlängern!");
+          if (border.day() === 6) {
+            console.log('Tag ist ein Samstag -> Frist um 1 Tag verlängern!');
             daysToSubtract++;
           }
         }
-        console.log ("Tag, an dem eine Stornierung noch möglich ist: "+border.format('DD.MM.YYYY'));
-        //------------------------------------------------------------------------------------------
-                
-        //border.subtract(2, 'days');        
+        console.log('Tag, an dem eine Stornierung noch möglich ist: ' + border.format('DD.MM.YYYY'));
+        // ------------------------------------------------------------------------------------------
+
+        // border.subtract(2, 'days');
         if (now.isAfter(border)) {
           this.mietDay = day;
           this.snachBar.open('Eine Stornierung ist nicht mehr möglich.', null, {duration: 2000});
@@ -316,7 +315,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
           //Hier war doch n Dreher oder? -Malte
           message = 'Aktiver Benutzer ist jetzt ' + this.changeMail;
           this.changeMail = null;
-          
+
           this.calcValues();
         } else {
           message = 'Benutzer ' + this.changeMail + ' nicht gefunden.';

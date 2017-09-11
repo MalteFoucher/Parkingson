@@ -4,3 +4,12 @@
 .text_col {
     width: 55%;
 }
+
+.title{
+  padding: 15px 0;
+}
+
+.content-el {
+  flex-grow: 1;
+  padding: 10px;
+}
