@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component} from '@angular/core';
+import {AfterViewChecked, Component, ChangeDetectorRef} from '@angular/core';
 import * as firebase from 'firebase';
 import {HttpClient} from '@angular/common/http';
 import {MdDialog} from '@angular/material';
@@ -17,7 +17,7 @@ export class LoginComponent implements AfterViewChecked{
   ngAfterViewChecked(): void {
   }
 
-  constructor(private http: HttpClient, private dialog: MdDialog) {
+  constructor(private http: HttpClient, private dialog: MdDialog, private cdRef: ChangeDetectorRef) {
   }
 
   login() {    
@@ -117,6 +117,7 @@ export class LoginComponent implements AfterViewChecked{
             console.log (error.message);
           });
         }
+        this.cdRef.detectChanges();
       });
   }
 }

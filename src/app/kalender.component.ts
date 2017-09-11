@@ -54,22 +54,17 @@ export class KalenderComponent {
   userParkId: number = -1;
   userAdmin: boolean = false;
   userEmail: string = "";
-  frist_tage: number = 2;
-  frist_stunde: number = (9.5 * 60); //Also in Minuten
   toggleState: any;
 
-  montagArray: Buchung[] = new Array<Buchung>();
-  dienstagArray: Buchung[] = new Array<Buchung>();
-  mittwochArray: Buchung[] = new Array<Buchung>();
-  donnerstagArray: Buchung[] = new Array<Buchung>();
-  freitagArray: Buchung[] = new Array<Buchung>();
-  tablerow: Tablerow = new Tablerow();
-  tablerows: Tablerow[] = new Array<Tablerow>();
-
+  //Nur nötig für die debug-komponenten (email, csv-befüllung...)
+  buchungsAdmin: boolean = false;
+  benutzerAdmin: boolean = false;
   //controller: any;
 
   constructor(dialog: MdDialog, private store: Store, private emailService: EmailService, private http: HttpClient) {
     this.dialog = dialog;
+    this.buchungsAdmin=store.buchungsAdmin;
+    this.benutzerAdmin=store.benutzerAdmin;
 
 
     // Firebase Function aufrufen, die alle Jahre zurückliefert, zu denen Buchungen vorliegen
@@ -257,8 +252,6 @@ export class KalenderComponent {
     var files = evt.target.files;
     console.log("HFS");
     console.log(files[0], typeof(files[0]));
-
-
     var reader = new FileReader();
     reader.readAsText(files[0]);
     reader.onload = function (event) {
@@ -269,8 +262,8 @@ export class KalenderComponent {
 
       for (var l in lines) {
         var tokens = lines[l].split(";");
-        //console.log (tokens[1]+ " "+tokens[0]+": "+tokens[4].replace(/\./g,'!')+"  => "+tokens[5]);
         var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
+        //var emailAsKey = tokens[3].replace(/\./g,'!');
         emailAsKey = emailAsKey.toLowerCase();
         emailAsKey = emailAsKey.replace(/ö/g, 'oe')
         emailAsKey = emailAsKey.replace(/ä/g, 'oe')
@@ -279,24 +272,58 @@ export class KalenderComponent {
         emailAsKey = emailAsKey.replace(/ /g, '');
 
 
-        var parkId = parseInt(tokens[3]);
+        var parkId = parseInt(tokens[2]);
         if (isNaN(parkId)) parkId = 0;
 
         console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
-        //am besten natürlich die richtige Email, ansosnten [2].[1]@deka.lu und umlaute beachten
 
-        //Muss eigentlich 2 funktionen machen, update und set 
+        firebase.database().ref('/emailToRole/' + emailAsKey + '/')
+          .set({
+            benutzerAdmin: false,
+            buchungsAdmin: false,
+            parkId: parkId,
+            isActive: false,
+            uid: 'not set yet'
+          });
+      }
+      console.log(lines.length + " Einträge geSETtet.");
+    }
+  }
+
+  handleFileSelectUpdate(evt) {
+    var files = evt.target.files;
+    console.log("HFS");
+    console.log(files[0], typeof(files[0]));
+    var reader = new FileReader();
+    reader.readAsText(files[0]);
+    reader.onload = function (event) {
+      var tokens = event.target['result'].split(";");
+      console.log(tokens.length);
+
+      var lines = event.target['result'].split(/\n/);
+
+      for (var l in lines) {
+        var tokens = lines[l].split(";");
+        var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
+        //var emailAsKey = tokens[3].replace(/\./g,'!');
+        emailAsKey = emailAsKey.toLowerCase();
+        emailAsKey = emailAsKey.replace(/ö/g, 'oe')
+        emailAsKey = emailAsKey.replace(/ä/g, 'oe')
+        emailAsKey = emailAsKey.replace(/ü/g, 'ue')
+        emailAsKey = emailAsKey.replace(/ß/g, 'ss')
+        emailAsKey = emailAsKey.replace(/ /g, '');
+
+        var parkId = parseInt(tokens[2]);
+        if (isNaN(parkId)) parkId = 0;
+
+        console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
+        
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .update({
-            //benutzerAdmin: false,
-            //buchungsAdmin: false,
             parkId: parkId,
-            //isActive: false,
-            //uid: 'not set yet'
           });
-
       }
-      console.log(lines.length + " Einträge fertig.");
+      console.log(lines.length + " Einträge geUPDATEt.");
     }
   }
 

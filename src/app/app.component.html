@@ -19,12 +19,8 @@
       <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
       <md-list-item (click)="setContent('buchungen')">Buchungen</md-list-item>
       <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('auswertung')">Auswertung</md-list-item>
-      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>
-      
-      <!-- TO DO: Die Jahresübersicht-View noch vom Testkram säubern und ganz normal für d.Admin einbinden!-->
-      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht</md-list-item>
-      
-      <!--md-list-item (click)="setContent('kalender')">Jahresübersicht & TESTKRAM</md-list-item-->
+      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>            
+      <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht</md-list-item>    
     </md-list>
   </md-sidenav>
 
@@ -37,4 +33,3 @@
     <app-verwaltung *ngIf="user!=null && content=='verwaltung'"></app-verwaltung>
   </div>
 </md-sidenav-container>
-

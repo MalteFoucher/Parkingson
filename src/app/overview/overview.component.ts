@@ -205,12 +205,12 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         {                    
           console.log ("Tag -"+i+" der "+daysToSubtract+"-Tagesfrist:");
           border.subtract(1,'days');
-          console.log (border.format('DD.MM.YYYY')+" : "+border.weekday());
-          if (border.weekday()==0) {
+          console.log (border.format('DD.MM.YYYY')+" : "+border.day());
+          if (border.day()==0) {
             console.log ("Tag ist ein Sonntag -> Frist um 1 Tag verlängern!");
             daysToSubtract++;
           }
-          if (border.weekday()==6) {
+          if (border.day()==6) {
             console.log ("Tag ist ein Samstag -> Frist um 1 Tag verlängern!");
             daysToSubtract++;
           }

@@ -249,17 +249,18 @@ createNewUser() {
           parkId: 0,
           uid: "overwrite me!"
         }).then(data=>{
-          this.snackBar.open('User erfolgreich angelegt.', null, {duration: 2000});
+          this.snackBar.open('User erfolgreich angelegt.', null, {duration: 2000});          
+          var newUser={email: email.replace(/!/g,'.'),
+            parkId:0,
+            isActive:false,
+            benutzerAdmin: false,
+            buchungsAdmin: false,
+            uid: "overwrite me!"
+          };
+          this.store.pushToE2R(newUser);
+          this.userArray.push(newUser);
         });
-        var newUser={email: email,
-          parkId:0,
-          isActive:false,
-          benutzerAdmin: false,
-          buchungsAdmin: false,
-          uid: "overwrite me!"
-        };
-        this.store.pushToE2R(newUser);
-        this.userArray.push(newUser);
+        
 
       }
     }

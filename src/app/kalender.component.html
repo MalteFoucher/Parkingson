@@ -28,17 +28,18 @@
   </table>
 </div>
 
-<!--
-<button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
-<p>Initialbefüllung</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
-<button md-raised-button (click)="writeNewBuchung()">writeNewBuchung()</button>
-<button md-raised-button (click)="writeNewUser()" >writeNewUser()</button>
-<button md-raised-button (click)="getJahre()" >getJahre()</button>
-<p> Passwort überprüfen:</p>
-<input [(ngModel)]="testPassword">
-<button md-raised-button (click)="evalEmail()" >Funktion Buchung testen</button>
-<input [mdDatepicker]="vonPicker" (click)="this.picker_von.open()" placeholder="Von...">
-<button [mdDatepickerToggle]="vonPicker"></button>
-<md-datepicker #vonPicker (dateChange)="onDateChange()"></md-datepicker>
-<button md-raised-button (click)="onDateChange()" >Jahrestag?</button>
--->
+<div *ngIf="buchungsAdmin && benutzerAdmin">
+  <button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
+  <p>Überschreiben der Daten in EmailToRole</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
+  <p>Update der Parkkplätze in EmailToRole</p><input name="myFileUpdate" type="file"  (change)="handleFileSelectUpdate($event)" accept=".csv">
+  <button md-raised-button (click)="writeNewBuchung()">writeNewBuchung()</button>
+  <button md-raised-button (click)="writeNewUser()" >writeNewUser()</button>
+  <button md-raised-button (click)="getJahre()" >getJahre()</button>
+  <p> Passwort überprüfen:</p>
+  <input [(ngModel)]="testPassword">
+  <button md-raised-button (click)="evalEmail()" >Funktion Buchung testen</button>
+  <input [mdDatepicker]="vonPicker" (click)="this.picker_von.open()" placeholder="Von...">
+  <button [mdDatepickerToggle]="vonPicker"></button>
+  <md-datepicker #vonPicker (dateChange)="onDateChange()"></md-datepicker>
+  <button md-raised-button (click)="onDateChange()" >Jahrestag?</button>
+</div>
