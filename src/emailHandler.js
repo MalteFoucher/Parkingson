@@ -111,7 +111,7 @@ if (! (user_password.length>=10 && zeichenTypenUsed>=3) ) {
   document.getElementById("resetPassword_status").innerHTML = 'Das eingegebene Passwort entspricht nicht den Passwortrichtlinien!';
   return;
 }
-    auth.confirmPasswordReset(actionCode, user_password).then(resp => {
+    auth.confirmPasswordReset(actionCode, user_password).then(function(resp) {
       console.log ("Password updated!");
       document.getElementById("resetPassword_status").innerHTML = 'Ihr Passwort wurde erneuert! Sie können jetzt zur Anwendung zurückkehren.';
       // Password reset has been confirmed and new password updated.
