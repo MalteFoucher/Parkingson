@@ -183,7 +183,7 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
 
     const now = moment();
     if (now.isAfter(border)) {
-      this.snachBar.open('Die Bearbeitung ist für diesen Tag gesperrt', null, {duration: 2000});
+      this.snachBar.open('Die Bearbeitung ist für diesen Tag gesperrt.', null, {duration: 2000});
       return;
     }
 
@@ -225,7 +225,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
           this.ngZone.run(() => {
             this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
               if (result === 'ok') {
-                console.log('res: ' + result);
                 dayRef.child(day.key).remove();
                 this.changeDetector.detectChanges();
               }
@@ -244,7 +243,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.ngZone.run(() => {
           this.dialog.open(ConfirmDialogComponent).afterClosed().subscribe(result => {
             if (result === 'ok') {
-              console.log('res: ' + result);
               dayRef.child(day.key).child('mId').remove();
             }
           });

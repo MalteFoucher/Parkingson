@@ -5,6 +5,7 @@ import {ParkConst} from "../util/const";
 
 import * as firebase from 'firebase/app';
 import {createChangeDetectorRef} from "@angular/core/src/view/refs";
+import {MdSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-choose-spot',
@@ -26,7 +27,7 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
   private query;
   private ref;
 
-  constructor(private store: Store, private cdRef : ChangeDetectorRef) {
+  constructor(private store: Store, private cdRef: ChangeDetectorRef, private snachBar: MdSnackBar) {
   }
 
   ngOnDestroy(): void {
@@ -64,28 +65,30 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
     }
     const last = res[res.length - 1];
 
-    console.log('last: ' + JSON.stringify(last));
-    console.log('length: ' + last.length);
-    console.log('size: ' + size);
-
     if (last.length < size) {
       const n = size - last.length;
       for (let i = 0; i < n; i++) {
         last.push({pId: 0});
       }
     }
-
-    console.log('last2: ' + JSON.stringify(last));
-
     return res;
   }
 
   slotClick(slot) {
-    this.ref.child(slot.key).update({
-      'mId': this.store.oververviewUser.uid
+    this.ref.child(slot.key).child('mId').transaction((mId) => {
+      if (mId === null) {
+        this.close();
+        return this.store.oververviewUser.uid;
+      } else {
+        this.snachBar.open('Der Parkplatz ist schon vergeben.', null, {duration: 2000});
+      }
     });
 
-    this.close();
+    // this.ref.child(slot.key).update({
+    //   'mId': this.store.oververviewUser.uid
+    // });
+
+
   }
 
   close() {

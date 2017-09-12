@@ -24,15 +24,15 @@ const smtpConfig = {
     //host: 'smtp-relay.gmail.com',
     //host: 'smtp-relay.sendinblue.com',
     host: 'w0088c85.kasserver.com',
-    //port: 587,    
-    port: 465,    
-    auth: {        
+    //port: 587,
+    port: 465,
+    auth: {
         //user: 'service@parken-eagle.com',     //gsuite
         //pass: '_C^M8dnN'
         //user: 'malte_kun@web.de',             //sendinblue
         //pass: 'darkwW6AQ7NPVh12'
         user: 'm040b7a3',                       //Romans all-inkl.com
-        pass: 'JnrSqK9Gg6USH4cy'        
+        pass: 'JnrSqK9Gg6USH4cy'
     }
     /*tls: {
         secure: true
@@ -127,7 +127,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {
         from: from,
-        to: 'malte.foucher@deka.lu',        
+        to: 'malte.foucher@deka.lu',
         subject: 'Hallo',
         text: 'plaintext version of the message',
         html: '<h1>Hey na! TestFunktion!</h1><p>Paragraph</p>'
@@ -173,7 +173,7 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
     res.writeHead(200, {'Content-Type': 'text/plain'});
         admin.database().ref('/emailToRole/').orderByKey().equalTo(emailAsKey).once('value')
             .then (function (snapshot) {
-                
+
                 if (snapshot.val()) {
                     console.log("true, weil gibts schon");
                     res.end("true");
@@ -226,10 +226,10 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
     console.log("mId: " + mId);
     if(mId!=null) {
       if(prevMId!= null){
-        mId = prevVal;
-        data.ref.update({mId: mId});
+        // data.ref.update({mId: prevMId});
+      }else{
+        buchungM("Buchungsbestätigung", buchungVermieter, buchungMieter, dataVal.vId, mId,pId ,datum);
       }
-      buchungM("Buchungsbestätigung", buchungVermieter, buchungMieter, dataVal.vId, mId,pId ,datum);
     } else {
       buchungM("Stornierung der Buchung", stornierungMieterVermieter, stornierungMieterMieter, dataVal.vId, prevMId,pId ,datum);
     }
