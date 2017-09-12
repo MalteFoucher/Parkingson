@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer');
 const moment = require('moment');
 
 //cors ist für Cross Origin Header
-const cors = require('cors')({origin:true});//['https://www.parken-eagle.com', 'http://parken-eagle.com', 'https://parkplatztool.firebaseapp.com'], optionsSuccessStatus: 200});
+const cors = require('cors')({origin:true});
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
@@ -32,7 +32,7 @@ const smtpConfig = {
         //user: 'malte_kun@web.de',             //sendinblue
         //pass: 'darkwW6AQ7NPVh12'
         user: 'm040b7a3',                       //Romans all-inkl.com
-        pass: 'JnrSqK9Gg6USH4cy'
+        pass: '7p2HTfcyrtM2wfrY'
     }
     /*tls: {
         secure: true
@@ -42,44 +42,13 @@ const smtpConfig = {
 
 const transporter = nodemailer.createTransport(smtpConfig);
 
-/*Funktion, die einen User löscht.
-exports.deleteUser = functions.https.onRequest((req, response) => {
-
-    //Wenn ich die uid habe, könnte ich darüber auch die Email und darüber auch
-    //an die EmailAsKey kommen...
-    //var emailAsKey = req.query.e2rKey;
-    var uid=req.query.uid;
-
-    console.log ("DeleteUser:"+emailAsKey+" / "+uid);
-    response.writeHead(200, {'Content-Type': 'text/plain'});
-
-    /*
-    admin.auth().deleteUser(uid)
-    .then (function() {
-        console.log("Aus Auth gelöscht!");
-        res="Aus Auth gelöscht.";
-        var db = admin.database();
-        var ref = db.ref('/emailToRole/'+emailAsKey).remove()
-        .then (function() {
-          console.log ("Aus DB gelöscht!");
-        })
-        .catch (function (error) {
-          console.log ("Fehler beim Löschen aus DB."+error);
-        });
-    })
-    .catch (function (error) {
-        console.log("Fehler beim aus Auth löschen!"+error);
-    });
-
-
-})
-*/
 exports.onRemoveUser = functions.database.ref('/emailToRole/{emailKey}')
     .onDelete(event => {
         var removedEntry= event.data.previous.val();
         admin.auth().deleteUser(removedEntry.uid);
         console.log ("User "+removedEntry.uid+" wurde gelöscht!");
     });
+
 
 //Listener für wenn User sich registrieren (check ob PW und Email korrekt sind, und auch, ob
 //unter dem Key schon was in der DB stand, geschah client-seitig)
@@ -108,7 +77,6 @@ function sendEmail(mailOptions) {
     return ("ok");
     })
 }
-
 
 
 //...emails verschicken - debug! Kann später weg!
@@ -159,11 +127,6 @@ exports.b3getJahre = functions.https.onRequest((req, res) => {
         })
   })
 })
-
-exports.dummyFunc = functions.https.onRequest((req, res) => {
-    console.log ("Dummdidummdudumm...");
-});
-
 
 exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
   console.log ("b3isUser... : ");
