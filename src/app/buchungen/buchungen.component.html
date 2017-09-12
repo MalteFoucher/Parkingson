@@ -3,17 +3,16 @@
 </div>
 
 <div class="centered-content">
-  <md-select class="content-el" placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">
-    <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>
-  </md-select>
+    <md-select class="content-el" placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">
+      <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>
+    </md-select>
 
-  <md-select class="content-el" placeholder="Monat" [(ngModel)]="myMonth" (change)="onMonthChanged()">
-    <md-option *ngFor="let month of monatNamen" [value]="month">{{month}}</md-option>
-  </md-select>
+    <md-select class="content-el" placeholder="Monat" [(ngModel)]="myMonth" (change)="onMonthChanged()">
+      <md-option *ngFor="let month of monatNamen" [value]="month">{{month}}</md-option>
+    </md-select>
 
-  <button class="content-el" md-button color="primary" (click)="onGoButton()">GO!</button>
-
-</div>
+    <button class="content-el" md-button color="primary" (click)="onGoButton()">GO!</button>
+  </div>
 <br>
 <div class="row columns">
 
