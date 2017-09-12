@@ -282,7 +282,7 @@ export class KalenderComponent {
             benutzerAdmin: false,
             buchungsAdmin: false,
             parkId: parkId,
-            isActive: false,
+            isActive: true,
             uid: 'not set yet'
           });
       }
@@ -320,7 +320,8 @@ export class KalenderComponent {
         
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .update({
-            parkId: parkId,
+            isActive: true,
+            parkId: parkId
           });
       }
       console.log(lines.length + " Einträge geUPDATEt.");
