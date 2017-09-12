@@ -5,8 +5,7 @@ const nodemailer = require('nodemailer');
 const moment = require('moment');
 
 //cors ist für Cross Origin Header
-const cors = require('cors')({origin:true});
-//const sync = require('synchronize');
+const cors = require('cors')({origin:true});//['https://www.parken-eagle.com', 'http://parken-eagle.com', 'https://parkplatztool.firebaseapp.com'], optionsSuccessStatus: 200});
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require('firebase-admin');
@@ -33,8 +32,7 @@ const smtpConfig = {
         //user: 'malte_kun@web.de',             //sendinblue
         //pass: 'darkwW6AQ7NPVh12'
         user: 'm040b7a3',                       //Romans all-inkl.com
-        pass: 'dARRzM2XVmCUy2Zh'
-        
+        pass: 'JnrSqK9Gg6USH4cy'        
     }
     /*tls: {
         secure: true
@@ -97,27 +95,6 @@ exports.welcomeUser = functions.auth.user().onCreate(event => {
     ref.update({
       uid: user.uid
     });
-    //..fertig! Das heißt, an welcher Stelle sollte denn eigentlich die BEstätigungs-Email kommen?
-
-    //Was jetzt folgt, ist ne selbsgemachte Willkommens-Email, aber wir wollen ja eh die Bestätigungs-Mail
-    //von Firebase verschicken lassen.
-    /*
-    var mailOptions = {
-        from: from,
-        to: email,
-        subject: 'Willkommen beim ParkplatzTool',
-        text: "Hey na!",
-        html: '<h1>Willkommen!</h1><p>Hi. Schön, dass du da bist! \n Blablablabla.</p>'
-    };
-    console.log("MailOptions erstellt!");
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            console.log("Error: "+error);
-        }
-        console.log("PostSend: "+info);
-    })
-    */
 })
 
 // Methode, um Emails zu verschicken
@@ -135,7 +112,6 @@ function sendEmail(mailOptions) {
 
 
 //...emails verschicken - debug! Kann später weg!
-
 exports.testEmail = functions.https.onRequest((req, response) => {
     transporter.verify(function(error, success) {
         if (error) {
@@ -184,27 +160,30 @@ exports.b3getJahre = functions.https.onRequest((req, res) => {
   })
 })
 
-
+exports.dummyFunc = functions.https.onRequest((req, res) => {
+    console.log ("Dummdidummdudumm...");
+});
 
 
 exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
+  console.log ("b3isUser... : ");
   cors (req, res, () => {
     var email = req.query.email;
     var emailAsKey = email.replace(/\./g, '!');
     res.writeHead(200, {'Content-Type': 'text/plain'});
         admin.database().ref('/emailToRole/').orderByKey().equalTo(emailAsKey).once('value')
             .then (function (snapshot) {
-                //console.log ("b3isUser... : "+snapshot.val());
+                
                 if (snapshot.val()) {
-                    //console.log("true, weil gibts schon");
+                    console.log("true, weil gibts schon");
                     res.end("true");
                 } else {
-                    //console.log("false, weil gibts noch nicht");
+                    console.log("false, weil gibts noch nicht");
                     res.end("false");
                 }
             })
             .catch(function (error) {
-                //console.log("Error, weil "+error);
+                console.log("Error, weil "+error);
                 res.end("failure:"+error);
             })
   });
