@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, ChangeDetectorRef} from '@angular/core';
+import {AfterViewChecked, Component, ChangeDetectorRef, NgZone} from '@angular/core';
 import * as firebase from 'firebase';
 import {HttpClient} from '@angular/common/http';
 import {MdDialog} from '@angular/material';
@@ -17,7 +17,7 @@ export class LoginComponent implements AfterViewChecked{
   ngAfterViewChecked(): void {
   }
 
-  constructor(private http: HttpClient, private dialog: MdDialog, private cdRef: ChangeDetectorRef) {
+  constructor(private http: HttpClient, private dialog: MdDialog, private cdRef: ChangeDetectorRef, private ngZone: NgZone) {
   }
 
   login() {    
@@ -93,7 +93,7 @@ export class LoginComponent implements AfterViewChecked{
   onPasswordReset() {
     console.log('OPR:');
     //Dialog mit Eingabemaske für Passwort einblenden und n Button zum Bestätigen. Und halt n Infotext.
-
+  this.ngZone.run(() => {
     const dialogRef = this.dialog.open(TextInputDialogComponent, {
       disableClose: true, //könnte eigentlich auch false
       data: {
@@ -121,5 +121,6 @@ export class LoginComponent implements AfterViewChecked{
         }
         this.cdRef.detectChanges();
       });
+  });
   }
 }
