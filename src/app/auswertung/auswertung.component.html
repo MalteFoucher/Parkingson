@@ -3,40 +3,44 @@
 </div>
 
 <div class="centered-content">
-  <md-select placeholder="Vermieter" [(ngModel)]="myState"><!-- (change)="onDropdownChange('hallo')"-->
+  <md-select class="content-el" placeholder="Vermieter" [(ngModel)]="myState"><
     <md-option>Alle Vermieter</md-option>
     <md-option *ngFor="let i of vermieterArray" [value]="i.uid">{{i.user_email}}</md-option>
   </md-select>
 
-  <!--button (click)="openPicker(1)"><i class="fa fa-calendar"></i></button-->
-  <input [mdDatepicker]="vonPicker" (click)="openPicker(1)" placeholder="Von...">
-  <button [mdDatepickerToggle]="vonPicker"></button>
-  <md-datepicker #vonPicker  placeholder="Von Datum..."  [startAt]="vonInitDate"></md-datepicker>
-
-
-  <!--button (click)="openPicker(2)"><i class="fa fa-calendar"></i></button-->
-  <input [mdDatepicker]="bisPicker" (click)="openPicker(2)" placeholder="Bis...">
-  <button [mdDatepickerToggle]="bisPicker"></button>
-  <md-datepicker #bisPicker  placeholder="Bis Datum..." [startAt]="bisInitDate"></md-datepicker>
-
-  <button md-raised-button (click)="onGoButton()" >GO!</button>
-</div>
-  <div class="row columns">
-    <table>
-      <tr><th class="number_col">ParkP.</th><th class="text_col">Vermieter</th><th class="number_col">Freigaben</th><th class="number_col">Davon gebucht</th></tr>
-      <tr *ngFor="let i of auswertungenArray">
-        <td>{{i.parkId}}</td>
-        <td>{{i.user_email}}</td>
-        <td>{{i.freigaben}}</td>
-        <td>{{i.davon_gebucht}}</td>
-      </tr>
-    </table>
+  <div class="content-el">
+    <input [mdDatepicker]="vonPicker" (click)="openPicker(1)" placeholder="Von...">
+    <button [mdDatepickerToggle]="vonPicker"></button>
+    <md-datepicker #vonPicker placeholder="Von Datum..." [startAt]="vonInitDate"></md-datepicker>
   </div>
 
+  <div class="content-el">
+    <input [mdDatepicker]="bisPicker" (click)="openPicker(2)" placeholder="Bis...">
+    <button [mdDatepickerToggle]="bisPicker"></button>
+    <md-datepicker #bisPicker placeholder="Bis Datum..." [startAt]="bisInitDate"></md-datepicker>
+  </div>
+
+  <button class="content-el" md-button color="primary" (click)="onGoButton()">GO!</button>
+</div>
+<div class="row columns">
+  <table>
+    <tr>
+      <th class="number_col">ParkP.</th>
+      <th class="text_col">Vermieter</th>
+      <th class="number_col">Freigaben</th>
+      <th class="number_col">Davon gebucht</th>
+    </tr>
+    <tr *ngFor="let i of auswertungenArray">
+      <td>{{i.parkId}}</td>
+      <td>{{i.user_email}}</td>
+      <td>{{i.freigaben}}</td>
+      <td>{{i.davon_gebucht}}</td>
+    </tr>
+  </table>
+</div>
 
 
-
-  <!--md-datepicker #vonPicker>PICK1</md-datepicker>
-  <input [mdDatepicker]="bisPicker">
-  <md-datepicker #bisPicker>PICK2</md-datepicker>
+<!--md-datepicker #vonPicker>PICK1</md-datepicker>
+<input [mdDatepicker]="bisPicker">
+<md-datepicker #bisPicker>PICK2</md-datepicker>
 </div-->

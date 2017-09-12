@@ -20,7 +20,7 @@
 }
 
 .blue {
-  background-color: #2196F3;
+  background-color: #448aff;
   border-radius: 4px;
   transition: background-color 0.3s;
   color: white;
@@ -62,6 +62,6 @@
 }
 
 .color-blue {
-   background-color: #2196F3;
+   background-color: #448aff;
  }
 
