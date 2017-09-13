@@ -6,6 +6,9 @@ body {
 * {
     font-family: 'Roboto';
 }
+a {
+  color: #448aff !important;
+}
 
 .centered-content {
 	display: flex;
