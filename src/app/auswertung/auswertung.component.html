@@ -3,7 +3,7 @@
 </div>
 
 <div class="centered-content">
-  <md-select class="content-el" placeholder="Vermieter" [(ngModel)]="myState"><
+  <md-select class="content-el" placeholder="Vermieter" [(ngModel)]="myState">
     <md-option>Alle Vermieter</md-option>
     <md-option *ngFor="let i of vermieterArray" [value]="i.uid">{{i.user_email}}</md-option>
   </md-select>
