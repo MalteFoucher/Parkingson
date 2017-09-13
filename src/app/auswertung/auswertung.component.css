@@ -1,8 +1,11 @@
 .number_col {
-    width: 15%;
+  width: 15%;
+  text-align: left;
 }
+
 .text_col {
-    width: 55%;
+  width: 55%;
+  text-align: left;
 }
 
 .content-el {

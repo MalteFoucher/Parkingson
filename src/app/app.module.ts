@@ -24,7 +24,7 @@ import {
 } from '@angular/material';
 
 import {AppComponent} from './app.component';
-import {KalenderComponent} from './kalender.component';
+import {KalenderComponent} from './kalender/kalender.component';
 import {DialogComponent} from './dialog/dialog.component';
 import {LoginComponent} from './login/login.component';
 import {AuswertungComponent} from './auswertung/auswertung.component';
@@ -35,7 +35,7 @@ import {OverviewComponent} from './overview/overview.component';
 import {Store} from './store/store.service';
 import {ChooseSpotComponent} from './choose-spot/choose-spot.component';
 import {VerwaltungComponent} from './verwaltung/verwaltung.component';
-import {EmailService} from './email.service';
+import {EmailService} from './service/email.service';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';

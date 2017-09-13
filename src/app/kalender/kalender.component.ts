@@ -1,23 +1,23 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import {Buchung} from './buchung';
-import {Tablerow} from './tablerow';
+import {Buchung} from '../model/buchung';
+import {Tablerow} from '../model/tablerow';
 import {MdDialog, MdSnackBar} from '@angular/material';
 import {MdCheckbox, MdDatepicker} from '@angular/material';
-import {DialogComponent} from './dialog/dialog.component';
-import {AdminDialogComponent} from './admin-dialog/admin-dialog.component';
+import {DialogComponent} from '../dialog/dialog.component';
+import {AdminDialogComponent} from '../admin-dialog/admin-dialog.component';
 
 //import {Http, Response} from '@angular/http';
 import {NgModule} from '@angular/core';
 // Import HttpClientModule from @angular/common/http
 import {HttpClient} from '@angular/common/http';
 
-import {EmailService} from './email.service';
+import {EmailService} from '../service/email.service';
 
-import {Store} from './store/store.service';
-import {Vermieter} from './auswertung/vermieter';
-import {ParkConst} from "./util/const";
+import {Store} from '../store/store.service';
+import {Vermieter} from '../auswertung/vermieter';
+import {ParkConst} from "../util/const";
 
 
 @Component({
@@ -317,7 +317,7 @@ export class KalenderComponent {
         if (isNaN(parkId)) parkId = 0;
 
         console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
-        
+
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .update({
             isActive: true,

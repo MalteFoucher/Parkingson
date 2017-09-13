@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as firebase from 'firebase/app';
 import * as moment from 'moment';
-import { Buchung } from '../buchung';
+import { Buchung } from '../model/buchung';
 import {Store} from '../store/store.service';
 import {HttpClient} from '@angular/common/http';
 import {ParkConst} from "../util/const";
