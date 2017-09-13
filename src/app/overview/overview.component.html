@@ -6,7 +6,7 @@
   <div *ngIf="this.store.buchungsAdmin">
     <div class="row columns">
       <md-input-container style="flex:2">
-        <input mdInput [(ngModel)]="changeMail"/>
+        <input mdInput [(ngModel)]="changeMail" (keyup.enter)="changeUser()"/>
       </md-input-container>
       <button md-button color="primary" (click)="changeUser()" style="flex:1">Change User</button>
     </div>
