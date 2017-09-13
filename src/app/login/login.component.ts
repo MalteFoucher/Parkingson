@@ -122,5 +122,10 @@ export class LoginComponent implements AfterViewChecked{
         this.cdRef.detectChanges();
       });
   });
-  }
+}
+
+onTabChanged() {
+  //console.log("onTabChanged");
+  this.cdRef.detectChanges();
+}
 }
