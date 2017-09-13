@@ -22,7 +22,9 @@
       <th class="text_col">Kontakt</th>
     </tr>
     <tr *ngFor="let i of buchungsArray">
-      <td>{{i.datum}}</td>
+      <td>{{i.datum}}
+      <div>P{{i.pId}}</div>
+      </td>
       <td>{{i.text}}
         <div [innerHTML]="i.partner">!!</div>
       </td>
