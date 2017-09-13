@@ -20,6 +20,7 @@ export class AppComponent implements AfterViewChecked {
   title = 'app';
   userId: string;
   debugText = 'debugText';
+  window = window;
 
   app: FirebaseApp;
 

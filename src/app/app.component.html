@@ -1,10 +1,27 @@
-<md-toolbar color="primary" style="flex-wrap: wrap">
-  <div style="flex:1">
-    <button md-icon-button (click)="sidenav.open()" style="cursor:pointer">
-      <md-icon class="md-24">menu</md-icon>
-    </button>
-    Parkplatztool
-  </div>
+<md-toolbar color="primary" style="flex-wrap: wrap; padding-left: 8px">
+  <button md-icon-button (click)="sidenav.open()" style="cursor:pointer">
+    <md-icon class="md-24">menu</md-icon>
+  </button>
+  <span class="header-title">
+    🅿️ 🦅
+      </span>
+  <span class="hide-for-small-only" style="margin-left:10px">
+      Parken Eagle
+    </span>
+  <span style="flex: 1 1 auto;"></span>
+  <span style="font-size: x-small">
+      by
+    </span>
+  <img src="assets/deka-colored.svg" class="deka-logo">
+  <span style="font-size: medium">
+    IT-Entwicklung LUX
+    </span>
+  <!--<span style="font-size: small">-->
+  <!-- -Entwicklung-->
+  <!--</span>-->
+  <!--<span style="font-size: large">-->
+  <!--LUX-->
+  <!--</span>-->
   <md-toolbar-row *ngIf="user!=null" style="height:40px">
     <span style="font-size:medium">{{user.email}}</span>
     <span style="flex: 1 1 auto;"></span>
@@ -19,7 +36,8 @@
       <md-list-item (click)="setContent('overview')">Übersicht</md-list-item>
       <md-list-item (click)="setContent('buchungen')">Buchungen</md-list-item>
       <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('auswertung')">Auswertung</md-list-item>
-      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung</md-list-item>
+      <md-list-item *ngIf="store.buchungsAdmin || store.benutzerAdmin" (click)="setContent('verwaltung')">Verwaltung
+      </md-list-item>
       <md-list-item *ngIf="store.buchungsAdmin" (click)="setContent('kalender')">Jahresübersicht</md-list-item>
     </md-list>
   </md-sidenav>

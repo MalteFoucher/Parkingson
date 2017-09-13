@@ -47,3 +47,18 @@ md-sidenav {
 md-list-item {
   cursor: pointer;
 }
+
+.header-title {
+  font-size: 30px;
+  line-height: 56px;
+  vertical-align: middle;
+}
+
+.deka-logo {
+  width: 28px;
+  height: 24px;
+  display: inline;
+  margin-bottom: 12px;
+  margin-left: 10px;
+  margin-right: 5px;
+}
