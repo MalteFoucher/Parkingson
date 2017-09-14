@@ -194,7 +194,7 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   }
 });
 
-const buchungVermieter = "Ihr Parkplatz #p wurde am #d durch #m gebucht.";
+const buchungVermieter = "Ihr Parkplatz #p wurde am #d von #m gebucht.";
 const buchungMieter = "Sie haben den Parkplatz #p am #d von #v gebucht.";
 const stornierungVermieterVermieter = "Sie haben die Buchung von Parkplatz #p am #d von #m storniert.";
 const stornierungVermieterMieter = "Die Buchung des Parkplatzes #p am #d wurde von #v storniert.";
@@ -219,14 +219,8 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
         //Mieter-Adresse haben wir auch
         var mailMieter = Object.keys(data.val())[0].replace(/!/g,'.');
 
-        //console.log ("Email des Mieters: "+mailMieter);
-
         textVermieter = textVermieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
         textMieter = textMieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
-
-        //console.log('subject: ' + subject);
-        //console.log('textVermieter: ' + textVermieter);
-        //console.log('textMieter: ' + textMieter);
 
         var uselessVariable = sendEmail({
         from: from,
