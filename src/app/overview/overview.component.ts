@@ -178,7 +178,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   dayClick(day) {
-    console.log('dayClick(' + day + ')');
     const border = this.getDayBorder(day);
 
     const now = moment();
@@ -200,21 +199,15 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Sind unter den Tagen der (nun leider ja variablen) Frist Wochendend-Tage (5||6),
         // falls ja: Frist verlängern.
         let daysToSubtract = this.store.config['tagesfrist'];
-        console.log('Geklickter Tag:' + border.format('DD.MM.YYYY') + ' (' + border.weekday() + ')');
         for (let i = 1; i <= daysToSubtract; i++) {
-          console.log('Tag -' + i + ' der ' + daysToSubtract + '-Tagesfrist:');
           border.subtract(1, 'days');
-          console.log(border.format('DD.MM.YYYY') + ' : ' + border.day());
           if (border.day() === 0) {
-            console.log('Tag ist ein Sonntag -> Frist um 1 Tag verlängern!');
             daysToSubtract++;
           }
           if (border.day() === 6) {
-            console.log('Tag ist ein Samstag -> Frist um 1 Tag verlängern!');
             daysToSubtract++;
           }
         }
-        console.log('Tag, an dem eine Stornierung noch möglich ist: ' + border.format('DD.MM.YYYY'));
         // ------------------------------------------------------------------------------------------
 
         // border.subtract(2, 'days');
@@ -347,6 +340,5 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
   checkCount = 0;
 
   ngAfterViewChecked(): void {
-    console.log('checked: ' + this.checkCount++);
   }
 }

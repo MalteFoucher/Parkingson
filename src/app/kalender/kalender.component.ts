@@ -88,26 +88,18 @@ export class KalenderComponent {
 
   generateTable() {
     firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + this.myYear + '/').once('value').then(data => {
-      console.log("JahresÜbersicht-Listener");
       var dayKeys = Object.keys(data.val());
-      //console.log(dayKeys);
       for (var dk in dayKeys) {
         var monat = moment().dayOfYear(parseInt(dayKeys[dk])).month();
-        console.log("Monat: " + monat);
-        //console.log (dayKeys[dk]);
         var buchungsKeys = Object.keys(data.val()[dayKeys[dk]]);
-        //console.log (buchungsKeys);
         for (var bk in buchungsKeys) {
 
           var buchung = data.val()[dayKeys[dk]][buchungsKeys[bk]];
-          console.log(buchungsKeys[bk] + ": " + buchung.mId, buchung.vId, buchung.pId);
           var gebucht = 0;
           //grad nicht sicher, ob mId beim Freigeben angelegt wird.
           if (buchung.mId && buchung.mId != "") {
             gebucht = 1;
           }
-          console.log(gebucht);
-          //console.log (this.parkplatzMap);
 
           //Prüfen, ob Vermieter schon angelegt und falls nicht, anlegen!
           if (!(buchung.vId in this.parkplatzMap)) {
@@ -118,7 +110,6 @@ export class KalenderComponent {
           }
           //Vermieter jetzt definitiv angelegt, aber auch der Monat?
           if (!(monat in this.parkplatzMap[buchung.vId])) {
-            console.log("Für " + buchung.vId + " den Monat " + monat + " angelegt.");
             this.parkplatzMap[buchung.vId][monat] = {
               freigaben: 1,
               davon_gebucht: gebucht
@@ -130,10 +121,7 @@ export class KalenderComponent {
 
         }
       }
-      console.log(" ___ ");
-      //console.log (this.parkplatzMap);
       for (var pmKeys in this.parkplatzMap) {
-        console.log("User: " + this.parkplatzMap[pmKeys]); //die User
         var user = this.parkplatzMap[pmKeys];
         var arrayEntry = {
           parkId: user.pId,//user.email,
@@ -183,9 +171,7 @@ export class KalenderComponent {
     //tag += Math.round( (Math.random() * 90)-45 );
     tag = Math.round(Math.random() * 60);
     var pp = Math.round(Math.random() * 250);
-    console.log("WnB: " + this.myYear + " / " + tag + " /" + pp);
     var mmt = moment().year(this.myYear).dayOfYear(tag);
-    console.log("Tag " + tag + " in " + this.myYear + " entspricht: " + mmt.format('DD.MM.YYYY'));
     //Year und Tag kommen im endeffekt dann von der selectierten zelle natürlich
     var b3nodeRef = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + this.myYear + '/' + tag);
 
@@ -212,8 +198,6 @@ export class KalenderComponent {
 
 //debug
   private writeNewbuchung() {
-    console.log("WNB: NodeRef:");
-    console.log(this.nodeRef);
     var newPostRef = this.nodeRef.push();
     newPostRef.set({
       mieter: "",
@@ -225,39 +209,17 @@ export class KalenderComponent {
 
   }
 
-  /*Wird das ncoh genutzt?
-  private getEmailToUid(uid: string, callbackFunction: any, callbackData: any) {
-    firebase.database().ref("/emailToRole/").orderByChild('uid').equalTo(uid).once('value').then(function (snapshot) {
-      callbackFunction(snapshot.val(), callbackData);
-    });
-  }*/
-
-
-/*
-  public setUserRights(pid: number, admin: boolean, email: string) {
-    this.userParkId = pid;
-    this.userAdmin = admin;
-    this.userEmail = email;
-    //this.nodeRef=firebase.database().ref('/buchungen2/'+this.year+'/KW'+this.kw+'/');
-    //this.nodeRef.orderByChild('parkId').on('value', this.buchungListener);
-  }
-*/
   emailTesten() {
-    console.log("EMIALTESTEN");
     this.emailService.sendEmail(this.userEmail).subscribe(data => console.log(data));
   }
 
 //CSV
   handleFileSelect(evt) {
     var files = evt.target.files;
-    console.log("HFS");
-    console.log(files[0], typeof(files[0]));
     var reader = new FileReader();
     reader.readAsText(files[0]);
     reader.onload = function (event) {
       var tokens = event.target['result'].split(";");
-      console.log(tokens.length);
-
       var lines = event.target['result'].split(/\n/);
 
       for (var l in lines) {
@@ -274,8 +236,6 @@ export class KalenderComponent {
 
         var parkId = parseInt(tokens[2]);
         if (isNaN(parkId)) parkId = 0;
-
-        console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
 
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .set({
@@ -286,20 +246,15 @@ export class KalenderComponent {
             uid: 'not set yet'
           });
       }
-      console.log(lines.length + " Einträge geSETtet.");
     }
   }
 
   handleFileSelectUpdate(evt) {
     var files = evt.target.files;
-    console.log("HFS");
-    console.log(files[0], typeof(files[0]));
     var reader = new FileReader();
     reader.readAsText(files[0]);
     reader.onload = function (event) {
       var tokens = event.target['result'].split(";");
-      console.log(tokens.length);
-
       var lines = event.target['result'].split(/\n/);
 
       for (var l in lines) {
@@ -316,28 +271,20 @@ export class KalenderComponent {
         var parkId = parseInt(tokens[2]);
         if (isNaN(parkId)) parkId = 0;
 
-        console.log('/emailToRole/' + emailAsKey + '/: ' + parkId);
-
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .update({
             isActive: true,
             parkId: parkId
           });
       }
-      console.log(lines.length + " Einträge geUPDATEt.");
     }
   }
 
   getJahre() {
-    console.log("GetJahre")
     this.http.get("https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
     //.map((res:Response) => res.json())
       .subscribe(data => {
-        console.log("Subscription!");
-        console.log(data);
         var tokens = data.toString().split(";");
-        console.log(tokens);
-
       }, err => {
         console.log(err);
       });
@@ -345,8 +292,7 @@ export class KalenderComponent {
   }
 
   evalPW() {
-    console.log("Eval PW: " + this.testPassword);
-    const kleinBS = /[a-z]/;
+    const kleinBS = /[a-zs]/;
     const grossBS = /[A-Z]/;
     const ziffern = /[0-9]/;
     const sonderz = /\W/;
@@ -359,35 +305,20 @@ export class KalenderComponent {
     if (sonderz.test(this.testPassword)) zeichenTypenUsed++;
 
     var valide = this.testPassword.length >= 10 && zeichenTypenUsed >= 3;
-    console.log(valide);
   }
 
   evalEmail() {
-    /*console.log("Eval Email: " + this.testPassword);
-    this.testPassword = this.testPassword.toLowerCase();
-    this.testPassword.replace(/ö/g, 'oe');
-    this.testPassword.replace(/ä/g, 'oe');
-    this.testPassword.replace(/ü/g, 'ue');
-    this.testPassword.replace(/ß/g, 'ss');
-    console.log(this.testPassword);*/
     var vermieter="VplQA1HK7rVRWESUfNx07SKzadY2";
     var mieter="YigUSZAZGYT607yegts1edNNqEC3";
     var text ="Blablabla";
-    console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+text);
   //Jetzt die Email-Adressen zu den IDs beziehen
   var ref = firebase.database().ref('/emailToRole/');
   //Vermieter dürfte ja stets !=null sein.
   ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {
     //Vermieter-Adresse haben wir
-    console.log ("Vermieter:");
-    console.log(Object.keys(data.val()));
-    console.log ("Email des Vermieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));
     if (mieter) {
         ref.orderByChild('uid').equalTo(mieter).once('value').then( data => {
         //Mieter-Adresse haben wir auch
-        console.log ("Mieter:");
-        console.log (Object.keys(data.val()));
-        console.log ("Email des Mieters: "+Object.keys(data.val())[0].replace(/!/g,'.'));
         //Und nu? Email an beide? Bzw an alle !=null?
     },error => {
       console.log ("ERROR: "+error);
@@ -397,7 +328,6 @@ export class KalenderComponent {
   }
 
   public onYearChanged() {
-    console.log("OYC: " + this.myYear);
     delete this.parkplatzrows;
     this.parkplatzrows = new Array();
     delete this.parkplatzMap;
@@ -410,6 +340,5 @@ onDateChange() {
     vonMoment.month(this.picker_von._selected.getMonth());
     vonMoment.year(this.picker_von._selected.getFullYear());
     this.jahrestag=" "+vonMoment.dayOfYear();
-    console.log(this.jahrestag);
 }
 }

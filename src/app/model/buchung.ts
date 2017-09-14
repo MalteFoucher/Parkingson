@@ -17,7 +17,6 @@ export class Buchung {
     this.tag = tag;
     this.parkId = parkId;
     this.firebaseKey = key;
-    //console.log("Neue Buchung: "+vermieter, mieter, bezahlt, erhalten, tag, parkId, key);
   }
 
   public setDateString(date: string) {

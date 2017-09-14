@@ -24,7 +24,6 @@ export class AdminDialogComponent implements OnInit {
 
 
   constructor(@Inject(MD_DIALOG_DATA) public data: any) {
-    console.log("AdminDialog-Konstruktor");
     this.titel = data.titel;
     this.text = data.text;
     this.yesButtonText = data.yesButtonText;
@@ -34,8 +33,6 @@ export class AdminDialogComponent implements OnInit {
   }
 
   ngOnInit() {
-    //var vermieter = this.controller.getVermieter();
-    //console.log("onInit ADC: " + this.vermieterArray.length);
   }
 
   getNewEmail(): string {

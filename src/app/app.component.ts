@@ -43,12 +43,9 @@ export class AppComponent implements AfterViewChecked {
     });
 
     firebase.auth().onAuthStateChanged(user => {
-      console.log('onAuthStateChanged');
       if (user) {
-        console.log('eingeloggt');
         firebase.database().ref('/config').once('value').then(v => this.store.setConfig(v.val()));
         firebase.database().ref('/emailToRole/').once('value', snapshot => {
-          console.log('e2R abfragen...');
           if (snapshot.val()) {
             this.store.setEmailToRole(snapshot.val());
           }
@@ -73,7 +70,6 @@ export class AppComponent implements AfterViewChecked {
                 // Email senden Button geklickt -> Ebenfalls ausloggen
                 // .then und .catch - Behandlung noch n bissel mager, aber funktioniert ja.
                 user.sendEmailVerification().then(function () {
-                  console.log('Email sent.');
                 }).catch(function (error) {
                   console.log('An error happened.');
                 });
@@ -84,7 +80,6 @@ export class AppComponent implements AfterViewChecked {
         } else {
           this.userId = user.uid;
           this.debugText = 'Eingeloggt als: ' + user.email;
-          console.log(this.debugText);
 
           const emailAsKey = user.email.replace(/\./g, '!');
 
@@ -93,14 +88,12 @@ export class AppComponent implements AfterViewChecked {
 
             if (value != null) {
               if (value['isActive']) {
-                console.log('---------- Der User ist aktiv! Alles gut! ----------');
                 value.email = user.email;
                 this.user = value;
                 this.store.eUser = value;
                 this.content = 'overview';
                 this.cdRef.detectChanges();
               } else {
-                console.log('---------- Der User ist inaktiv! ');
                 const dialogRef = this.dialog.open(DialogComponent, {
                   disableClose: true,
                   data: {
@@ -120,7 +113,6 @@ export class AppComponent implements AfterViewChecked {
         }
       } else {
         // Ausgeloggt...
-        console.log('ausgeloggt');
         this.user = null;
         cdRef.detectChanges();
       }
@@ -130,7 +122,6 @@ export class AppComponent implements AfterViewChecked {
 
   login(email: string, pw: string) {
     firebase.auth().signInWithEmailAndPassword(email, pw).catch(function (error) {
-      console.log('error from log: ' + error.message);
       this.dialogRef.componentInstance.fb_status = error.message;
     });
   }

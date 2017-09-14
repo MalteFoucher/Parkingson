@@ -14,13 +14,10 @@ export class TextInputDialogComponent implements OnInit {
   user_email: string;
 
   constructor(@Inject(MD_DIALOG_DATA) public data: any) {
-    console.log("Kontruktor TextInputDialog");
     this.titel = data.titel;
     this.innerHtmlString= data.html;
-    this.user_email=data.email;    
+    this.user_email=data.email;
    }
-
-
 
   ngOnInit() {
   }

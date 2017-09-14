@@ -20,16 +20,16 @@ export class LoginComponent implements AfterViewChecked{
   constructor(private http: HttpClient, private dialog: MdDialog, private cdRef: ChangeDetectorRef, private ngZone: NgZone) {
   }
 
-  login() {    
+  login() {
     this.user_email=this.user_email.toLowerCase();
     firebase.auth().signInWithEmailAndPassword(this.user_email, this.user_password)
-      .then((promise: any) => {        
+      .then((promise: any) => {
         this.innerHtmlString = 'Erfolgreich angemeldet.';
       })
       .catch((error: any) => {
         console.log('LoginComponent Error ' + error.message);
         this.innerHtmlString = error.message;
-      });      
+      });
   }
 
   register() {
@@ -59,7 +59,7 @@ export class LoginComponent implements AfterViewChecked{
       }
 
 
-    
+
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
     this.http.get('https://us-central1-parkplatztool.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
 
@@ -77,9 +77,6 @@ export class LoginComponent implements AfterViewChecked{
           .then(data => {
             //Registrierung hat geklappt! data entspricht glaube ich nem firebase.user Objekt
             //Dummerweise wird der User auch gleich eingeloggt.
-            console.log('then data: ' + data);
-            console.log(Object.keys(data));
-            console.log(data.uid);
             this.innerHtmlString = 'Sie haben sich erfolgreich registriert!';
           })
           .catch(error => {
@@ -91,7 +88,6 @@ export class LoginComponent implements AfterViewChecked{
   }
 
   onPasswordReset() {
-    console.log('OPR:');
     //Dialog mit Eingabemaske für Passwort einblenden und n Button zum Bestätigen. Und halt n Infotext.
   this.ngZone.run(() => {
     const dialogRef = this.dialog.open(TextInputDialogComponent, {
@@ -103,7 +99,6 @@ export class LoginComponent implements AfterViewChecked{
       }
     });
     dialogRef.afterClosed().subscribe(selection => {
-        console.log("After closed!");
         if (!selection) {
           //Abbruch Button geklickt, um Dialog zu schließen
         } else {
@@ -113,7 +108,6 @@ export class LoginComponent implements AfterViewChecked{
           const auth = firebase.auth();
           auth.sendPasswordResetEmail(this.user_email).then(function () {
             // Email sent.
-            console.log('pw reset email sent');
           }).catch(function (error) {
             console.log('error beim versenden der pw reset email');
             console.log (error.message);
@@ -125,7 +119,6 @@ export class LoginComponent implements AfterViewChecked{
 }
 
 onTabChanged() {
-  //console.log("onTabChanged");
   this.innerHtmlString="";
   this.cdRef.detectChanges();
 }

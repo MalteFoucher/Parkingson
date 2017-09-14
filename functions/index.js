@@ -48,7 +48,6 @@ exports.onRemoveUser = functions.database.ref('/emailToRole/{emailKey}')
     .onDelete(event => {
         var removedEntry= event.data.previous.val();
         admin.auth().deleteUser(removedEntry.uid);
-        console.log ("User "+removedEntry.uid+" wurde gelöscht!");
     });
 
 
@@ -74,7 +73,7 @@ function sendEmail(mailOptions) {
         if (error) {
             console.log("SendEmail-Error: " + error);
             return ("" + error);
-        }        
+        }
     return ("ok");
     })
 }
@@ -91,7 +90,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
 
     });
 
-  var to = req.query.to;  
+  var to = req.query.to;
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {
         from: from,
@@ -128,7 +127,7 @@ exports.b3getJahre = functions.https.onRequest((req, res) => {
   })
 })
 
-exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {  
+exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
   cors (req, res, () => {
     var email = req.query.email;
     var emailAsKey = email.replace(/\./g, '!');
@@ -137,15 +136,12 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
             .then (function (snapshot) {
 
                 if (snapshot.val()) {
-                    //console.log("true, weil gibts schon");
                     res.end("true");
                 } else {
-                    //console.log("false, weil gibts noch nicht");
                     res.end("false");
                 }
             })
             .catch(function (error) {
-                //console.log("Error, weil "+error);
                 res.end("failure:"+error);
             })
   });

@@ -18,7 +18,6 @@ export class DialogComponent implements OnInit {
     userPid: number;
 
   constructor(@Inject(MD_DIALOG_DATA) public data: any) {
-    console.log("Kontruktor Dialog");
     this.titel = data.titel;
     this.text=data.text;
     this.yesButtonText=data.yesButtonText;

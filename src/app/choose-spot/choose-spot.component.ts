@@ -40,11 +40,8 @@ export class ChooseSpotComponent implements OnInit, OnDestroy {
     this.ref = firebase.database().ref(ParkConst.BUCHUNGEN_PFAD).child(String(this.day.year)).child(String(this.day.dayOfYear));
     this.query = this.ref.orderByChild('mId').equalTo(null);
     this.query.on('value', snapshot => {
-      console.log('snapshot: ' + snapshot);
       const value = snapshot.val();
-      console.log('value: ' + value);
       if (value != null) {
-        console.log('v: ' + JSON.stringify(value));
         Object.keys(value).forEach(k => {
           const v = value[k];
           this.slots.push({key: k, pId: v.pId});

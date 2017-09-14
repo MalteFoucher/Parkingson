@@ -33,7 +33,7 @@ export class Store {
   get buchungsAdmin(): boolean {
     return this.eUser  && this.eUser.buchungsAdmin;
   }
-  
+
   setEmailToRole(snapshot: any) {
     this.emailToRole = snapshot;
   }
@@ -75,22 +75,17 @@ export class Store {
   }
 
   updateE2R(key: string, data: any) {
-    console.log("UPDATE E2R:");
-    console.log(data);
     var dataKeys = Object.keys(data);
     for (var dk in dataKeys) {
       //this.emailToRole[key][dataKeys[dk]] = data[dataKeys[data]];
-      console.log("Setze emailToRole[" + key + "][" + dataKeys[dk] + "] = " + data[dataKeys[dk]]);
     }
   }
 
   deleteFromE2R(key: string) {
-    console.log("DELETE FROM E2R:");
     this.emailToRole[key] = {};
   }
-  
+
   pushToE2R(data: any) {
-    console.log("PUSH TO E2R:");
     this.emailToRole[data.email] = {
       parkId:data.parkId,
       isActive:data.isActive,
