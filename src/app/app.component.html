@@ -6,23 +6,17 @@
       Parkplatztool
     </span>
   <span style="flex: 1 1 auto;"></span>
-  <!--<span style="font-size: x-small">-->
-      <!--by-->
-    <!--</span>-->
   <img src="assets/deka-colored.svg" class="deka-logo">
-  <span style="font-size: medium" class="hide-for-small-only">
-    IT-Entwicklung LUX
-    </span>
-  <!--<span style="font-size: small">-->
-  <!-- -Entwicklung-->
-  <!--</span>-->
-  <!--<span style="font-size: large">-->
-  <!--LUX-->
-  <!--</span>-->
+  <span style="font-size: medium; margin-top: 10px" class="hide-for-small-only">
+    IT ENTWICKLUNG LUX
+  </span>
+  <span style="margin-right: 8px">
+    &nbsp;
+  </span>
   <md-toolbar-row *ngIf="user!=null" style="height:40px">
-    <span style="font-size:medium">{{user.email}}</span>
+    <span style="font-size:medium; margin-left: 14px">{{user.email}}</span>
     <span style="flex: 1 1 auto;"></span>
-    <button md-button (click)="logout()">Logout</button>
+    <button style="padding-right: 0" md-button (click)="logout()">Logout</button>
   </md-toolbar-row>
 </md-toolbar>
 
