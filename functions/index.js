@@ -17,13 +17,14 @@ admin.initializeApp(functions.config().firebase);
 //'smtps://${gmailEmail}:${gmailPassword}@smtp.gmail.com'
 
 //const from = 'ParkplatzTool <malte_kun@web.de>'; //bruacht Port:578
-const from = 'ParkplatzTool';// <service@parken-eagle.com>';
+const from = 'ParkplatzTool <service@parken-eagle.com>';
 
 const smtpConfig = {
     //host: 'smtp.web.de',
     //host: 'smtp-relay.gmail.com',
     //host: 'smtp-relay.sendinblue.com',
-    host: 'w0088c85.kasserver.com',
+    //host: 'w0088c85.kasserver.com',
+    host: 'w017568b.kasserver.com',
     //port: 587,
     port: 465,
     auth: {
@@ -31,8 +32,9 @@ const smtpConfig = {
         //pass: '_C^M8dnN'
         //user: 'malte_kun@web.de',             //sendinblue
         //pass: 'darkwW6AQ7NPVh12'
-        user: 'm040b7a3',                       //Romans all-inkl.com
-        pass: '7p2HTfcyrtM2wfrY'
+        //user: 'm040b7a3',                       //Romans all-inkl.com
+        user: 'm040d1e7',                       //Die endgültige all-inkl.com
+        pass: 'ZLb6BEQhPoz53yeq'
     }
     /*tls: {
         secure: true
@@ -53,7 +55,6 @@ exports.onRemoveUser = functions.database.ref('/emailToRole/{emailKey}')
 //Listener für wenn User sich registrieren (check ob PW und Email korrekt sind, und auch, ob
 //unter dem Key schon was in der DB stand, geschah client-seitig)
 exports.welcomeUser = functions.auth.user().onCreate(event => {
-    console.log("---welcomeUser---");
     const user = event.data;
     const email = user.email;
     const emailAsKey = email.replace(/\./g, '!');
@@ -64,16 +65,16 @@ exports.welcomeUser = functions.auth.user().onCreate(event => {
     ref.update({
       uid: user.uid
     });
+    console.log ("Neuer User registriert: "+emailAsKey+"/"+user.uid);
 })
 
 // Methode, um Emails zu verschicken
 function sendEmail(mailOptions) {
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log("Error: " + error);
+            console.log("SendEmail-Error: " + error);
             return ("" + error);
-        }
-        //console.log("PostSend: " + info);
+        }        
     return ("ok");
     })
 }
@@ -83,15 +84,14 @@ function sendEmail(mailOptions) {
 exports.testEmail = functions.https.onRequest((req, response) => {
     transporter.verify(function(error, success) {
         if (error) {
-            console.log(error);
+            console.log("TestEmail-Error: "+error);
         } else {
             console.log('Server is ready to take our message');
         }
 
     });
 
-  var to = req.query.to;
-    console.log ("TESTEMAIL");
+  var to = req.query.to;  
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {
         from: from,
@@ -116,20 +116,19 @@ exports.b3getJahre = functions.https.onRequest((req, res) => {
             var response="";
             for (var k in keys) {
                 response+=keys[k]+";";
-                console.log (keys[k] + "; hinzugefügt!")
+                //console.log (keys[k] + "; hinzugefügt!")
             }
-            console.log ("Response von b3gJ: "+response);
+            //console.log ("Response von b3gJ: "+response);
             res.end(response);
         })
         .catch(function (error) {
-            console.log(error);
+            console.log("b3getJahre-Error: "+error);
             res.end("error");
         })
   })
 })
 
-exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
-  console.log ("b3isUser... : ");
+exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {  
   cors (req, res, () => {
     var email = req.query.email;
     var emailAsKey = email.replace(/\./g, '!');
@@ -138,15 +137,15 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
             .then (function (snapshot) {
 
                 if (snapshot.val()) {
-                    console.log("true, weil gibts schon");
+                    //console.log("true, weil gibts schon");
                     res.end("true");
                 } else {
-                    console.log("false, weil gibts noch nicht");
+                    //console.log("false, weil gibts noch nicht");
                     res.end("false");
                 }
             })
             .catch(function (error) {
-                console.log("Error, weil "+error);
+                //console.log("Error, weil "+error);
                 res.end("failure:"+error);
             })
   });
@@ -176,8 +175,8 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   }
   else if (!data.exists()) {
     const mId = prevVal.mId;
-    console.log("mId: " + mId);
-    console.log("prevVal.vId: " + prevVal.vId);
+    //console.log("mId: " + mId);
+    //console.log("prevVal.vId: " + prevVal.vId);
     if(mId!=null) {
       buchungM("Stornierung der Buchung",stornierungVermieterVermieter, stornierungVermieterMieter, prevVal.vId, mId,pId ,datum);
     } else {
@@ -186,7 +185,7 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
   } else {
     var mId = dataVal.mId;
     const prevMId = prevVal != null ? prevVal.mId : null;
-    console.log("mId: " + mId);
+    //console.log("mId: " + mId);
     if(mId!=null) {
       if(prevMId!= null){
         // data.ref.update({mId: prevMId});
@@ -213,8 +212,10 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
   //Vermieter dürfte ja stets !=null sein.
   ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {
     //Vermieter-Adresse haben wir
+    //Hier kommt es noch häufig vor, dass val() null or undefined ist, weil als VermieterId
+    //die Id eines mittlerweile gelöschten Users war, aber das sollte sich in Produktion geben...
     var mailVermieter = Object.keys(data.val())[0].replace(/!/g,'.');
-    console.log ("Email des Vermieters: "+mailVermieter);
+    //console.log ("Email des Vermieters: "+mailVermieter);
 
 
     if (mieter) {
@@ -222,14 +223,14 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
         //Mieter-Adresse haben wir auch
         var mailMieter = Object.keys(data.val())[0].replace(/!/g,'.');
 
-        console.log ("Email des Mieters: "+mailMieter);
+        //console.log ("Email des Mieters: "+mailMieter);
 
         textVermieter = textVermieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
         textMieter = textMieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
 
-        console.log('subject: ' + subject);
-        console.log('textVermieter: ' + textVermieter);
-        console.log('textMieter: ' + textMieter);
+        //console.log('subject: ' + subject);
+        //console.log('textVermieter: ' + textVermieter);
+        //console.log('textMieter: ' + textMieter);
 
         var uselessVariable = sendEmail({
         from: from,
@@ -246,7 +247,7 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
         );
 
     },error => {
-      console.log ("ERROR: "+error);
+      console.log ("Buchung-ERROR: "+error);
     })
     }
   });

@@ -4,7 +4,7 @@ var auth;
 var mode, actionCode, apiKey, continueUrl;
 var accountEmail;
 document.addEventListener('DOMContentLoaded', function() {
-  console.log ("DOMContentLoaded...");
+  
 
   // Get the action to complete.
   mode = getParameterByName('mode');
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Configure the Firebase SDK.
   // This is the minimum configuration required for the API to be used.
-  console.log("Mode: "+mode);
+  
   var config = {
     'apiKey': apiKey  // This key could also be copied from the web
-                      // initialization snippet found in the Firebase console.
+                      // initialization snippet found in the Firebase c onsole.
   };
   app = firebase.initializeApp(config);
   auth = app.auth();
@@ -40,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
       break;
     case 'verifyEmail':
       // Display email verification handler and UI.      
-      console.log("mode = verifyEmail");
       document.getElementById("header3").innerHTML="Email bestätigen";
       $("#resetPasswordContainer").hide();
       $("#verifyEmailContainer").show();
@@ -56,18 +55,11 @@ function getParameterByName(name) {
     var url = window.location.href;
     //name =
     var regex = new RegExp("[?&]"+name+"(=([^&#]*)|&|#|$)");
-    results = regex.exec(url);
-    console.log ("Results für "+name+": ");
-    console.log (results);
+    results = regex.exec(url);    
     if(!results) return null;
     if(!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g," "));
     
-    /*Der beschissene InternetExplorer kann natürlich URLSearchParams nicht! 
-    var params = new URLSearchParams(window.location.search);
-    console.log(params.get(name));
-    return params.get(name);    
-    */
 }
 
 function handleResetPassword(auth, actionCode, continueUrl) {
@@ -77,8 +69,7 @@ function handleResetPassword(auth, actionCode, continueUrl) {
     accountEmail = email;
 
     // TODO: Show the reset screen with the user's email and ask the user for
-    // the new password.
-    console.log("accountemail: "+accountEmail);
+    // the new password.    
     document.getElementById("resetPassword_userEmail").innerHTML=accountEmail;
 
     
@@ -92,7 +83,6 @@ function confirmNewPassword() {
 // Save the new password.
 
 var user_password=$("#resetPassword_input").val();
-console.log("Confirm new password:"+ user_password);
 //Hier erstmal auf DEKA Conformity checken
 const kleinBS = /[a-z]/;
 const grossBS = /[A-Z]/;
@@ -112,7 +102,6 @@ if (! (user_password.length>=10 && zeichenTypenUsed>=3) ) {
   return;
 }
     auth.confirmPasswordReset(actionCode, user_password).then(function(resp) {
-      console.log ("Password updated!");
       document.getElementById("resetPassword_status").innerHTML = 'Ihr Passwort wurde erneuert! Sie können jetzt zur Anwendung zurückkehren.';
       // Password reset has been confirmed and new password updated.
       auth.signInWithEmailAndPassword(accountEmail, user_password);
@@ -120,18 +109,15 @@ if (! (user_password.length>=10 && zeichenTypenUsed>=3) ) {
     }).catch(function(error) {
       // Error occurred during confirmation. The code might have expired or the
       // password is too weak.
-      console.log("error "+error);
       document.getElementById("resetPassword_status").innerHTML= 'Fehler beim Erneuern ihres Passworts: '+error;
     });
 }
 
 function handleVerifyEmail(auth, actionCode, continueUrl) {
   // Try to apply the email verification code.
-  console.log("handleVerifyEmail");
   auth.applyActionCode(actionCode).then(function(resp) {
     // Email address has been verified.
-    console.log("Email verified");
-
+    
     // TODO: Display a confirmation message to the user.
     // You could also provide the user with a link back to the app.
     document.getElementById("verifyEmail_status").innerHTML= 'Ihre E-Mail wurde erfolgreich verifiziert. Unter Umständen muss Ihr Account allerdings erst noch von der Hotline freigeschaltet werde.';
