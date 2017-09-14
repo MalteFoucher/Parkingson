@@ -213,6 +213,8 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
   //Vermieter dürfte ja stets !=null sein.
   ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {
     //Vermieter-Adresse haben wir
+    //Hier kommt es noch häufig vor, dass val() null or undefined ist, weil als VermieterId
+    //die Id eines mittlerweile gelöschten Users war, aber das sollte sich in Produktion geben...
     var mailVermieter = Object.keys(data.val())[0].replace(/!/g,'.');
     console.log ("Email des Vermieters: "+mailVermieter);
 

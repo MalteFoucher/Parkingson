@@ -183,26 +183,34 @@ onParkIdChange(index:number) {
   var value = parseInt((<HTMLInputElement>document.getElementById(""+index)).value);
   console.log ("ParkId of #"+index+" changed to "+value);
 
-  //Dummy Wert 400 für maxParkplatzId
-  if (isNaN( value ) || ( value<0 || value>400)) {
+  //Dummy Wert 6000 für maxParkplatzId
+  if (isNaN( value ) || ( value<0 || value>6000)) {
     this.snackBar.open('Bitte geben Sie eine gültige Parkplatz-Nummer ein.', null, {duration: 2000});
-    (<HTMLInputElement>document.getElementById(""+index)).value = this.userArray[index].parkId;
+    var ersatzWert = (this.userArray[index].parkId);
+    if (!ersatzWert) ersatzWert=0;    
+    (<HTMLInputElement>document.getElementById(""+index)).value = ersatzWert;
     return;
   }
 
   //Prüfen, ob schon jmd anderes diesen Parkplat hat
   if ( this.vergebeneParkplaetze.indexOf(value)>-1 )
   {
-    this.snackBar.open('Dieser Parkplatz ist bereits vergeben.', null, {duration: 2000});
-    (<HTMLInputElement>document.getElementById(""+index)).value = this.userArray[index].parkId;
+    this.snackBar.open('Dieser Parkplatz ist bereits vergeben.', null, {duration: 3000});
+    var ersatzWert = (this.userArray[index].parkId);
+    if (!ersatzWert) ersatzWert=0;    
+    (<HTMLInputElement>document.getElementById(""+index)).value = ersatzWert;
     return;
   }
 
+  //Den bisherigen Wert muss ich noch aus dem Array VergebeneParkplätze herausholen, sonst kann ich den
+  //erst nach nem Neustart neu vergeben.
+  var oldValue = this.userArray[index].parkId;
   var ref = firebase.database().ref('/emailToRole/'+this.userArray[index].email.replace(/\./g,'!'));
     ref.update( {parkId: value} )
     .then( result => {
-      this.snackBar.open('Parkplatz gewechselt zu '+value, null, {duration: 2000});
+      this.snackBar.open('Parkplatz gewechselt von '+ oldValue +' zu '+value, null, {duration: 2000});
       if (value>0) this.vergebeneParkplaetze.push(value);
+      if (oldValue>0) this.vergebeneParkplaetze.splice ( this.vergebeneParkplaetze.indexOf(oldValue),1);
       this.store.updateE2R( this.userArray[index].email.replace(/\./g,'!'),  {parkId: value});
       this.userArray[index].parkId=value;
     })
