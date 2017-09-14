@@ -34,7 +34,7 @@ const smtpConfig = {
         //pass: 'darkwW6AQ7NPVh12'
         //user: 'm040b7a3',                       //Romans all-inkl.com
         user: 'm040d1e7',                       //Die endgültige all-inkl.com
-        pass: 'ZLb6BEQhPoz53yeq'
+        pass: 'VN5UUB7o5VervyaD'
     }
     /*tls: {
         secure: true
