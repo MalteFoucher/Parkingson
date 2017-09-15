@@ -170,13 +170,6 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.calcValues();
   }
 
-  vermieterIsMieter(day): boolean {
-    const now = moment();
-    const clickDay = this.getDayBorder(day);
-    const clickDayM2 = clickDay.clone().subtract(2, 'days');
-    return day.state === 1 && now.isAfter(clickDayM2);
-  }
-
   dayClick(day) {
     const border = this.getDayBorder(day);
 
@@ -275,11 +268,13 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       this.day.add(4, 'weeks');
     }
+    this.day.day(1);
     this.calcValues();
   }
 
   zurueck() {
     this.day.subtract(4, 'weeks');
+    this.day.day(1);
     this.calcValues();
   }
 
