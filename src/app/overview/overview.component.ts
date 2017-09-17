@@ -268,13 +268,13 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       this.day.add(4, 'weeks');
     }
-    this.day.day(1);
+    this.day.day(5);
     this.calcValues();
   }
 
   zurueck() {
     this.day.subtract(4, 'weeks');
-    this.day.day(1);
+    this.day.day(5);
     this.calcValues();
   }
 
