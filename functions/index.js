@@ -3,10 +3,6 @@
 const functions = require('firebase-functions');
 const moment = require('moment');
 
-//const o = require('observable')
-//var v = o()
-var poolAccess=0;
-
 // cors ist für Cross Origin Header
 const cors = require('cors')({origin:true});
 
@@ -16,10 +12,6 @@ const admin = require('firebase-admin');
 admin.initializeApp(functions.config().firebase);
 
 // *** Allerhand Kram für Emailversand
-//var AsyncLock = require('async-lock');
-//var lock = new AsyncLock();
-//var ReadWriteLock = require('rwlock');
-//var lock = new ReadWriteLock();
 
 const nodemailer = require('nodemailer');
 const from = 'ParkplatzTool <service@parken-eagle.com>';
@@ -41,9 +33,6 @@ const smtpConfig = {
     }
 };
 const transporter = nodemailer.createTransport(smtpConfig);
-var messages = [];
-//transporter.on('idle', startSending);
-//startSending();
 // ***
 
 
@@ -340,4 +329,34 @@ exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => 
         
     }
   }  
+})
+
+
+exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {      
+  //Die Funktion habe ich geschrieben um am 19.09 um 12:00 alle User auf aktiv zu setzen.
+  //War angedacht, in der Query einen Wert zu übergeben, um ggf. auch auf inaktiv zu setzen.
+  //Der Übergabewert ist aber "true" statt true, als kein boolean. Wäre natürlich möglich, das
+  //irgendwie abzufangen, aber aus Faulheit lasse ich das mit dem Parameter und setze hier einfach
+  //alles stumpf auf true.
+
+  cors (req, res, () => {
+    //var state = req.query.state;
+
+    var i=0;
+    //console.log ("Set Everyone's isActive - Flag to "+state);    
+    admin.database().ref('/emailToRole/').orderByKey().once('value')
+    .then (function (snapshot) {
+        if (snapshot.val()) {
+            var keys = Object.keys(snapshot.val());
+            for (var key in keys) {
+                i++;
+                console.log ("Setze isActive von "+keys[key] +" auf "+state);
+                admin.database().ref('/emailToRole/').child(keys[key]).update(
+                    {isActive: true}
+                );
+            }            
+        }
+        res.end(i+ " Einträge geupdated.");
+    });
+  });
 })
