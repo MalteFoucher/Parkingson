@@ -29,7 +29,7 @@
 </div>
 
 <div *ngIf="buchungsAdmin && benutzerAdmin">
-  <button (click)="emailTesten()" > Test-Email an {{userEmail}} </button>
+  <button (click)="emailTesten()" > Start Sending! </button>
   <p>Überschreiben der Daten in EmailToRole</p><input name="myFile" type="file"  (change)="handleFileSelect($event)" accept=".csv">
   <p>Update der Parkkplätze in EmailToRole</p><input name="myFileUpdate" type="file"  (change)="handleFileSelectUpdate($event)" accept=".csv">
   <button md-raised-button (click)="writeNewBuchung()">writeNewBuchung()</button>
@@ -42,4 +42,5 @@
   <button [mdDatepickerToggle]="vonPicker"></button>
   <md-datepicker #vonPicker (dateChange)="onDateChange()"></md-datepicker>
   <button md-raised-button (click)="onDateChange()" >Jahrestag?</button>
+  
 </div>

@@ -341,4 +341,6 @@ onDateChange() {
     vonMoment.year(this.picker_von._selected.getFullYear());
     this.jahrestag=" "+vonMoment.dayOfYear();
 }
+
+
 }

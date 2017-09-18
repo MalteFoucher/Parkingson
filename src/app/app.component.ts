@@ -98,7 +98,8 @@ export class AppComponent implements AfterViewChecked {
                   disableClose: true,
                   data: {
                     titel: 'Userkonto inaktiv',
-                    text: 'Ihr Konto wurde noch nicht aktiviert.<br>Wenden Sie sich an die Hotline.',
+                    //text: 'Ihr Konto wurde noch nicht aktiviert.<br>Wenden Sie sich an die Hotline.',
+                    text: 'Die Benutzerkonten werden am 19.09.17 freigeschaltet.',
                     yesButtonText: 'Ok',
                     yesButtonVisible: true
                   }
@@ -106,10 +107,12 @@ export class AppComponent implements AfterViewChecked {
                   .afterClosed().subscribe(selection => {
                     this.logout();
                   });
+                  this.cdRef.detectChanges();
               }
             }
           });
-          // this.cdRef.detectChanges();
+          //wieder reingenommen in der Hoffnung, dass das auf MANCHEN InternetExplorern dann eingeblendet wird!!
+          this.cdRef.detectChanges();
         }
       } else {
         // Ausgeloggt...

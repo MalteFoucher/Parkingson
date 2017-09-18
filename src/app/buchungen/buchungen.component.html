@@ -3,11 +3,11 @@
 </div>
 
 <div class="centered-content">
-    <md-select class="content-el" placeholder="Jahr" [(ngModel)]="myYear" (change)="onYearChanged()">
+    <md-select class="content-el" placeholder="Jahr" [(ngModel)]="myYear">
       <md-option *ngFor="let year of yearValues" [value]="year">{{year}}</md-option>
     </md-select>
 
-    <md-select class="content-el" placeholder="Monat" [(ngModel)]="myMonth" (change)="onMonthChanged()">
+    <md-select class="content-el" placeholder="Monat" [(ngModel)]="myMonth">
       <md-option *ngFor="let month of monatNamen" [value]="month">{{month}}</md-option>
     </md-select>
 
