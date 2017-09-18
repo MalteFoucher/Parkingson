@@ -18,14 +18,14 @@ admin.initializeApp(functions.config().firebase);
 // *** Allerhand Kram für Emailversand
 //var AsyncLock = require('async-lock');
 //var lock = new AsyncLock();
-var ReadWriteLock = require('rwlock');
-var lock = new ReadWriteLock();
+//var ReadWriteLock = require('rwlock');
+//var lock = new ReadWriteLock();
 
 const nodemailer = require('nodemailer');
 const from = 'ParkplatzTool <service@parken-eagle.com>';
 const smtpConfig = {
     pool: true,
-    maxConnections: 1,
+    maxConnections: 3,
     //rateDelta: 3000,
     //rateLimit: 15
 
@@ -42,7 +42,7 @@ const smtpConfig = {
 };
 const transporter = nodemailer.createTransport(smtpConfig);
 var messages = [];
-transporter.on('idle', startSending);
+//transporter.on('idle', startSending);
 //startSending();
 // ***
 
@@ -221,9 +221,11 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
   //console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+ transporter.isIdle());
   return new Promise(function (resolve, reject) {
     var ref = admin.database().ref('/emailToRole/');
+    var messageRef = admin.database().ref('/messages/');
     
     ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {        
         var mailVermieter = Object.keys(data.val())[0].replace(/!/g,'.');
+        
         if (mieter) {
         ref.orderByChild('uid').equalTo(mieter).once('value').then( data => {            
             var mailMieter = Object.keys(data.val())[0].replace(/!/g,'.');       
@@ -231,35 +233,27 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
             textVermieter = textVermieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
             textMieter = textMieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
         
-            accessPool({
-                    from: from,
+            messageRef.push(
+            //accessPool({
+                {
+                    //from: from,
                     to: mailVermieter,
                     subject: subject,
-                    text: textVermieter})
-                    .then(res => {
-                        //console.log ("Pushed VermieterMessage to position "+res);               
-                    });
-
-                
-                accessPool(
-                    {
-                    from: from,
+                    text: textVermieter});
+            
+            messageRef.push(
+            //accessPool(
+                {
+                    //from: from,
                     to: Object.keys(data.val())[0].replace(/!/g,'.'),
                     subject: subject,
-                    text: textMieter})
-                    .then(res => {
-                        //console.log ("Pushed MieterMessage to position "+res);
-                        //Muss schon im .then-Block stehen. Aber halt ruhig im zweiten
-                        if (transporter.isIdle() )    { 
-                            //console.log ("buchungM stoesst den idling transporter an...");
-                            startSending();
-                        }
-                    });
-                            
+                    text: textMieter});
+                        
+                //startSending();
 
         },error => {
           console.log ("Mieter Email finden-ERROR: "+error);
-          reject(erro);
+          //reject(erro);
         });
         }   //Ende von if(mieter)
 
@@ -268,59 +262,82 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
         reject(error);
     }); //Ende vom vermieter.then
   
+  //Schäbiges busy-waiting auf die beiden
   resolve("alles gut")  ;
   }); //Ende vom Return new Promise
 }
 
 
-
+/*
 function startSending() {//function(){
-    //console.log ("entering startSending @"+messages.length);
-    // send next message from the pending queue
-    
-        //macht nur sinn bei >1 connections
+  if (transporter.isIdle() ) {
 
-        //while (messages.length) {
-            //console.log(messages.length+ " in der Queue!");
-            //var msg= messages.shift();
-            if (transporter.isIdle()) {
-                accessPool().then(msg => {
-                    if (msg) {                
+    
+    var msg = accessPool();
+    if (msg) {                                        
+        console.log ("Sending message: TO("+msg.to+")/TEXT("+msg.text+")");
                         
-                        //console.log ("Sending message: TO("+msg.to+")/TEXT("+msg.text+")");
-                        
-                        transporter.sendMail(msg, (error, info) => {
-                        if (error) console.log("onIdle - SendEmail-Error: " + JSON.stringify(error));
-                        //if (info)  console.log("onIdle - SendEmail: " + JSON.stringify(info));
-                        //console.log("Verbleibende Messages: "+messages.length);
-                    });
-                    
-                    } else {
-                        console.log ("Keine messages in der Queue.");
-                    }
-                });
+        transporter.sendMail(msg, (error, info) => {
+            if (error) {
+                console.log("onIdle - SendEmail-Error: " + JSON.stringify(error));
+                console.log ("Packe Message "+JSON.stringify(msg) +" wieder in die Queue.");
+                //Message wieder in die Queue packen
+                accessPool(msg);
             }
-        //}           
+            if (messages.length>0) {
+                console.log ("Messages.length = "+messages.length + " -> Rekursion!")
+                startSending();
+            }
+        });     
+    }
+    console.log ("StartSending Ende")    ;
+  }
 }
 
-//Zugriffe auf die message queue will ich jetzt an dieser stelle irgendwie synchronisieren
+
 function accessPool(optionalArg) {      
     poolAccess++;
-    return new Promise(
-        function (resolve, reject) {
+    //return new Promise(
+        //function (resolve, reject) {
             
             if (typeof optionalArg === 'undefined') {                
                 var msg = messages.shift();
-                if (msg) console.log("["+poolAccess+"] - Return #"+messages.length+": "+msg.to+"/"+msg.text);                                
-                resolve (msg);
+                if (msg) console.log("["+poolAccess+"] - Return #1/"+(messages.length+1)+": "+msg.to+"/"+msg.text);                                
+                //resolve (msg);
+                return msg;
             } else {                
                 messages.push(optionalArg);                
                 console.log("["+poolAccess+"] - Push #"+messages.length+": "+optionalArg.to+"/"+optionalArg.text);                
-                resolve(messages.length);
+                //resolve(messages.length);
             }
             //reject(error);
-        }
-    );
+        //}
+    //);
 }    
-    
+  */  
+exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {      
+  //console.log("sendDBm : event: " + JSON.stringify(event));
   
+  const data = event.data;
+  //console.log("sendDBm data: " + JSON.stringify(data));
+  if (data) {
+    //console.log ("sendDBm dataVal: "+JSON.stringify(data.val()) );
+    if (data.val()) {
+        var keys = Object.keys(data.val());
+        //console.log ("Erste Message: "+ JSON.stringify(data.val()[keys[0]]));
+        var msg = data.val()[keys[0]];
+        msg.from = from;        
+        if (transporter.isIdle()) {
+            transporter.sendMail(msg, (error, info) => {                
+                if (!error) {
+                  //console.log ("Email2 verschickt. Lösche Key "+keys[0]);
+                  admin.database().ref('/messages/').child(keys[0]).remove();                  
+                } else {
+                    console.log("sendMail: "+error);
+                }
+            });
+        }
+        
+    }
+  }  
+})
