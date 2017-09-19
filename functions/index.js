@@ -39,7 +39,10 @@ const transporter = nodemailer.createTransport(smtpConfig);
 exports.onRemoveUser = functions.database.ref('/emailToRole/{emailKey}')
     .onDelete(event => {
         var removedEntry= event.data.previous.val();
-        admin.auth().deleteUser(removedEntry.uid);
+        admin.auth().deleteUser(removedEntry.uid)
+        .catch(error => {
+            console.log ("Zur ID "+removedEntry.uid + " lag kein Eintrag vor! Macht aber nüscht!");
+        });
     });
 
 
@@ -223,26 +226,20 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
             textMieter = textMieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
         
             messageRef.push(
-            //accessPool({
                 {
-                    //from: from,
                     to: mailVermieter,
                     subject: subject,
                     text: textVermieter});
             
             messageRef.push(
-            //accessPool(
                 {
-                    //from: from,
                     to: Object.keys(data.val())[0].replace(/!/g,'.'),
                     subject: subject,
                     text: textMieter});
                         
-                //startSending();
-
+  
         },error => {
           console.log ("Mieter Email finden-ERROR: "+error);
-          //reject(erro);
         });
         }   //Ende von if(mieter)
 
@@ -251,59 +248,11 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
         reject(error);
     }); //Ende vom vermieter.then
   
-  //Schäbiges busy-waiting auf die beiden
+  
   resolve("alles gut")  ;
   }); //Ende vom Return new Promise
 }
 
-
-/*
-function startSending() {//function(){
-  if (transporter.isIdle() ) {
-
-    
-    var msg = accessPool();
-    if (msg) {                                        
-        console.log ("Sending message: TO("+msg.to+")/TEXT("+msg.text+")");
-                        
-        transporter.sendMail(msg, (error, info) => {
-            if (error) {
-                console.log("onIdle - SendEmail-Error: " + JSON.stringify(error));
-                console.log ("Packe Message "+JSON.stringify(msg) +" wieder in die Queue.");
-                //Message wieder in die Queue packen
-                accessPool(msg);
-            }
-            if (messages.length>0) {
-                console.log ("Messages.length = "+messages.length + " -> Rekursion!")
-                startSending();
-            }
-        });     
-    }
-    console.log ("StartSending Ende")    ;
-  }
-}
-
-
-function accessPool(optionalArg) {      
-    poolAccess++;
-    //return new Promise(
-        //function (resolve, reject) {
-            
-            if (typeof optionalArg === 'undefined') {                
-                var msg = messages.shift();
-                if (msg) console.log("["+poolAccess+"] - Return #1/"+(messages.length+1)+": "+msg.to+"/"+msg.text);                                
-                //resolve (msg);
-                return msg;
-            } else {                
-                messages.push(optionalArg);                
-                console.log("["+poolAccess+"] - Push #"+messages.length+": "+optionalArg.to+"/"+optionalArg.text);                
-                //resolve(messages.length);
-            }
-            //reject(error);
-        //}
-    //);
-}    
-  */  
 exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {      
   //console.log("sendDBm : event: " + JSON.stringify(event));
   
@@ -359,4 +308,24 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
         res.end(i+ " Einträge geupdated.");
     });
   });
+})
+
+exports.updateUserEmail = functions.https.onRequest((req, res) => {
+    cors (req, res, () => {
+        var uid = req.query.uid;
+        var newEmail = req.query.email;        
+        console.log ("Email des Users "+uid+ " updaten auf: "+newEmail);
+        admin.auth().updateUser(uid, 
+            {
+                email: newEmail
+            })
+        .then(userRecord=> {
+            console.log ("Erfolgreich geupdated: "+JSON.stringify(userRecord));
+            res.end("Alles gut!");
+        })
+        .catch(error => {
+            console.log ("Fehler beim Updaten: "+error);
+            res.end(error);
+        })
+    });
 })

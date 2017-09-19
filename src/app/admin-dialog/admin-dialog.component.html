@@ -1,6 +1,6 @@
 <h2 md-dialog-title>{{titel}}</h2>
 <md-dialog-content>{{text}}</md-dialog-content>
-<input placeholder="E-Mail" [(ngModel)]="newUserEmail">
+<input style="width: 100%" placeholder="E-Mail" [(ngModel)]="newUserEmail">
 <md-dialog-actions style="margin-right: 5px">
     <button *ngIf="yesButtonVisible==true" md-raised-button [md-dialog-close]="true">{{yesButtonText}}</button>    
     <button *ngIf="noButtonVisible==true" md-raised-button [md-dialog-close]="false">{{noButtonText}}</button>    

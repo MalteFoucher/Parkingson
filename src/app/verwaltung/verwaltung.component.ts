@@ -162,12 +162,7 @@ createNewUser() {
         //Snackbar mit Fehlermeldung
         this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
       } else {
-        email=email.replace(/ö/g,'oe');
-        email=email.replace(/ä/g,'oe');
-        email=email.replace(/ü/g,'ue');
-        email=email.replace(/ß/g,'ss');
-
-        email=email.replace(/\./g,'!');
+        email=this.emailToEmailAsKey(email);
 
         var newPostRef = firebase.database().ref('/emailToRole/'+email+'/')
         .set({
@@ -193,5 +188,72 @@ createNewUser() {
       }
     }
   });
+}
+
+onEmailChanged(i: any) {
+  console.log ("onEmailChanged(): "+i);
+  console.log (this.userArray[i]);
+  //console.log (i);
+  var editedEmail = (<HTMLInputElement>document.getElementById(""+i)).value;
+  editedEmail=editedEmail.toLowerCase();
+  if (this.userArray[i].email != editedEmail) {
+    console.log("Email wurde editiert.");
+    
+    //Erstmal nen Bestätigungsdialog anzeigen.    
+    let dialogRef = this.dialog.open(DialogComponent, {
+      data:  {
+        titel: 'Email ändern',
+        text:'Wollen Sie die Email von "'+this.userArray[i].email+'"<br>nach "'+editedEmail+'" ändern?',
+        yesButtonText: 'Ja',
+        yesButtonVisible: true,
+        noButtonText:'Nein',
+        noButtonVisible: true
+        }
+      });
+    dialogRef.afterClosed().subscribe(selection => {
+      if (selection) {
+        //Neuen Knoten unter neuer Email anlegen, alten da rein kopieren        
+        if ( !( editedEmail.includes('@deka.lu') || editedEmail.includes('@deka.de') )) {
+          //Snackbar mit Fehlermeldung
+          this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
+        } else {
+          var newPostRef = firebase.database().ref('/emailToRole/'+this.emailToEmailAsKey(editedEmail)+'/')
+          .set({
+            benutzerAdmin: this.userArray[i].benutzerAdmin,
+            buchungsAdmin: this.userArray[i].buchungsAdmin,
+            isActive: this.userArray[i].isActive,
+            parkId: this.userArray[i].parkId,
+            uid: this.userArray[i].uid
+          })
+          .then(res => {
+            //Alten Knoten löschen, Email-Adresse des Users ändern.
+              //firebase.database().ref('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email )).remove();
+              console.log ('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email ) + ' löschen!');
+            
+            //Allerdings auch im Store. Alten raus, neuen rein.
+            console.log ("Im Store den Key "+this.userArray[i].email + "(oder asKey?) löschen und nen neuen"+
+            " Eintrag für "+editedEmail + " anlegen. Mal nochmal gucken, ob das jetzt Keys oder KlartextEmails sind.");
+
+            //Um das Ganze mal zu testen, erstmal im HTML den keyup wieder auskommentieren.
+            //Dann vielleicht mal mit malte.foucher@deka oder so ausprobieren.
+          })
+        
+
+        }
+      }
+    });
+
+  }
+}
+
+emailToEmailAsKey(email: string) {  
+  email=email.toLowerCase();
+  email=email.replace(/ö/g,'oe');
+  email=email.replace(/ä/g,'ae');
+  email=email.replace(/ü/g,'ue');
+  email=email.replace(/ß/g,'ss');
+
+  email=email.replace(/\./g,'!');
+  return email;  
 }
 }
