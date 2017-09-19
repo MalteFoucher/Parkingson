@@ -29,7 +29,7 @@ const smtpConfig = {
         //user: 'm040b7a3',                       //Romans all-inkl.com
         //pass: '7p2HTfcyrtM2wfrY'
         user: 'm040d1e7',                       //Die endgültige all-inkl.com
-        pass: 'Malte12345'        
+        pass: 'Malte12345'
     }
 };
 const transporter = nodemailer.createTransport(smtpConfig);
@@ -67,7 +67,7 @@ function sendEmail(mailOptions) {
     //console.log ("sendEmail(1) " + transporter.isIdle());
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log("SendEmail-Error: " + error);            
+            console.log("SendEmail-Error: " + error);
         }
     });
     //console.log ("sendEmail(2) " + transporter.isIdle());
@@ -83,7 +83,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
             console.log('Server is ready to take our message');
         }
 
-    
+
     });
 
     var to = req.query.to;
@@ -146,7 +146,7 @@ exports.b3isUserAlreadyInDB = functions.https.onRequest((req, res) => {
   });
 })
 
-exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWrite(event => {    
+exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWrite(event => {
   //console.log("event: " + JSON.stringify(event));
   const data = event.data;
   //console.log("data: " + JSON.stringify(data));
@@ -198,7 +198,7 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
             //console.log ("Zurück aus buchungM f. Stornierung: "+res);
         });
     }
-  }  
+  }
   //console.log("...BUCHUNG ENDE!");
 });
 
@@ -211,33 +211,39 @@ const stornierungMieterMieter = "Sie haben die Buchung von Parkplatz #p von #v a
 
 const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, datum) => {
   //console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+ transporter.isIdle());
+
+  console.log("mail - vermieter id : " + vermieter);
+  console.log("mail - mieter id : " + mieter);
+
   return new Promise(function (resolve, reject) {
     var ref = admin.database().ref('/emailToRole/');
     var messageRef = admin.database().ref('/messages/');
-    
-    ref.orderByChild('uid').equalTo(vermieter).once('value').then( data => {        
-        var mailVermieter = Object.keys(data.val())[0].replace(/!/g,'.');
-        
+
+    ref.orderByChild('uid').equalTo(vermieter).once('value').then( vData => {
+        console.log("vData: " + JSON.stringify(vData.val()));
+        var mailVermieter = Object.keys(vData.val())[0].replace(/!/g,'.');
+
         if (mieter) {
-        ref.orderByChild('uid').equalTo(mieter).once('value').then( data => {            
-            var mailMieter = Object.keys(data.val())[0].replace(/!/g,'.');       
-            
+        ref.orderByChild('uid').equalTo(mieter).once('value').then( mData => {
+            console.log("mData: " + JSON.stringify(mData.val()));
+            var mailMieter = Object.keys(mData.val())[0].replace(/!/g,'.');
+
             textVermieter = textVermieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
             textMieter = textMieter.replace("#v",mailVermieter).replace('#m',mailMieter).replace("#p",pp).replace("#d", datum);
-        
+
             messageRef.push(
                 {
                     to: mailVermieter,
                     subject: subject,
                     text: textVermieter});
-            
+
             messageRef.push(
                 {
-                    to: Object.keys(data.val())[0].replace(/!/g,'.'),
+                    to: mailMieter,
                     subject: subject,
                     text: textMieter});
-                        
-  
+
+
         },error => {
           console.log ("Mieter Email finden-ERROR: "+error);
         });
@@ -247,15 +253,15 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
         console.log ("Vermieter Email finden-ERROR: "+error);
         reject(error);
     }); //Ende vom vermieter.then
-  
-  
+
+
   resolve("alles gut")  ;
   }); //Ende vom Return new Promise
 }
 
-exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {      
+exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {
   //console.log("sendDBm : event: " + JSON.stringify(event));
-  
+
   const data = event.data;
   //console.log("sendDBm data: " + JSON.stringify(data));
   if (data) {
@@ -264,24 +270,24 @@ exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => 
         var keys = Object.keys(data.val());
         //console.log ("Erste Message: "+ JSON.stringify(data.val()[keys[0]]));
         var msg = data.val()[keys[0]];
-        msg.from = from;        
+        msg.from = from;
         if (transporter.isIdle()) {
-            transporter.sendMail(msg, (error, info) => {                
+            transporter.sendMail(msg, (error, info) => {
                 if (!error) {
                   //console.log ("Email2 verschickt. Lösche Key "+keys[0]);
-                  admin.database().ref('/messages/').child(keys[0]).remove();                  
+                  admin.database().ref('/messages/').child(keys[0]).remove();
                 } else {
                     console.log("sendMail: "+error);
                 }
             });
         }
-        
+
     }
-  }  
+  }
 })
 
 
-exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {      
+exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
   //Die Funktion habe ich geschrieben um am 19.09 um 12:00 alle User auf aktiv zu setzen.
   //War angedacht, in der Query einen Wert zu übergeben, um ggf. auch auf inaktiv zu setzen.
   //Der Übergabewert ist aber "true" statt true, als kein boolean. Wäre natürlich möglich, das
@@ -292,7 +298,7 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
     //var state = req.query.state;
     var state=true;
     var i=0;
-    console.log ("Set Everyone's isActive - Flag to "+state);    
+    console.log ("Set Everyone's isActive - Flag to "+state);
     admin.database().ref('/emailToRole/').orderByKey().once('value')
     .then (function (snapshot) {
         if (snapshot.val()) {
@@ -303,7 +309,7 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
                 admin.database().ref('/emailToRole/').child(keys[key]).update(
                     {isActive: true}
                 );
-            }            
+            }
         }
         res.end(i+ " Einträge geupdated.");
     });
@@ -313,9 +319,9 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
 exports.updateUserEmail = functions.https.onRequest((req, res) => {
     cors (req, res, () => {
         var uid = req.query.uid;
-        var newEmail = req.query.email;        
+        var newEmail = req.query.email;
         console.log ("Email des Users "+uid+ " updaten auf: "+newEmail);
-        admin.auth().updateUser(uid, 
+        admin.auth().updateUser(uid,
             {
                 email: newEmail
             })
