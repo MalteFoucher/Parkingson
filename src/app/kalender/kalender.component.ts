@@ -115,8 +115,9 @@ export class KalenderComponent {
               davon_gebucht: gebucht
             };
           } else {
+            
             this.parkplatzMap[buchung.vId][monat].freigaben++;
-            this.parkplatzMap[buchung.vId][monat].davon_gebucht = +gebucht;
+            this.parkplatzMap[buchung.vId][monat].davon_gebucht = this.parkplatzMap[buchung.vId][monat].davon_gebucht+gebucht;
           }
 
         }
@@ -224,11 +225,12 @@ export class KalenderComponent {
 
       for (var l in lines) {
         var tokens = lines[l].split(";");
-        var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
-        //var emailAsKey = tokens[3].replace(/\./g,'!');
+        //var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
+        var emailAsKey = tokens[3].replace(/\./g,'!');
+        //emailAsKey = emailAsKey.replace(/(\n)/g,'');
         emailAsKey = emailAsKey.toLowerCase();
         emailAsKey = emailAsKey.replace(/ö/g, 'oe')
-        emailAsKey = emailAsKey.replace(/ä/g, 'oe')
+        emailAsKey = emailAsKey.replace(/ä/g, 'ae')
         emailAsKey = emailAsKey.replace(/ü/g, 'ue')
         emailAsKey = emailAsKey.replace(/ß/g, 'ss')
         emailAsKey = emailAsKey.replace(/ /g, '');
@@ -245,6 +247,8 @@ export class KalenderComponent {
             isActive: true,
             uid: 'not set yet'
           });
+          
+          //console.log("Entry "+l+": '"+emailAsKey+ "'(ParkId:"+parkId+")");
       }
     }
   }
@@ -259,11 +263,11 @@ export class KalenderComponent {
 
       for (var l in lines) {
         var tokens = lines[l].split(";");
-        var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
-        //var emailAsKey = tokens[3].replace(/\./g,'!');
+        //var emailAsKey = tokens[1] + "!" + tokens[0] + "@deka!lu";
+        var emailAsKey = tokens[3].replace(/\./g,'!');
         emailAsKey = emailAsKey.toLowerCase();
         emailAsKey = emailAsKey.replace(/ö/g, 'oe')
-        emailAsKey = emailAsKey.replace(/ä/g, 'oe')
+        emailAsKey = emailAsKey.replace(/ä/g, 'ae')
         emailAsKey = emailAsKey.replace(/ü/g, 'ue')
         emailAsKey = emailAsKey.replace(/ß/g, 'ss')
         emailAsKey = emailAsKey.replace(/ /g, '');
@@ -271,11 +275,12 @@ export class KalenderComponent {
         var parkId = parseInt(tokens[2]);
         if (isNaN(parkId)) parkId = 0;
 
+        
         firebase.database().ref('/emailToRole/' + emailAsKey + '/')
           .update({
-            isActive: true,
+            //isActive: true,
             parkId: parkId
-          });
+          });          
       }
     }
   }

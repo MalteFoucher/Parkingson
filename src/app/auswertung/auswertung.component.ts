@@ -54,16 +54,17 @@ export class AuswertungComponent implements OnInit {
 
     //Da ich es nicht gebacken bekomme, die Property _selected in ein Format zu überführen,
     //das einem moment-Konstruktor übergeben werden kann -> die umständliche Tour:
-    var vonMoment = moment().date(this.picker_von._selected.getDate());
+    var vonMoment = moment().year(this.picker_von._selected.getFullYear());    
     vonMoment.month(this.picker_von._selected.getMonth());
-    vonMoment.year(this.picker_von._selected.getFullYear());
+    vonMoment.date(this.picker_von._selected.getDate());
+    
 
-    var bisMoment = moment().date(this.picker_bis._selected.getDate());
+    
+    var bisMoment = moment().year(this.picker_bis._selected.getFullYear());    
     bisMoment.month(this.picker_bis._selected.getMonth());
-    bisMoment.year(this.picker_bis._selected.getFullYear());
+    bisMoment.date(this.picker_bis._selected.getDate());
+    
 
-    //Vorerst geh ich mal davon aus, start und ende sind valide.... (ende > start, beide selbes jahr, ?)
-    //Muss aber noch überprüft werden!
     if (bisMoment.year() != vonMoment.year() || vonMoment.isAfter(bisMoment, 'day')) {
       //Dialog aufploppen, der auf falsche Eingaben hinweist:
       let dialogRef = this.dialog.open(DialogComponent, {
@@ -83,10 +84,10 @@ export class AuswertungComponent implements OnInit {
     var year = bisMoment.year();
     var startDay = "" + vonMoment.dayOfYear();
     var endDay = "" + bisMoment.dayOfYear();
-
+    //console.log (startDay, endDay);
 
     firebase.database().ref(ParkConst.BUCHUNGEN_PFAD + year).orderByKey().startAt(startDay).endAt(endDay).once('value', this.auswertungCallback);
-
+    //ginge nicht auch orderByChild WHERE vId = die gesuchte Id?
   }
 
 
@@ -109,6 +110,8 @@ export class AuswertungComponent implements OnInit {
 
           //Prüfen, ob der Vermieter-Key der des im Dropdown ausgewählten ist:
           if (!this.myState || this.myState == buchung.vId) {
+            //console.log (tagesKeys[tk]);
+            //console.log (JSON.stringify(buchung));
 
             if (!(buchung.vId in this.auswertungenMap)) {
               this.auswertungenMap[buchung.vId] = new Auswertung(buchung.vId);
@@ -119,7 +122,9 @@ export class AuswertungComponent implements OnInit {
               this.auswertungenMap[buchung.vId].incFreigaben();//freigaben++;
             }
             // In der Annahme, dass es zu jeder Buchung auch einen Vermieter geben muss/wird!
-            if (buchung.mId != "") this.auswertungenMap[buchung.vId].incGebucht();
+            if (buchung.mId != "") {              
+              this.auswertungenMap[buchung.vId].incGebucht();
+            }
           }
         }
       }

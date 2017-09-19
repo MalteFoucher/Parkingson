@@ -104,8 +104,8 @@ export class VerwaltungComponent implements OnInit {
 onParkIdChange(index:number) {
   var value = parseInt((<HTMLInputElement>document.getElementById(""+index)).value);
 
-  //Dummy Wert 6000 für maxParkplatzId
-  if (isNaN( value ) || ( value<0 || value>6000)) {
+  
+  if (isNaN( value ) || ( value<0 || value>6098)) {
     this.snackBar.open('Bitte geben Sie eine gültige Parkplatz-Nummer ein.', null, {duration: 2000});
     var ersatzWert = (this.userArray[index].parkId);
     if (!ersatzWert) ersatzWert=0;
@@ -234,8 +234,8 @@ onEmailChanged(i: any) {
             console.log ("Im Store den Key "+this.userArray[i].email + "(oder asKey?) löschen und nen neuen"+
             " Eintrag für "+editedEmail + " anlegen. Mal nochmal gucken, ob das jetzt Keys oder KlartextEmails sind.");
 
-            //Um das Ganze mal zu testen, erstmal im HTML den keyup wieder auskommentieren.
-            //Dann vielleicht mal mit malte.foucher@deka oder so ausprobieren.
+            //Um das Ganze mal zu testen, erstmal im HTML den keyup wieder reinkommentieren.
+            //Dann vielleicht mal mit malte.foucher@deka oder so ausprobieren.          
           })
         
 
