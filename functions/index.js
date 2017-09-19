@@ -215,6 +215,11 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
   console.log("mail - vermieter id : " + vermieter);
   console.log("mail - mieter id : " + mieter);
 
+  if (mieter == null || vermieter == null) {
+    console.error("vermieter oder mieter is null: " + vermieter + " - " + mieter);
+    return;
+  }
+
   return new Promise(function (resolve, reject) {
     var ref = admin.database().ref('/emailToRole/');
     var messageRef = admin.database().ref('/messages/');
