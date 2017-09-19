@@ -341,9 +341,9 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
 
   cors (req, res, () => {
     //var state = req.query.state;
-
+    var state=true;
     var i=0;
-    //console.log ("Set Everyone's isActive - Flag to "+state);    
+    console.log ("Set Everyone's isActive - Flag to "+state);    
     admin.database().ref('/emailToRole/').orderByKey().once('value')
     .then (function (snapshot) {
         if (snapshot.val()) {

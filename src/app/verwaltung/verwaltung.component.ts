@@ -158,7 +158,7 @@ createNewUser() {
     if(selection) {
       var email=dialogRef.componentInstance.getNewEmail().toLowerCase();
       //email validieren: vorhandensein von : @deka.lu, nochwas?
-      if ( !email.includes('@deka.lu') ) {
+      if ( !( email.includes('@deka.lu') || email.includes('@deka.de') )) {
         //Snackbar mit Fehlermeldung
         this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
       } else {
