@@ -217,6 +217,8 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
 
   if (mieter == null || vermieter == null) {
     console.error("vermieter oder mieter is null: " + vermieter + " - " + mieter);
+    console.error("textVermieter: " + textVermieter);
+    console.error("textMieter: " + textMieter);
     return;
   }
 
