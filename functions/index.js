@@ -204,18 +204,19 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
 
 const buchungVermieter = "Ihr Parkplatz #p wurde am #d von #m gebucht.";
 const buchungMieter = "Sie haben den Parkplatz #p am #d von #v gebucht.";
-const stornierungVermieterVermieter = "Sie haben die Buchung von Parkplatz #p am #d von #m storniert.";
-const stornierungVermieterMieter = "Die Buchung des Parkplatzes #p am #d wurde von #v storniert.";
-const stornierungMieterVermieter = "Die Buchung des Parkplatzes #p am #d wurde von #m storniert.";
-const stornierungMieterMieter = "Sie haben die Buchung von Parkplatz #p von #v am #d storniert.";
+const stornierungVermieterVermieter = "Sie haben #m's Buchung ihres Parkplatzes #p am #d storniert.";
+const stornierungVermieterMieter = "Ihre Buchung des Parkplatzes #p am #d wurde vom Vermieter #v storniert.";
+const stornierungMieterVermieter = "Die Buchung Ihres Parkplatzes #p am #d wurde vom Mieter #m storniert.";
+const stornierungMieterMieter = "Sie haben Ihre Buchung des Parkplatzes #p von #v am #d storniert.";
 
 const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, datum) => {
+
   //console.log("MAIL: vermieter: " + vermieter+" / mieter: " + mieter+ " / "+ transporter.isIdle());
 
   console.log("mail - vermieter id : " + vermieter);
   console.log("mail - mieter id : " + mieter);
 
-  if (mieter == null || vermieter == null) {
+  if (mieter == null || vermieter == null || mieter == "not set yet" || vermieter =="not set yet") {
     console.error("vermieter oder mieter is null: " + vermieter + " - " + mieter);
     console.error("textVermieter: " + textVermieter);
     console.error("textMieter: " + textMieter);
@@ -229,7 +230,7 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
     ref.orderByChild('uid').equalTo(vermieter).once('value').then( vData => {
         console.log("vData: " + JSON.stringify(vData.val()));
         var mailVermieter = Object.keys(vData.val())[0].replace(/!/g,'.');
-
+        
         if (mieter) {
         ref.orderByChild('uid').equalTo(mieter).once('value').then( mData => {
             console.log("mData: " + JSON.stringify(mData.val()));
@@ -267,7 +268,8 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
 }
 
 exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {
-  //console.log("sendDBm : event: " + JSON.stringify(event));
+  //TO DO: Nicht bei JEDEM Error aufhören, bei Recipient unknown-> Email löschen, weitermachen!
+  
 
   const data = event.data;
   //console.log("sendDBm data: " + JSON.stringify(data));
@@ -285,6 +287,11 @@ exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => 
                   admin.database().ref('/messages/').child(keys[0]).remove();
                 } else {
                     console.log("sendMail: "+error);
+                    console.log(JSON.stringify(error));
+                    //responseCode ist wohl das Attribut worauf es ankommt. Hat aber nicht jedes ERROR Object
+                    //450: too much mail
+                    //bloß welches sind die, bei denen ich die Email lösche?
+                    //550 müsste sein, falls recipient rejected
                 }
             });
         }

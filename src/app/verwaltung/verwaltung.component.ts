@@ -4,6 +4,7 @@ import {MdDialog, MdSnackBar} from '@angular/material';
 import {DialogComponent} from '../dialog/dialog.component';
 import {AdminDialogComponent} from '../admin-dialog/admin-dialog.component';
 import * as firebase from 'firebase/app';
+import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-verwaltung',
@@ -17,7 +18,8 @@ export class VerwaltungComponent implements OnInit {
   vergebeneParkplaetze=[];
   user;
 
-  constructor(private store: Store, private dialog: MdDialog, private snackBar: MdSnackBar, private changeDetector: ChangeDetectorRef) { }
+  constructor(private store: Store, private dialog: MdDialog, private snackBar: MdSnackBar, 
+    private changeDetector: ChangeDetectorRef, private http: HttpClient) { }
 
   ngOnInit() {
     this.user = this.store.eUser;
@@ -170,7 +172,7 @@ createNewUser() {
           buchungsAdmin: false,
           isActive: false,
           parkId: 0,
-          uid: "overwrite me!"
+          uid: "not set yet"
         }).then(data=>{
           this.snackBar.open('User erfolgreich angelegt.', null, {duration: 2000});
           var newUser={email: email.replace(/!/g,'.'),
@@ -178,7 +180,7 @@ createNewUser() {
             isActive:false,
             benutzerAdmin: false,
             buchungsAdmin: false,
-            uid: "overwrite me!"
+            uid: "not set yet"
           };
           this.store.pushToE2R(newUser);
           this.userArray.push(newUser);
@@ -217,6 +219,7 @@ onEmailChanged(i: any) {
           //Snackbar mit Fehlermeldung
           this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
         } else {
+          //Neuen Knoten in emailToRole anlegen:
           var newPostRef = firebase.database().ref('/emailToRole/'+this.emailToEmailAsKey(editedEmail)+'/')
           .set({
             benutzerAdmin: this.userArray[i].benutzerAdmin,
@@ -226,7 +229,15 @@ onEmailChanged(i: any) {
             uid: this.userArray[i].uid
           })
           .then(res => {
-            //Alten Knoten löschen, Email-Adresse des Users ändern.
+            //Firebase Function um die Email zu ändern aufrufen:
+            this.http.get("https://us-central1-parkplatztool.cloudfunctions.net/updateUserEmail", {responseType: 'text'})
+            .subscribe(data => {
+              //Hat geklappt, waber was krieg ich als ergebnis?
+            }, err => {
+              //Ablauf der Funktion
+            });
+
+            //Alten Knoten löschen:
               //firebase.database().ref('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email )).remove();
               console.log ('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email ) + ' löschen!');
             
