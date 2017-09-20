@@ -185,7 +185,9 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (vermieter) {
       // Test mit enum - wie?
       if (day.state === 0) {
-        dayRef.push({vId: this.store.oververviewUser.uid, pId: this.store.oververviewUser.parkId});
+        const pId = this.store.oververviewUser.parkId;
+        dayRef.child(pId).update({vId: this.store.oververviewUser.uid, pId: pId});
+        // dayRef.push({vId: this.store.oververviewUser.uid, pId: this.store.oververviewUser.parkId});
       } else if (day.state === 1) {
 
         // PROBLEM: BEI DER STORNOFRIST HANDELT ES SICH UM ARBEITS-, NICHT WOCHENTAGE! Daher prüfen:

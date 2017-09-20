@@ -41,17 +41,6 @@ import {AngularFireModule} from 'angularfire2';
 import {AngularFireDatabaseModule} from 'angularfire2/database';
 import {AngularFireAuthModule} from 'angularfire2/auth';
 
-
-export const firebaseConfig = {
-  apiKey: 'AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE',
-  authDomain: 'parkplatztool.firebaseapp.com',
-  databaseURL: 'https://parkplatztool.firebaseio.com',
-  projectId: 'parkplatztool',
-  storageBucket: 'parkplatztool.appspot.com',
-  messagingSenderId: '110161579432'
-
-};
-
 @NgModule({
   declarations: [
     AppComponent,

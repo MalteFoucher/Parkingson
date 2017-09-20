@@ -5,7 +5,8 @@ import {DialogComponent} from './dialog/dialog.component';
 import {Store} from './store/store.service';
 
 import * as firebase from 'firebase/app';
-import {FirebaseApp} from "angularfire2";
+import {FirebaseApp} from 'angularfire2';
+import {FIREBASE_CONF} from './firebase-conf';
 
 @Component({
   selector: 'app-root',
@@ -20,9 +21,26 @@ export class AppComponent implements AfterViewChecked {
   title = 'app';
   userId: string;
   debugText = 'debugText';
-  window = window;
 
   app: FirebaseApp;
+
+  prodConf = {
+    apiKey: 'AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE',
+    authDomain: 'parkplatztool.firebaseapp.com',
+    databaseURL: 'https://parkplatztool.firebaseio.com',
+    projectId: 'parkplatztool',
+    storageBucket: 'parkplatztool.appspot.com',
+    messagingSenderId: '110161579432'
+  };
+
+  testConf = {
+    apiKey: 'AIzaSyAyF1BGjVb87MYyAVupvmzP-Gs_TK9vSNs',
+    authDomain: 'parkplatztooltest.firebaseapp.com',
+    databaseURL: 'https://parkplatztooltest.firebaseio.com',
+    projectId: 'parkplatztooltest',
+    storageBucket: 'parkplatztooltest.appspot.com',
+    messagingSenderId: '810443810062'
+  };
 
   @ViewChild(MdSidenav)
   private sidenav: MdSidenav;
@@ -31,15 +49,16 @@ export class AppComponent implements AfterViewChecked {
   }
 
   constructor(private cdRef: ChangeDetectorRef, public dialog: MdDialog, public store: Store, private ngZone: NgZone) {
+    const location = window.location.href;
+    console.log('location: ' + location);
+    let fbConf = FIREBASE_CONF.testConf;
+    if (location.includes('parken-eagle.com') || location.includes('parkplatztool.firebaseapp.com')) {
+      fbConf = FIREBASE_CONF.prodConf;
+    }
+
+    console.log('firebase conf: ' + JSON.stringify(fbConf));
     ngZone.runOutsideAngular(() => {
-      this.app = firebase.initializeApp({
-        apiKey: 'AIzaSyCLHo_GBE6DsfCElOiJaIFsEpehmX9H3sE',
-        authDomain: 'parkplatztool.firebaseapp.com',
-        databaseURL: 'https://parkplatztool.firebaseio.com',
-        projectId: 'parkplatztool',
-        storageBucket: 'parkplatztool.appspot.com',
-        messagingSenderId: '110161579432'
-      });
+      this.app = firebase.initializeApp(fbConf);
     });
 
     firebase.auth().onAuthStateChanged(user => {
@@ -107,7 +126,7 @@ export class AppComponent implements AfterViewChecked {
                   .afterClosed().subscribe(selection => {
                     this.logout();
                   });
-                  this.cdRef.detectChanges();
+                this.cdRef.detectChanges();
               }
             }
           });
