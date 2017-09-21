@@ -7,6 +7,7 @@ export class Store {
   public eUser;
   public emailToRole;
   public config;
+  public projectId;
 
   constructor() {
     // this.user = {uid: 'abc123', parkId: 11};
@@ -34,12 +35,19 @@ export class Store {
     return this.eUser  && this.eUser.buchungsAdmin;
   }
 
+  
   setEmailToRole(snapshot: any) {
     this.emailToRole = snapshot;
   }
-
   getEmailToRole(): any {
     return this.emailToRole;
+  }
+
+  setProjectId(id: string) {
+    this.projectId = id;
+  }
+  getProjectId(): string {
+    return this.projectId;
   }
 
   getEmailToUid(uid: string): string {

@@ -55,6 +55,7 @@ export class AppComponent implements AfterViewChecked {
     if (location.includes('parken-eagle.com') || location.includes('parkplatztool.firebaseapp.com')) {
       fbConf = FIREBASE_CONF.prodConf;
     }
+    store.setProjectId(fbConf.projectId);
 
     console.log('firebase conf: ' + JSON.stringify(fbConf));
     ngZone.runOutsideAngular(() => {
