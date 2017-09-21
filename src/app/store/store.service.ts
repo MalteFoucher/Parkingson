@@ -51,7 +51,10 @@ export class Store {
   }
 
   getEmailToUid(uid: string): string {
-    // Durchsucht die email2Role-Daten nach der übergebenen Uid und gibt die zugehörige Email zurück
+    // Durchsucht die email2Role-Daten nach der übergebenen Uid und gibt die zugehörige Email zurück    
+    if (uid == "not set yet") {
+      return "Fehlerhafte UserID";
+    }
     const e2rKeys = Object.keys(this.emailToRole);
     for (const ek in e2rKeys) {
       if (this.emailToRole[e2rKeys[ek]].uid == uid) return e2rKeys[ek].replace(/!/g, '.');

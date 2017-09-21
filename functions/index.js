@@ -3,7 +3,7 @@
 const functions = require('firebase-functions');
 const moment = require('moment');
 
-// cors ist für Cross Origin Header
+// cors ist f�r Cross Origin Header
 const cors = require('cors')({origin:true});
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
@@ -11,25 +11,31 @@ const admin = require('firebase-admin');
 
 admin.initializeApp(functions.config().firebase);
 
-// *** Allerhand Kram für Emailversand
-
+// *** Allerhand Kram f�r Emailversand
 const nodemailer = require('nodemailer');
+
+//console.log ("Config: "+ JSON.stringify(functions.config()) );
+
 const from = 'ParkplatzTool <service@parken-eagle.com>';
+
+
+
 const smtpConfig = {
     pool: true,
     maxConnections: 3,
-    //rateDelta: 3000,
-    //rateLimit: 15
 
-    //host: 'smtp.web.de',
+    //host: 'smtp.web.de', @578?
     //host: 'w0088c85.kasserver.com',             //romans All-inkl Host
-    host: 'w017568b.kasserver.com',           //unser All-inkl Host
-    port: 465,
+    host: functions.config().smtp.host,
+    port: functions.config().smtp.port,
+
+    //host: 'w017568b.kasserver.com',           //unser All-inkl Host
+    //port: 465,
     auth: {
-        //user: 'm040b7a3',                       //Romans all-inkl.com
-        //pass: '7p2HTfcyrtM2wfrY'
-        user: 'm040d1e7',                       //Die endgültige all-inkl.com
-        pass: 'Malte12345'
+        //user: 'm040d1e7',                       //Die endg�ltige all-inkl.com
+        //pass: 'Malte12345'
+        user: functions.config().smtp.user,
+        pass: functions.config().smtp.pass
     }
 };
 const transporter = nodemailer.createTransport(smtpConfig);
@@ -41,12 +47,12 @@ exports.onRemoveUser = functions.database.ref('/emailToRole/{emailKey}')
         var removedEntry= event.data.previous.val();
         admin.auth().deleteUser(removedEntry.uid)
         .catch(error => {
-            console.log ("Zur ID "+removedEntry.uid + " lag kein Eintrag vor! Macht aber nüscht!");
+            console.log ("Zur ID "+removedEntry.uid + " lag kein Eintrag vor! Macht aber n�scht!");
         });
     });
 
 
-//Listener für wenn User sich registrieren (check ob PW und Email korrekt sind, und auch, ob
+//Listener f�r wenn User sich registrieren (check ob PW und Email korrekt sind, und auch, ob
 //unter dem Key schon was in der DB stand, geschah client-seitig)
 exports.welcomeUser = functions.auth.user().onCreate(event => {
     const user = event.data;
@@ -55,7 +61,7 @@ exports.welcomeUser = functions.auth.user().onCreate(event => {
 
     var db = admin.database();
     var ref = db.ref('/emailToRole/' + emailAsKey);
-    //Die eben generierte UserId im DB-Eintrag ergänzen
+    //Die eben generierte UserId im DB-Eintrag erg�nzen
     ref.update({
       uid: user.uid
     });
@@ -74,9 +80,9 @@ function sendEmail(mailOptions) {
 }
 
 
-//...emails verschicken - debug! Kann später weg!
+//...emails verschicken - debug! Kann sp�ter weg!
 exports.testEmail = functions.https.onRequest((req, response) => {
-    /*transporter.verify(function(error, success) {
+    transporter.verify(function(error, success) {
         if (error) {
             console.log("TestEmail-Error: "+error);
         } else {
@@ -85,7 +91,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
 
 
     });
-
+    
     var to = req.query.to;
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {
@@ -95,10 +101,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
         text: 'plaintext version of the message',
         html: '<h1>Hey na! TestFunktion!</h1><p>Paragraph</p>'
     };
-    var res = sendEmail(mailOptions);
-    */
-    startSending();
-
+    var useless = sendEmail(mailOptions);    
     response.end( "ok" );
 })
 
@@ -106,6 +109,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
 
 
 exports.b3getJahre = functions.https.onRequest((req, res) => {
+console.log ("Config: "+ JSON.stringify(functions.config()) );
   cors (req, res, () => {
     admin.database().ref('/buchungen3/').once('value')
         .then (snapshot => {
@@ -114,7 +118,7 @@ exports.b3getJahre = functions.https.onRequest((req, res) => {
             var response="";
             for (var k in keys) {
                 response+=keys[k]+";";
-                //console.log (keys[k] + "; hinzugefügt!")
+                //console.log (keys[k] + "; hinzugef�gt!")
             }
             //console.log ("Response von b3gJ: "+response);
             res.end(response);
@@ -188,14 +192,14 @@ exports.buchung = functions.database.ref('/buchungen3/{year}/{day}/{key}').onWri
         //console.log("Buchungsbestätigung");
         buchungM("Buchungsbestätigung", buchungVermieter, buchungMieter, dataVal.vId, mId,pId ,datum)
         .then (res => {
-            //console.log ("Zurück aus buchungM f. B.Bestätigung: "+res);
+            //console.log ("Zuräck aus buchungM f. B.Bestätigung: "+res);
         });
       }
     } else {
       //console.log("Stornierung");
       buchungM("Stornierung der Buchung", stornierungMieterVermieter, stornierungMieterMieter, dataVal.vId, prevMId,pId ,datum)
       .then (res => {
-            //console.log ("Zurück aus buchungM f. Stornierung: "+res);
+            //console.log ("Zuräck aus buchungM f. Stornierung: "+res);
         });
     }
   }
@@ -268,7 +272,7 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
 }
 
 exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {
-  //TO DO: Nicht bei JEDEM Error aufhören, bei Recipient unknown-> Email löschen, weitermachen!
+  //TO DO: Nicht bei JEDEM Error aufhären, bei Recipient unknown-> Email läschen, weitermachen!
   
 
   const data = event.data;
@@ -283,15 +287,17 @@ exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => 
         if (transporter.isIdle()) {
             transporter.sendMail(msg, (error, info) => {
                 if (!error) {
-                  //console.log ("Email2 verschickt. Lösche Key "+keys[0]);
+                  //console.log ("Email2 verschickt. L�sche Key "+keys[0]);
                   admin.database().ref('/messages/').child(keys[0]).remove();
                 } else {
+                    //Email-Error. Falls 450 (too much mail) : Nichts tun->Kein neues Update Event.
+                    //Falls 550 (recipient rejected) : Email löschen und somit neues Update-Event
                     console.log("sendMail: "+error);
                     console.log(JSON.stringify(error));
-                    //responseCode ist wohl das Attribut worauf es ankommt. Hat aber nicht jedes ERROR Object
-                    //450: too much mail
-                    //bloß welches sind die, bei denen ich die Email lösche?
-                    //550 müsste sein, falls recipient rejected
+                    if (error.responseCode=="550") {
+                        console.log("Error 550->Email löschen");
+                      admin.database().ref('/messages/').child(keys[0]).remove();
+                    }                    
                 }
             });
         }
@@ -303,8 +309,8 @@ exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => 
 
 exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
   //Die Funktion habe ich geschrieben um am 19.09 um 12:00 alle User auf aktiv zu setzen.
-  //War angedacht, in der Query einen Wert zu übergeben, um ggf. auch auf inaktiv zu setzen.
-  //Der Übergabewert ist aber "true" statt true, als kein boolean. Wäre natürlich möglich, das
+  //War angedacht, in der Query einen Wert zu �bergeben, um ggf. auch auf inaktiv zu setzen.
+  //Der �bergabewert ist aber "true" statt true, als kein boolean. W�re nat�rlich m�glich, das
   //irgendwie abzufangen, aber aus Faulheit lasse ich das mit dem Parameter und setze hier einfach
   //alles stumpf auf true.
 
@@ -332,6 +338,7 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
 
 exports.updateUserEmail = functions.https.onRequest((req, res) => {
     cors (req, res, () => {
+        
         var uid = req.query.uid;
         var newEmail = req.query.email;
         console.log ("Email des Users "+uid+ " updaten auf: "+newEmail);
@@ -341,11 +348,19 @@ exports.updateUserEmail = functions.https.onRequest((req, res) => {
             })
         .then(userRecord=> {
             console.log ("Erfolgreich geupdated: "+JSON.stringify(userRecord));
-            res.end("Alles gut!");
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.end("OK");
         })
         .catch(error => {
             console.log ("Fehler beim Updaten: "+error);
+            res.writeHead(500, {'Content-Type': 'text/plain'});
             res.end(error);
         })
     });
 })
+
+/*exports.shutdownHook = functions.https.onRequest((req, res) => {    
+    console.log("Aufruf von "+req.query.text);
+    res.end("OK");
+})
+*/

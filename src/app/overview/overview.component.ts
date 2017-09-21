@@ -298,6 +298,11 @@ export class OverviewComponent implements OnInit, OnDestroy, AfterViewChecked {
       firebase.database().ref('/emailToRole').child(this.changeMail.replace(/\./g, '!')).once('value').then(snapshot => {
         const value = snapshot.val();
         if (value != null) {
+          if (value.uid == "not set yet") {
+            //Der User, auf den gewechselt werden soll, ist noch nicht registriert!
+            this.snachBar.open("Wechsel nicht möglich, da der User noch nicht registriert ist!", null, {duration: 2000});
+            return
+          }
           value.email = this.changeMail;
           this.store.ovUser = value;
           //Hier war doch n Dreher oder? -Malte

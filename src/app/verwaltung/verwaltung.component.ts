@@ -234,21 +234,20 @@ onEmailChanged(i: any) {
             .subscribe(data => {
               //Erfolgreich geupdatet->
               //Alten Knoten löschen:
-              //firebase.database().ref('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email )).remove();
+              firebase.database().ref('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email )).remove();
               console.log ('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email ) + ' löschen!');
             
             //Allerdings auch im Store. Alten raus, neuen rein.
+            //Und hier im array
+            this.userArray.splice(i,1);
             console.log ("Im Store den Key "+this.userArray[i].email + "(oder asKey?) löschen und nen neuen"+
-            " Eintrag für "+editedEmail + " anlegen. Mal nochmal gucken, ob das jetzt Keys oder KlartextEmails sind.");
-
-            //Um das Ganze mal zu testen, erstmal im HTML den keyup wieder reinkommentieren.
-            //Dann vielleicht mal mit malte.foucher@deka oder so ausprobieren.          
-
-              
-              console.log("Subscribe von der updateFunktion: "+JSON.stringify(data));
+            " Eintrag für "+editedEmail + " anlegen. Mal nochmal gucken, ob das jetzt Keys oder KlartextEmails sind.");            
+                          
             }, err => {
               //Abbruch der Verbindung?
               //Meldung und neuen Knoten löschen
+              this.snackBar.open("Wechsel der Adresse fehlgeschlagen!", null, {duration: 2000});
+              firebase.database().ref('/emailToRole/'+this.emailToEmailAsKey(editedEmail)).remove();
             });
 
           })
