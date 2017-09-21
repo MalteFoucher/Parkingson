@@ -91,7 +91,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
 
 
     });
-    
+
     var to = req.query.to;
     response.writeHead(200, {'Content-Type': 'text/plain'});
     var mailOptions = {
@@ -101,7 +101,7 @@ exports.testEmail = functions.https.onRequest((req, response) => {
         text: 'plaintext version of the message',
         html: '<h1>Hey na! TestFunktion!</h1><p>Paragraph</p>'
     };
-    var useless = sendEmail(mailOptions);    
+    var useless = sendEmail(mailOptions);
     response.end( "ok" );
 })
 
@@ -234,7 +234,7 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
     ref.orderByChild('uid').equalTo(vermieter).once('value').then( vData => {
         console.log("vData: " + JSON.stringify(vData.val()));
         var mailVermieter = Object.keys(vData.val())[0].replace(/!/g,'.');
-        
+
         if (mieter) {
         ref.orderByChild('uid').equalTo(mieter).once('value').then( mData => {
             console.log("mData: " + JSON.stringify(mData.val()));
@@ -273,7 +273,7 @@ const buchungM = (subject, textVermieter, textMieter, vermieter, mieter, pp, dat
 
 exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => {
   //TO DO: Nicht bei JEDEM Error aufhären, bei Recipient unknown-> Email läschen, weitermachen!
-  
+
 
   const data = event.data;
   //console.log("sendDBm data: " + JSON.stringify(data));
@@ -297,7 +297,7 @@ exports.sendDBmessages = functions.database.ref('/messages/').onUpdate(event => 
                     if (error.responseCode=="550") {
                         console.log("Error 550->Email löschen");
                       admin.database().ref('/messages/').child(keys[0]).remove();
-                    }                    
+                    }
                 }
             });
         }
@@ -338,7 +338,7 @@ exports.setEveryonesActiveFlag = functions.https.onRequest((req, res) => {
 
 exports.updateUserEmail = functions.https.onRequest((req, res) => {
     cors (req, res, () => {
-        
+
         var uid = req.query.uid;
         var newEmail = req.query.email;
         console.log ("Email des Users "+uid+ " updaten auf: "+newEmail);
@@ -359,8 +359,32 @@ exports.updateUserEmail = functions.https.onRequest((req, res) => {
     });
 })
 
-/*exports.shutdownHook = functions.https.onRequest((req, res) => {    
-    console.log("Aufruf von "+req.query.text);
-    res.end("OK");
-})
-*/
+exports.checkBuchungen = functions.https.onRequest((req, res) => {
+  admin.database().ref("/buchungen3").once('value').then(snapshot => {
+    var out = "";
+    var val = snapshot.val();
+    var years = Object.keys(val);
+    years.forEach(y => {
+      var year = val[y];
+      var days = Object.keys(year);
+      days.forEach(d => {
+        var day = year[d];
+        var test = {};
+        var values = Object.keys(day);
+        values.forEach(v => {
+          var value = day[v];
+          var pId = value.pId;
+          if (test[pId] != null) {
+            var text = "Doppelbuchung: " + d + "." + y + " " + JSON.stringify(value) + " - " + JSON.stringify(test[pId]);
+            out += text + "\n";
+            console.error(text);
+          }
+          else {
+            test[pId] = value;
+          }
+        });
+      });
+    });
+    res.end(out);
+  });
+});
