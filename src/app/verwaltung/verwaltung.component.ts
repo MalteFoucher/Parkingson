@@ -13,8 +13,7 @@ import {HttpClient} from '@angular/common/http';
 })
 export class VerwaltungComponent implements OnInit {
 
-  userArray=[];
-  //availableSpaces=['Kein Parkplatz',1, 15, 123, 310];
+  userArray=[];  
   vergebeneParkplaetze=[];
   user;
 
@@ -23,7 +22,6 @@ export class VerwaltungComponent implements OnInit {
 
   ngOnInit() {
     this.user = this.store.eUser;
-
     var e2r = this.store.getEmailToRole();
     var e2rKeys = Object.keys(e2r);
 
@@ -220,6 +218,7 @@ onEmailChanged(i: any) {
           this.snackBar.open('Fehler! Geben Sie eine gültige DEKA-E-Mail an.', null, {duration: 2000});
         } else {
           //Neuen Knoten in emailToRole anlegen:
+          console.log ('/emailToRole/'+ this.userArray[i].email + ' löschen!');
           var newPostRef = firebase.database().ref('/emailToRole/'+this.emailToEmailAsKey(editedEmail)+'/')
           .set({
             benutzerAdmin: this.userArray[i].benutzerAdmin,
@@ -230,14 +229,11 @@ onEmailChanged(i: any) {
           })
           .then(res => {
             //Firebase Function um die Email zu ändern aufrufen:
-            this.http.get("https://us-central1-parkplatztool.cloudfunctions.net/updateUserEmail", {responseType: 'text'})
+            this.http.get("https://us-central1-"+this.store.getProjectId()+".cloudfunctions.net/updateUserEmail?uid="+this.userArray[i].uid+"&email="+
+            editedEmail, {responseType: 'text'})
             .subscribe(data => {
-              //Hat geklappt, waber was krieg ich als ergebnis?
-            }, err => {
-              //Ablauf der Funktion
-            });
-
-            //Alten Knoten löschen:
+              //Erfolgreich geupdatet->
+              //Alten Knoten löschen:
               //firebase.database().ref('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email )).remove();
               console.log ('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email ) + ' löschen!');
             
@@ -247,6 +243,14 @@ onEmailChanged(i: any) {
 
             //Um das Ganze mal zu testen, erstmal im HTML den keyup wieder reinkommentieren.
             //Dann vielleicht mal mit malte.foucher@deka oder so ausprobieren.          
+
+              
+              console.log("Subscribe von der updateFunktion: "+JSON.stringify(data));
+            }, err => {
+              //Abbruch der Verbindung?
+              //Meldung und neuen Knoten löschen
+            });
+
           })
         
 

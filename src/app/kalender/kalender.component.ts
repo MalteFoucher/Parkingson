@@ -68,7 +68,7 @@ export class KalenderComponent {
 
 
     // Firebase Function aufrufen, die alle Jahre zurückliefert, zu denen Buchungen vorliegen
-    this.http.get("https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
+    this.http.get("https://us-central1-"+store.getProjectId()+".cloudfunctions.net/b3getJahre", {responseType: 'text'})
       .subscribe(data => {
         var tokens = data.toString().split(";");
         for (var t = 0; t < tokens.length - 1; t++) {
@@ -286,7 +286,7 @@ export class KalenderComponent {
   }
 
   getJahre() {
-    this.http.get("https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
+    this.http.get("https://us-central1-"+this.store.getProjectId()+".cloudfunctions.net/b3getJahre", {responseType: 'text'})
     //.map((res:Response) => res.json())
       .subscribe(data => {
         var tokens = data.toString().split(";");

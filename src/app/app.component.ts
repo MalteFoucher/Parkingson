@@ -52,7 +52,7 @@ export class AppComponent implements AfterViewChecked {
     const location = window.location.href;
     console.log('location: ' + location);
     let fbConf = FIREBASE_CONF.testConf;
-    if (location.includes('parken-eagle.com') || location.includes('parkplatztool.firebaseapp.com')) {
+    if (location.includes('parken-eagle.com') || location.includes('parkplatztool.firebaseapp.com') ){//|| location.includes('localhost') ) {
       fbConf = FIREBASE_CONF.prodConf;
     }
     store.setProjectId(fbConf.projectId);

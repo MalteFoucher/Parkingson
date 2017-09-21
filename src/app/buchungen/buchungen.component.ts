@@ -30,7 +30,8 @@ export class BuchungenComponent implements OnInit {
 
   ngOnInit() {
     // Firebase Function aufrufen, die alle Jahre zurückliefert, zu denen Buchungen vorliegen
-    this.http.get("https://us-central1-parkplatztool.cloudfunctions.net/b3getJahre", {responseType: 'text'})
+    console.log("https://us-central1-"+this.store.getProjectId()+".cloudfunctions.net/b3getJahre");
+    this.http.get("https://us-central1-"+this.store.getProjectId()+".cloudfunctions.net/b3getJahre", {responseType: 'text'})
       .subscribe(data => {
         var tokens = data.toString().split(";");
         for (var t = 0; t < tokens.length - 1; t++) {

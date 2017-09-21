@@ -3,6 +3,7 @@ import * as firebase from 'firebase';
 import {HttpClient} from '@angular/common/http';
 import {MdDialog} from '@angular/material';
 import {TextInputDialogComponent} from '../text-input-dialog/text-input-dialog.component';
+import {Store} from '../store/store.service';
 
 @Component({
   selector: 'app-login',
@@ -17,8 +18,7 @@ export class LoginComponent implements AfterViewChecked{
   ngAfterViewChecked(): void {
   }
 
-  constructor(private http: HttpClient, private dialog: MdDialog, private cdRef: ChangeDetectorRef, private ngZone: NgZone) {
-  }
+  constructor(private http: HttpClient, private dialog: MdDialog, private cdRef: ChangeDetectorRef, private ngZone: NgZone, private store: Store) {}
 
   login() {
     this.user_email=this.user_email.toLowerCase();
@@ -61,7 +61,7 @@ export class LoginComponent implements AfterViewChecked{
 
 
     //Funktion schickt als HTTP-Response nen String zurück. Weiß nicht wie klug/dumm das ist...
-    this.http.get('https://us-central1-parkplatztool.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
+    this.http.get('https://us-central1-'+this.store.getProjectId()+'.cloudfunctions.net/b3isUserAlreadyInDB?email=' + this.user_email, {responseType: 'text'}).subscribe(data => {
 
       //Falls es die Register-Email (noch) nicht in emailToRole gibt:
       if (data === 'false') {
