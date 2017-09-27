@@ -1,0 +1,16 @@
+{
+  "config" : {
+    "direktvergabe" : false,
+    "sperrzeit" : "9:30",
+    "tagesfrist" : 1
+  },
+  "emailToRole" : {
+    "<Emailadresse!Mit!Ausrufezeichen!statt!Punkten@Deka!Lu" : {
+      "benutzerAdmin" : false,
+      "buchungsAdmin" : false,
+      "isActive" : true,
+      "parkId" : 0,
+      "uid" : "not set yet"
+    }
+  }
+}

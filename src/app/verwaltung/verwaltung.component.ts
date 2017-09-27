@@ -92,9 +92,8 @@ export class VerwaltungComponent implements OnInit {
         });
         dialogRef.afterClosed().subscribe(selection => {
           if (selection) {
-            var ref = firebase.database().ref('/emailToRole/'+this.userArray[index].email.replace(/\./g,'!'));
-            ref.remove()
-            .then( any => {
+            this.http.get("https://us-central1-"+this.store.getProjectId()+".cloudfunctions.net/deleteUser?uid="+uid+"&key="+this.emailToEmailAsKey(email))
+            .subscribe(data => {
               this.userArray.splice(index,1);
             });
           }
@@ -238,11 +237,11 @@ onEmailChanged(i: any) {
               console.log ('/emailToRole/'+ this.emailToEmailAsKey( this.userArray[i].email ) + ' löschen!');
             
             //Allerdings auch im Store. Alten raus, neuen rein.
-            //Und hier im array
-            this.userArray.splice(i,1);
-            console.log ("Im Store den Key "+this.userArray[i].email + "(oder asKey?) löschen und nen neuen"+
-            " Eintrag für "+editedEmail + " anlegen. Mal nochmal gucken, ob das jetzt Keys oder KlartextEmails sind.");            
-                          
+            //Neuer Rein:
+            this.store.updateE2R(this.emailToEmailAsKey(editedEmail), this.userArray[i]);
+            //Alter raus:
+            this.store.updateE2R(this.emailToEmailAsKey(this.userArray[i].email), null);
+                                      
             }, err => {
               //Abbruch der Verbindung?
               //Meldung und neuen Knoten löschen

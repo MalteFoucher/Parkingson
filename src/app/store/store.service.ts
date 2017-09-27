@@ -88,7 +88,7 @@ export class Store {
   updateE2R(key: string, data: any) {
     var dataKeys = Object.keys(data);
     for (var dk in dataKeys) {
-      //this.emailToRole[key][dataKeys[dk]] = data[dataKeys[data]];
+      this.emailToRole[key][dataKeys[dk]] = data[dataKeys[data]];
     }
   }
 

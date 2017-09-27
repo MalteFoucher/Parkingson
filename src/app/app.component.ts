@@ -49,11 +49,11 @@ export class AppComponent implements AfterViewChecked {
   }
 
   constructor(private cdRef: ChangeDetectorRef, public dialog: MdDialog, public store: Store, private ngZone: NgZone) {
-    const location = window.location.href;
-    console.log('location: ' + location);
+    //Anhand der URL im Browserfesnter entscheiden, welche Firebase-Konfiguration (Test oder Prod) geladen wird.
+    const location = window.location.href;    
     let fbConf = FIREBASE_CONF.testConf;
-    if (location.includes('parken-eagle.com') || location.includes('parkplatztool.firebaseapp.com') ){//|| location.includes('localhost') ) {
-      fbConf = FIREBASE_CONF.prodConf;
+    if (location.includes('parken-eagle.com') || location.includes('parkplatztool.firebaseapp.com')) {//} || location.includes('localhost') ) {
+      fbConf = FIREBASE_CONF.prodConf;      
     }
     store.setProjectId(fbConf.projectId);
 
