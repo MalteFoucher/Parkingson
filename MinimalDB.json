@@ -5,7 +5,7 @@
     "tagesfrist" : 1
   },
   "emailToRole" : {
-    "<Emailadresse!Mit!Ausrufezeichen!statt!Punkten@Deka!Lu" : {
+    "<Emailadresse!Mit!Ausrufezeichen!statt!Punkten@Deka!Lu>" : {
       "benutzerAdmin" : false,
       "buchungsAdmin" : false,
       "isActive" : true,
